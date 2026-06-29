@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head th:replace="~{fragments/layout :: head('Historial Clínico')}">
+</head>
+
+<body>
+
+    <!-- Estilos específicos para la Línea de Tiempo Clínica -->
+    <style>
+        .timeline {
+            position: relative;
+            padding-left: 2.5rem;
+            margin-left: 1rem;
+            border-left: 3px solid var(--primary-light);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -3.6rem;
+            width: 2.2rem;
+            height: 2.2rem;
+            border-radius: 50%;
+            background: var(--white);
+            border: 4px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: var(--primary-dark);
+            z-index: 2;
+        }
+
+        .timeline-item:first-child .timeline-marker {
+            border-color: var(--accent);
+            color: #c4667a;
+        }
+
+        .timeline-content {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: 0 4px 15px var(--shadow);
+            border: 1px solid rgba(186, 186, 186, 0.15);
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .timeline-content:hover {
+            box-shadow: 0 8px 25px var(--shadow-md);
+            transform: translateX(5px);
+        }
+
+        .metric-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            border: 1px solid rgba(186, 186, 186, 0.2);
+            box-shadow: 0 4px 15px var(--shadow);
+            padding: 1.5rem;
+            text-align: center;
+        }
+    </style>
+
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-journal-medical me-2" style="color: var(--primary);"></i>
+                    Historial Médico: <span th:text="${mascota.nombre}">Firulais</span>
+                </h1>
+                <div class="d-flex gap-2">
+                    <a th:href="@{/historias/nuevo(mascotaId=${mascota.id})}" class="btn btn-primary-custom">
+                        <i class="bi bi-plus-circle me-1"></i> Nueva Consulta
+                    </a>
+                    <a th:href="@{/mascotas/detalle/{id}(id=${mascota.id})}" class="btn btn-outline-custom">
+                        <i class="bi bi-eye me-1"></i> Ficha Mascota
+                    </a>
+                    <a th:href="@{/historias}" class="btn btn-secondary-custom">
+                        <i class="bi bi-arrow-left me-1"></i> Volver
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bloque de Métricas Clínicas -->
+            <div class="row g-3 mb-4">
+                <!-- Métrica: Total de consultas -->
+                <div class="col-md-4">
+                    <div class="metric-card">
+                        <div class="text-primary fs-2 mb-2"><i class="bi bi-hospital"></i></div>
+                        <p class="mb-0 text-muted-custom small">Total Consultas Realizadas</p>
+                        <h3 class="fw-bold mb-0 text-secondary" th:text="${totalConsultas}">0</h3>
+                    </div>
+                </div>
+
+                <!-- Métrica: Última consulta -->
+                <div class="col-md-4">
+                    <div class="metric-card">
+                        <div class="text-accent fs-2 mb-2"><i class="bi bi-calendar-check"></i></div>
+                        <p class="mb-0 text-muted-custom small">Última Consulta</p>
+                        <h5 class="fw-bold mb-0 mt-1 text-secondary"
+                            th:text="${ultimaConsulta != null} ? ${ultimaConsulta.fechaConsulta} : 'Ninguna registrada'">
+                            2026-06-14</h5>
+                    </div>
+                </div>
+
+                <!-- Métrica: Peso de mascota -->
+                <div class="col-md-4">
+                    <div class="metric-card">
+                        <div class="text-success fs-2 mb-2"><i class="bi bi-speedometer2"></i></div>
+                        <p class="mb-0 text-muted-custom small">Peso Actual del Paciente</p>
+                        <h3 class="fw-bold mb-0 text-secondary" th:text="${mascota.peso} + ' kg'">0 kg</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tarjeta Paciente Compacta -->
+            <div class="card-custom mb-4 p-3" style="background: var(--background-alt);">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-warning text-white"
+                            style="width: 50px; height: 50px; font-size: 1.5rem;">
+                            <i class="bi bi-paw-fill"></i>
+                        </div>
+                        <div>
+                            <h5 class="mb-0 fw-bold" th:text="${mascota.nombre + ' (' + mascota.codigoMascota + ')'}">
+                                Nombre Paciente</h5>
+                            <p class="mb-0 small text-muted-custom">
+                                <span th:text="${mascota.especie.name()}">ESPECIE</span> &bull;
+                                <span th:text="${mascota.raza}">Raza</span> &bull;
+                                <span th:text="${mascota.sexo.name()}">Sexo</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <p class="mb-0 small text-muted-custom">Propietario Responsable</p>
+                        <h6 class="mb-0 fw-bold"><i class="bi bi-person me-1"></i> <span
+                                th:text="${mascota.propietario.nombre + ' ' + mascota.propietario.apellido}">Propietario</span>
+                        </h6>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN: LÍNEA DE TIEMPO CLÍNICA -->
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <i class="bi bi-activity me-2"></i> Cronología de Eventos Clínicos (Línea de Tiempo)
+                </div>
+                <div class="card-body-custom">
+
+                    <!-- Línea de tiempo con consultas -->
+                    <div th:if="${!consultas.isEmpty()}" class="timeline">
+
+                        <div th:each="c, iterStat : ${consultas}" class="timeline-item">
+                            <!-- Marcador de Línea -->
+                            <div class="timeline-marker">
+                                <i th:if="${iterStat.first}" class="bi bi-star-fill"></i>
+                                <i th:if="${!iterStat.first}" class="bi bi-calendar-event-fill"></i>
+                            </div>
+
+                            <!-- Contenido -->
+                            <div class="timeline-content">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+                                    <div>
+                                        <span class="badge bg-secondary text-white font-monospace mb-1"
+                                            th:text="${c.codigoConsulta}">CONS-000001</span>
+                                        <h5 class="fw-bold mb-0 text-secondary">
+                                            Motivo: <span th:text="${c.motivoConsulta}">Motivo de Consulta</span>
+                                        </h5>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge"
+                                            th:classappend="${c.estadoConsulta.name() == 'PENDIENTE' ? 'bg-warning text-dark' : 
+                                                          (c.estadoConsulta.name() == 'ATENDIDA' ? 'bg-success text-white' : 
+                                                          (c.estadoConsulta.name() == 'OBSERVACION' ? 'bg-info text-dark' : 
+                                                          (c.estadoConsulta.name() == 'HOSPITALIZADA' ? 'bg-danger text-white' : 'bg-secondary text-white')))}"
+                                            th:text="${c.estadoConsulta}">Estado</span>
+                                        <p class="mb-0 small text-muted-custom mt-1" th:text="${c.fechaConsulta}">
+                                            2026-06-14</p>
+                                    </div>
+                                </div>
+
+                                <hr class="my-2 border-secondary-subtle">
+
+                                <div class="row g-2">
+                                    <div class="col-md-8">
+                                        <p class="mb-1"><strong>Diagnóstico:</strong> <span
+                                                th:text="${c.diagnostico}">Diagnóstico</span></p>
+                                        <p class="mb-1" th:if="${c.medicamentos != null && !c.medicamentos.isEmpty()}">
+                                            <strong>Receta / Medicación:</strong> <span
+                                                th:text="${c.medicamentos}">Receta</span>
+                                        </p>
+                                        <p class="mb-0 text-muted-custom small">
+                                            <i class="bi bi-person-fill-gear me-1"></i> Atendido por: <strong
+                                                th:text="${c.veterinario}">Veterinario</strong>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-4 text-md-end align-self-end">
+                                        <a th:href="@{/historias/detalle/{id}(id=${c.id})}"
+                                            class="btn btn-outline-custom btn-sm">
+                                            <i class="bi bi-eye"></i> Ver Ficha Completa
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Estado vacío -->
+                    <div th:if="${consultas.isEmpty()}" class="empty-state">
+                        <i class="bi bi-journal-medical d-block"></i>
+                        <h5>Sin registro de historial médico</h5>
+                        <p>Esta mascota no registra consultas o atenciones previas en el sistema.</p>
+                        <a th:href="@{/historias/nuevo(mascotaId=${mascota.id})}" class="btn btn-primary-custom mt-3">
+                            <i class="bi bi-plus-circle me-1"></i> Registrar Primera Consulta
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+
+</html>

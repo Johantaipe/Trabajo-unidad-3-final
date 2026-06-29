@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head th:replace="~{fragments/layout :: head('Formulario de Consulta')}">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-file-medical-fill me-2" style="color: var(--primary);"
+                        th:if="${consulta.id == null}"></i>
+                    <i class="bi bi-pencil-square me-2" style="color: var(--primary);"
+                        th:if="${consulta.id != null}"></i>
+                    <span
+                        th:text="${consulta.id == null} ? 'Nueva Consulta Clínica' : 'Editar Consulta'">Formulario</span>
+                </h1>
+                <a th:href="@{/historias}" class="btn btn-secondary-custom">
+                    <i class="bi bi-arrow-left me-1"></i> Volver a la lista
+                </a>
+            </div>
+
+            <!-- Formulario centrado -->
+            <div class="form-card-wrapper">
+                <div class="form-card" style="max-width: 850px;">
+
+                    <!-- Header del formulario -->
+                    <div class="form-header">
+                        <h4>
+                            <i class="bi bi-hospital me-2"></i>
+                            <span
+                                th:text="${consulta.id == null} ? 'Registrar Consulta Médica' : 'Actualizar Datos de Consulta'">
+                                Formulario
+                            </span>
+                        </h4>
+                        <p>Complete todos los campos obligatorios (*)</p>
+                    </div>
+
+                    <!-- Body del formulario -->
+                    <div class="form-body">
+
+                        <!-- Error de negocio general -->
+                        <div th:if="${errorNegocio}" class="alert alert-custom-danger mb-4 d-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                            <span th:text="${errorNegocio}">Error general</span>
+                        </div>
+
+                        <!-- Formulario -->
+                        <form
+                            th:action="${consulta.id == null} ? @{/historias/guardar} : @{/historias/actualizar/{id}(id=${consulta.id})}"
+                            method="post" th:object="${consulta}" id="formConsulta">
+
+                            <!-- SECCIÓN 1: DATOS GENERALES -->
+                            <h5 class="mb-3"
+                                style="color: var(--secondary); font-weight: 700; border-bottom: 2px solid var(--primary-light); padding-bottom: 0.3rem;">
+                                1. Datos Generales de la Consulta
+                            </h5>
+
+                            <div class="row">
+                                <!-- Mascota -->
+                                <div class="col-md-6 mb-custom">
+                                    <label for="mascotaId" class="form-label-custom">
+                                        <i class="bi bi-heart-pulse-fill me-1"></i> Paciente (Mascota) <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <select id="mascotaId" th:field="*{mascotaId}"
+                                        class="form-control form-control-custom"
+                                        th:classappend="${#fields.hasErrors('mascotaId')} ? 'is-invalid'">
+                                        <option value="" disabled selected>Seleccione la mascota paciente</option>
+                                        <option th:each="m : ${mascotas}" th:value="${m.id}"
+                                            th:text="${m.nombre + ' - ' + m.especie.name() + ' (' + m.propietario.nombre + ' ' + m.propietario.apellido + ')'}">
+                                            Mascota</option>
+                                    </select>
+                                    <div th:if="${#fields.hasErrors('mascotaId')}" class="invalid-feedback">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        <span th:errors="*{mascotaId}">Error</span>
+                                    </div>
+                                </div>
+
+                                <!-- Fecha Consulta -->
+                                <div class="col-md-6 mb-custom">
+                                    <label for="fechaConsulta" class="form-label-custom">
+                                        <i class="bi bi-calendar-check me-1"></i> Fecha Consulta <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="date" id="fechaConsulta" th:field="*{fechaConsulta}"
+                                        class="form-control form-control-custom"
+                                        th:classappend="${#fields.hasErrors('fechaConsulta')} ? 'is-invalid'">
+                                    <div th:if="${#fields.hasErrors('fechaConsulta')}" class="invalid-feedback">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        <span th:errors="*{fechaConsulta}">Error</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <!-- Veterinario -->
+                                <div class="col-md-6 mb-custom">
+                                    <label for="veterinario" class="form-label-custom">
+                                        <i class="bi bi-person-fill-gear me-1"></i> Veterinario a Cargo <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="veterinario" th:field="*{veterinario}"
+                                        class="form-control form-control-custom"
+                                        th:classappend="${#fields.hasErrors('veterinario')} ? 'is-invalid'"
+                                        placeholder="Ingrese el nombre del médico veterinario">
+                                    <div th:if="${#fields.hasErrors('veterinario')}" class="invalid-feedback">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        <span th:errors="*{veterinario}">Error</span>
+                                    </div>
+                                </div>
+
+                                <!-- Estado de Consulta -->
+                                <div class="col-md-6 mb-custom">
+                                    <label for="estadoConsulta" class="form-label-custom">
+                                        <i class="bi bi-activity me-1"></i> Estado Clínico Inicial/Actual <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <select id="estadoConsulta" th:field="*{estadoConsulta}"
+                                        class="form-control form-control-custom"
+                                        th:classappend="${#fields.hasErrors('estadoConsulta')} ? 'is-invalid'">
+                                        <option value="" disabled selected>Seleccione el estado</option>
+                                        <option th:each="est : ${estados}" th:value="${est.name()}"
+                                            th:text="${est.name()}">ESTADO</option>
+                                    </select>
+                                    <div th:if="${#fields.hasErrors('estadoConsulta')}" class="invalid-feedback">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        <span th:errors="*{estadoConsulta}">Error</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Motivo Consulta -->
+                            <div class="mb-custom">
+                                <label for="motivoConsulta" class="form-label-custom">
+                                    <i class="bi bi-chat-left-quote me-1"></i> Motivo de la Consulta <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <textarea id="motivoConsulta" th:field="*{motivoConsulta}"
+                                    class="form-control form-control-custom"
+                                    th:classappend="${#fields.hasErrors('motivoConsulta')} ? 'is-invalid'" rows="2"
+                                    placeholder="Ej. Control de vacunas, decaimiento y vómitos desde hace 2 días..."></textarea>
+                                <div th:if="${#fields.hasErrors('motivoConsulta')}" class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    <span th:errors="*{motivoConsulta}">Error</span>
+                                </div>
+                                <small class="text-muted-custom">
+                                    <i class="bi bi-info-circle me-1"></i> Entre 5 y 300 caracteres
+                                </small>
+                            </div>
+
+                            <!-- Anamnesis -->
+                            <div class="mb-custom">
+                                <label for="anamnesis" class="form-label-custom">
+                                    <i class="bi bi-file-earmark-medical me-1"></i> Anamnesis (Historial / Antecedentes
+                                    narrados por propietario)
+                                </label>
+                                <textarea id="anamnesis" th:field="*{anamnesis}"
+                                    class="form-control form-control-custom" rows="3"
+                                    placeholder="Antecedentes médicos relevantes, alergias, alimentación, estilo de vida..."></textarea>
+                            </div>
+
+                            <!-- SECCIÓN 2: SIGNOS VITALES -->
+                            <h5 class="mb-3 mt-4"
+                                style="color: var(--secondary); font-weight: 700; border-bottom: 2px solid var(--primary-light); padding-bottom: 0.3rem;">
+                                2. Exploración Física y Signos Vitales
+                            </h5>
+
+                            <div class="row">
+                                <!-- Temperatura -->
+                                <div class="col-md-3 col-sm-6 mb-custom">
+                                    <label for="temperatura" class="form-label-custom">
+                                        <i class="bi bi-thermometer-half me-1"></i> Temp (&deg;C)
+                                    </label>
+                                    <input type="number" id="temperatura" step="0.1" th:field="*{temperatura}"
+                                        class="form-control form-control-custom"
+                                        th:classappend="${#fields.hasErrors('temperatura')} ? 'is-invalid'"
+                                        placeholder="Ej. 38.5">
+                                    <div th:if="${#fields.hasErrors('temperatura')}" class="invalid-feedback">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        <span th:errors="*{temperatura}">Error</span>
+                                    </div>
+                                    <small class="text-muted-custom">Rango: 30 - 45 &deg;C</small>
+                                </div>
+
+                                <!-- Peso Actual -->
+                                <div class="col-md-3 col-sm-6 mb-custom">
+                                    <label for="pesoActual" class="form-label-custom">
+                                        <i class="bi bi-speedometer2 me-1"></i> Peso (kg) <span
+                                            class="text-danger">*</span>
+                                    </label>
+                                    <input type="number" id="pesoActual" step="0.01" th:field="*{pesoActual}"
+                                        class="form-control form-control-custom"
+                                        th:classappend="${#fields.hasErrors('pesoActual')} ? 'is-invalid'"
+                                        placeholder="Ej. 12.50">
+                                    <div th:if="${#fields.hasErrors('pesoActual')}" class="invalid-feedback">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        <span th:errors="*{pesoActual}">Error</span>
+                                    </div>
+                                    <small class="text-muted-custom">Debe ser mayor a 0</small>
+                                </div>
+
+                                <!-- Frecuencia Cardiaca -->
+                                <div class="col-md-3 col-sm-6 mb-custom">
+                                    <label for="frecuenciaCardiaca" class="form-label-custom">
+                                        <i class="bi bi-heart me-1"></i> Frec. Card. (lpm)
+                                    </label>
+                                    <input type="number" id="frecuenciaCardiaca" th:field="*{frecuenciaCardiaca}"
+                                        class="form-control form-control-custom" placeholder="Ej. 90">
+                                </div>
+
+                                <!-- Frecuencia Respiratoria -->
+                                <div class="col-md-3 col-sm-6 mb-custom">
+                                    <label for="frecuenciaRespiratoria" class="form-label-custom">
+                                        <i class="bi bi-wind me-1"></i> Frec. Resp. (rpm)
+                                    </label>
+                                    <input type="number" id="frecuenciaRespiratoria"
+                                        th:field="*{frecuenciaRespiratoria}" class="form-control form-control-custom"
+                                        placeholder="Ej. 24">
+                                </div>
+                            </div>
+
+                            <!-- SECCIÓN 3: DIAGNÓSTICO Y TRATAMIENTO -->
+                            <h5 class="mb-3 mt-4"
+                                style="color: var(--secondary); font-weight: 700; border-bottom: 2px solid var(--primary-light); padding-bottom: 0.3rem;">
+                                3. Diagnóstico, Tratamiento y Receta
+                            </h5>
+
+                            <!-- Diagnóstico -->
+                            <div class="mb-custom">
+                                <label for="diagnostico" class="form-label-custom">
+                                    <i class="bi bi-shield-exclamation me-1"></i> Diagnóstico Médico <span
+                                        class="text-danger">*</span>
+                                </label>
+                                <textarea id="diagnostico" th:field="*{diagnostico}"
+                                    class="form-control form-control-custom"
+                                    th:classappend="${#fields.hasErrors('diagnostico')} ? 'is-invalid'" rows="3"
+                                    placeholder="Describa el diagnóstico de la consulta..."></textarea>
+                                <div th:if="${#fields.hasErrors('diagnostico')}" class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    <span th:errors="*{diagnostico}">Error</span>
+                                </div>
+                                <small class="text-muted-custom">Mínimo 5 caracteres</small>
+                            </div>
+
+                            <!-- Tratamiento -->
+                            <div class="mb-custom">
+                                <label for="tratamiento" class="form-label-custom">
+                                    <i class="bi bi-prescription me-1"></i> Tratamiento Clínico Aplicado
+                                </label>
+                                <textarea id="tratamiento" th:field="*{tratamiento}"
+                                    class="form-control form-control-custom"
+                                    th:classappend="${#fields.hasErrors('tratamiento')} ? 'is-invalid'" rows="3"
+                                    placeholder="Procedimientos realizados, limpieza de heridas, internación temporal..."></textarea>
+                                <div th:if="${#fields.hasErrors('tratamiento')}" class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    <span th:errors="*{tratamiento}">Error</span>
+                                </div>
+                            </div>
+
+                            <!-- Medicamentos -->
+                            <div class="mb-custom">
+                                <label for="medicamentos" class="form-label-custom">
+                                    <i class="bi bi-capsule me-1"></i> Receta de Medicamentos
+                                </label>
+                                <textarea id="medicamentos" th:field="*{medicamentos}"
+                                    class="form-control form-control-custom"
+                                    th:classappend="${#fields.hasErrors('medicamentos')} ? 'is-invalid'" rows="3"
+                                    placeholder="Ej: Amoxicilina 250mg - 1 tableta cada 12 horas por 7 días..."></textarea>
+                                <div th:if="${#fields.hasErrors('medicamentos')}" class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    <span th:errors="*{medicamentos}">Error</span>
+                                </div>
+                            </div>
+
+                            <!-- Recomendaciones y Próxima Visita -->
+                            <div class="row">
+                                <!-- Recomendaciones -->
+                                <div class="col-md-8 mb-custom">
+                                    <label for="recomendaciones" class="form-label-custom">
+                                        <i class="bi bi-info-circle-fill me-1"></i> Recomendaciones Generales para el
+                                        Propietario
+                                    </label>
+                                    <textarea id="recomendaciones" th:field="*{recomendaciones}"
+                                        class="form-control form-control-custom"
+                                        th:classappend="${#fields.hasErrors('recomendaciones')} ? 'is-invalid'" rows="3"
+                                        placeholder="Dieta especial, reposo, evitar contacto con agua..."></textarea>
+                                    <div th:if="${#fields.hasErrors('recomendaciones')}" class="invalid-feedback">
+                                        <i class="bi bi-exclamation-circle me-1"></i>
+                                        <span th:errors="*{recomendaciones}">Error</span>
+                                    </div>
+                                </div>
+
+                                <!-- Próxima Visita -->
+                                <div class="col-md-4 mb-custom">
+                                    <label for="proximaVisita" class="form-label-custom">
+                                        <i class="bi bi-calendar-event me-1"></i> Próxima Visita / Control
+                                    </label>
+                                    <input type="date" id="proximaVisita" th:field="*{proximaVisita}"
+                                        class="form-control form-control-custom">
+                                    <small class="text-muted-custom">Opcional</small>
+                                </div>
+                            </div>
+
+                            <div class="divider"></div>
+
+                            <!-- Botones -->
+                            <div class="d-flex gap-3 justify-content-end flex-wrap">
+                                <a th:href="@{/historias}" class="btn btn-secondary-custom">
+                                    <i class="bi bi-x-circle me-1"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-primary-custom">
+                                    <i class="bi bi-check-circle me-1" th:if="${consulta.id == null}"></i>
+                                    <i class="bi bi-arrow-repeat me-1" th:if="${consulta.id != null}"></i>
+                                    <span
+                                        th:text="${consulta.id == null} ? 'Registrar Consulta' : 'Actualizar Consulta'">
+                                        Guardar
+                                    </span>
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+
+</html>

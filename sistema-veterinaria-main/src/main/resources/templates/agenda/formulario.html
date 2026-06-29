@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head(${cita.id == null ? 'Nueva Cita' : 'Editar Cita'})}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="row g-4">
+                <!-- Formulario Principal -->
+                <div class="col-lg-7">
+                    <div class="card-custom">
+                        <div class="card-header-custom">
+                            <i class="bi bi-calendar-event-fill me-1"></i> Programar Cita Veterinaria
+                        </div>
+                        <div class="card-body-custom">
+                            
+                            <!-- Alertas de error por Colisiones (Backend) -->
+                            <div th:if="${errorCollision}" class="alert alert-custom-danger mb-4 d-flex align-items-center" role="alert">
+                                <i class="bi bi-exclamation-octagon-fill me-2 fs-5"></i>
+                                <span th:text="${errorCollision}">Error de colisión</span>
+                            </div>
+
+                            <!-- Alerta de Colisión en Tiempo Real (Frontend) -->
+                            <div id="liveCollisionAlert" class="alert alert-danger mb-4 d-none align-items-center" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                                <span id="liveCollisionMessage">Advertencia: Colisión de horarios detectada para el veterinario.</span>
+                            </div>
+
+                            <form id="citaForm" th:action="${cita.id == null} ? @{/agenda/guardar} : @{/agenda/actualizar/{id}(id=${cita.id})}" th:object="${cita}" method="post">
+                                <input type="hidden" th:field="*{id}" id="citaId" />
+
+                                <div class="row g-3">
+                                    <!-- Mascota -->
+                                    <div class="col-md-12">
+                                        <label for="mascotaId" class="form-label-custom">Mascota Paciente</label>
+                                        <select id="mascotaId" th:field="*{mascotaId}" class="form-control form-control-custom" th:classappend="${#fields.hasErrors('mascotaId')} ? 'is-invalid'">
+                                            <option value="">Seleccione una mascota...</option>
+                                            <option th:each="m : ${mascotas}" 
+                                                    th:value="${m.id}" 
+                                                    th:text="${m.nombre} + ' (' + ${m.especie} + ')'"></option>
+                                        </select>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('mascotaId')}" th:errors="*{mascotaId}"></div>
+                                    </div>
+
+                                    <!-- Datos de Autocompletado del Paciente -->
+                                    <div class="col-md-4">
+                                        <label class="form-label-custom text-muted">Propietario</label>
+                                        <input type="text" id="autoPropietario" class="form-control form-control-custom bg-light text-muted" readonly placeholder="-" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label-custom text-muted">Especie</label>
+                                        <input type="text" id="autoEspecie" class="form-control form-control-custom bg-light text-muted" readonly placeholder="-" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label-custom text-muted">Teléfono</label>
+                                        <input type="text" id="autoTelefono" class="form-control form-control-custom bg-light text-muted" readonly placeholder="-" />
+                                    </div>
+
+                                    <!-- Tipo de Cita -->
+                                    <div class="col-md-6">
+                                        <label for="tipoCita" class="form-label-custom">Tipo de Cita</label>
+                                        <select id="tipoCita" th:field="*{tipoCita}" class="form-control form-control-custom" th:classappend="${#fields.hasErrors('tipoCita')} ? 'is-invalid'">
+                                            <option value="">Seleccione tipo...</option>
+                                            <option th:each="t : ${tipos}" th:value="${t.name()}" th:text="${t.name()}">CONSULTA_GENERAL</option>
+                                        </select>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('tipoCita')}" th:errors="*{tipoCita}"></div>
+                                    </div>
+
+                                    <!-- Duración (Autocalculado) -->
+                                    <div class="col-md-6">
+                                        <label for="duracionMinutos" class="form-label-custom">Duración Bloque (Minutos)</label>
+                                        <input type="number" id="duracionMinutos" th:field="*{duracionMinutos}" class="form-control form-control-custom" readonly />
+                                        <small class="text-muted">La duración se calcula automáticamente según el tipo de cita.</small>
+                                    </div>
+
+                                    <!-- Fecha -->
+                                    <div class="col-md-6">
+                                        <label for="fecha" class="form-label-custom">Fecha</label>
+                                        <input type="date" id="fecha" th:field="*{fecha}" class="form-control form-control-custom" th:classappend="${#fields.hasErrors('fecha')} ? 'is-invalid'" />
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('fecha')}" th:errors="*{fecha}"></div>
+                                    </div>
+
+                                    <!-- Hora -->
+                                    <div class="col-md-6">
+                                        <label for="hora" class="form-label-custom">Hora de Inicio</label>
+                                        <input type="time" id="hora" th:field="*{hora}" class="form-control form-control-custom" th:classappend="${#fields.hasErrors('hora')} ? 'is-invalid'" />
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('hora')}" th:errors="*{hora}"></div>
+                                    </div>
+
+                                    <!-- Veterinario -->
+                                    <div class="col-md-6">
+                                        <label for="veterinario" class="form-label-custom">Veterinario Responsable</label>
+                                        <input type="text" id="veterinario" th:field="*{veterinario}" class="form-control form-control-custom" placeholder="Nombre del Veterinario" th:classappend="${#fields.hasErrors('veterinario')} ? 'is-invalid'" />
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('veterinario')}" th:errors="*{veterinario}"></div>
+                                    </div>
+
+                                    <!-- Prioridad -->
+                                    <div class="col-md-6">
+                                        <label for="prioridad" class="form-label-custom">Prioridad</label>
+                                        <select id="prioridad" th:field="*{prioridad}" class="form-control form-control-custom" th:classappend="${#fields.hasErrors('prioridad')} ? 'is-invalid'">
+                                            <option th:each="p : ${prioridades}" th:value="${p.name()}" th:text="${p.name()}">NORMAL</option>
+                                        </select>
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('prioridad')}" th:errors="*{prioridad}"></div>
+                                    </div>
+
+                                    <!-- Estado (Editar) -->
+                                    <div class="col-md-12" th:if="${cita.id != null}">
+                                        <label for="estado" class="form-label-custom">Estado de la Cita</label>
+                                        <select id="estado" th:field="*{estado}" class="form-control form-control-custom">
+                                            <option th:each="e : ${estados}" th:value="${e.name()}" th:text="${e.name()}">PROGRAMADA</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Motivo -->
+                                    <div class="col-md-12">
+                                        <label for="motivoConsulta" class="form-label-custom">Motivo de la Cita</label>
+                                        <input type="text" id="motivoConsulta" th:field="*{motivoConsulta}" class="form-control form-control-custom" placeholder="Ej: Control de vacunas, baño y corte, cojera..." th:classappend="${#fields.hasErrors('motivoConsulta')} ? 'is-invalid'" />
+                                        <div class="invalid-feedback" th:if="${#fields.hasErrors('motivoConsulta')}" th:errors="*{motivoConsulta}"></div>
+                                    </div>
+
+                                    <!-- Observaciones -->
+                                    <div class="col-md-12">
+                                        <label for="observaciones" class="form-label-custom">Observaciones Adicionales</label>
+                                        <textarea id="observaciones" th:field="*{observaciones}" class="form-control form-control-custom" rows="3" placeholder="Información opcional..."></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-footer mt-4">
+                                    <a th:href="@{/agenda}" class="btn btn-secondary-custom">
+                                        <i class="bi bi-x-circle me-1"></i> Cancelar
+                                    </a>
+                                    <button type="submit" class="btn btn-primary-custom" id="btnGuardar">
+                                        <i class="bi bi-save me-1"></i> Guardar Cita
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tarjeta de Autocompletado Clínico Lateral -->
+                <div class="col-lg-5">
+                    <div id="resumenClinicoCard" class="card-custom bg-white border-start border-4 border-info shadow-sm d-none">
+                        <div class="card-header-custom" style="background: linear-gradient(135deg, var(--secondary-dark) 0%, #111 100%);">
+                            <i class="bi bi-info-circle-fill me-1 text-info"></i> Resumen de Mascota & Propietario
+                        </div>
+                        <div class="card-body-custom py-3 px-4">
+                            <h5 class="fw-bold mb-3 text-secondary border-bottom pb-2">Información de Contacto</h5>
+                            <div class="mb-2">
+                                <span class="text-muted d-block small">Nombre del Propietario</span>
+                                <strong id="resPropietarioNombre" class="text-dark">-</strong>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <span class="text-muted d-block small">Teléfono</span>
+                                    <span id="resPropietarioTelefono" class="text-dark font-monospace">-</span>
+                                </div>
+                                <div class="col-6">
+                                    <span class="text-muted d-block small">Correo Electrónico</span>
+                                    <span id="resPropietarioCorreo" class="text-dark">-</span>
+                                </div>
+                            </div>
+
+                            <h5 class="fw-bold mb-3 text-secondary border-bottom pb-2">Historial Médico Reciente</h5>
+                            <ul class="list-group list-group-flush small">
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span>Última Consulta:</span>
+                                    <strong id="resUltimaConsulta">-</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span>Última Vacuna:</span>
+                                    <strong id="resUltimaVacuna">-</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span>Próxima Vacuna:</span>
+                                    <strong id="resProximaVacuna" class="text-success">-</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span>Última Desparasitación:</span>
+                                    <strong id="resUltimaDesparasitacion">-</strong>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const mascotaSelect = document.getElementById('mascotaId');
+            const tipoCitaSelect = document.getElementById('tipoCita');
+            const duracionInput = document.getElementById('duracionMinutos');
+            const dateInput = document.getElementById('fecha');
+            const timeInput = document.getElementById('hora');
+            const vetInput = document.getElementById('veterinario');
+            const citaIdInput = document.getElementById('citaId');
+
+            const autoProp = document.getElementById('autoPropietario');
+            const autoEsp = document.getElementById('autoEspecie');
+            const autoTel = document.getElementById('autoTelefono');
+
+            const resumenCard = document.getElementById('resumenClinicoCard');
+            const resPropNombre = document.getElementById('resPropietarioNombre');
+            const resPropTelefono = document.getElementById('resPropietarioTelefono');
+            const resPropCorreo = document.getElementById('resPropietarioCorreo');
+            const resUltConsulta = document.getElementById('resUltimaConsulta');
+            const resUltVacuna = document.getElementById('resUltimaVacuna');
+            const resProxVacuna = document.getElementById('resProximaVacuna');
+            const resUltDesp = document.getElementById('resUltimaDesparasitacion');
+
+            const liveAlert = document.getElementById('liveCollisionAlert');
+            const liveMessage = document.getElementById('liveCollisionMessage');
+            const btnGuardar = document.getElementById('btnGuardar');
+
+            // Set default date to today for new appointments
+            if (dateInput && !dateInput.value) {
+                const hoy = new Date();
+                const yyyy = hoy.getFullYear();
+                const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+                const dd = String(hoy.getDate()).padStart(2, '0');
+                dateInput.value = `${yyyy}-${mm}-${dd}`;
+            }
+
+            // Duracion auto-calculation based on appointment type
+            function actualizarDuracion() {
+                const val = tipoCitaSelect.value;
+                if (val === 'CONSULTA_GENERAL') duracionInput.value = 30;
+                else if (val === 'VACUNACION') duracionInput.value = 15;
+                else if (val === 'DESPARASITACION') duracionInput.value = 15;
+                else if (val === 'CONTROL') duracionInput.value = 20;
+                else if (val === 'PELUQUERIA') duracionInput.value = 60;
+                else duracionInput.value = 30;
+                
+                checkCollisionLive();
+            }
+
+            tipoCitaSelect.addEventListener('change', actualizarDuracion);
+            if (tipoCitaSelect.value) {
+                actualizarDuracion();
+            }
+
+            // Autocompletion on mascota select
+            mascotaSelect.addEventListener('change', function() {
+                const id = mascotaSelect.value;
+                if (!id) {
+                    resumenCard.classList.add('d-none');
+                    autoProp.value = '-';
+                    autoEsp.value = '-';
+                    autoTel.value = '-';
+                    return;
+                }
+
+                fetch('/api/agenda/mascota/' + id + '/resumen')
+                    .then(res => res.json())
+                    .then(data => {
+                        // Populate readonly inputs in form
+                        autoProp.value = data.propietarioNombre || '-';
+                        autoEsp.value = data.mascotaEspecie || '-';
+                        autoTel.value = data.propietarioTelefono || '-';
+
+                        // Populate lateral summary card
+                        resPropNombre.textContent = data.propietarioNombre || '-';
+                        resPropTelefono.textContent = data.propietarioTelefono || '-';
+                        resPropCorreo.textContent = data.propietarioCorreo || '-';
+                        resUltConsulta.textContent = data.ultimaConsulta || 'Ninguna registrada';
+                        resUltVacuna.textContent = data.ultimaVacuna || 'Ninguna registrada';
+                        resProxVacuna.textContent = data.proximaVacuna || 'Ninguna programada';
+                        resUltDesp.textContent = data.ultimaDesparasitacion || 'Ninguna registrada';
+                        
+                        resumenCard.classList.remove('d-none');
+                    })
+                    .catch(err => {
+                        console.error('Error fetching clinical summary:', err);
+                        resumenCard.classList.add('d-none');
+                    });
+            });
+
+            // Trigger change if loaded with value (e.g. edit mode)
+            if (mascotaSelect.value) {
+                mascotaSelect.dispatchEvent(new Event('change'));
+            }
+
+            // Real-time scheduling collision verification function
+            function checkCollisionLive() {
+                const fecha = dateInput.value;
+                const hora = timeInput.value;
+                const duracion = duracionInput.value;
+                const vet = vetInput.value;
+                const citaId = citaIdInput.value;
+
+                if (!fecha || !hora || !duracion || !vet) {
+                    liveAlert.classList.add('d-none');
+                    btnGuardar.disabled = false;
+                    return;
+                }
+
+                let url = `/api/agenda/check-collision?fecha=${fecha}&hora=${hora}&duracion=${duracion}&veterinario=${encodeURIComponent(vet)}`;
+                if (citaId) {
+                    url += `&excludeId=${citaId}`;
+                }
+
+                fetch(url)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.collision) {
+                            liveMessage.textContent = data.message;
+                            liveAlert.classList.remove('d-none');
+                            liveAlert.classList.add('d-flex');
+                            // We warn the user, but don't hard block them since veterinarians can overlap emergencies 
+                            // in exceptional cases, or we can optionally disable saving. Let's show a very prominent warning.
+                        } else {
+                            liveAlert.classList.add('d-none');
+                            liveAlert.classList.remove('d-flex');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error validation collision:', err);
+                    });
+            }
+
+            // Attach event listeners to scheduling fields
+            dateInput.addEventListener('change', checkCollisionLive);
+            timeInput.addEventListener('change', checkCollisionLive);
+            vetInput.addEventListener('input', checkCollisionLive);
+        });
+    </script>
+</body>
+</html>

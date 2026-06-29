@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restablecer Contraseña - VET EXPERTS</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Custom Public CSS -->
+    <link th:href="@{/css/public.css}" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, rgba(82, 183, 136, 0.08) 0%, rgba(247, 176, 50, 0.04) 100%), #f4f7f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        .reset-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 32px;
+            box-shadow: var(--shadow-lg);
+            padding: 3rem;
+            max-width: 500px;
+            width: 100%;
+        }
+        .form-control {
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.2);
+            border-color: var(--primary-light);
+        }
+        .btn-primary-custom {
+            background-color: var(--primary);
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem;
+            font-weight: 700;
+            color: white;
+            transition: var(--transition);
+            width: 100%;
+        }
+        .btn-primary-custom:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(45, 106, 79, 0.3);
+        }
+        .requirement-item {
+            font-size: 0.8rem;
+            color: #dc3545;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .requirement-item.met {
+            color: #198754;
+        }
+        .requirement-item i {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="reset-card">
+        <div class="text-center mb-4">
+            <i class="bi bi-shield-lock-fill text-success" style="font-size: 3rem;"></i>
+            <h3 class="fw-extrabold text-dark mt-2">Nueva Contraseña</h3>
+            <p class="text-muted small">Crea una contraseña segura para tu cuenta de cliente.</p>
+        </div>
+
+        <div th:if="${errorPassword}" class="alert alert-danger border-0 rounded-4 shadow-sm mb-4" role="alert">
+            <span th:text="${errorPassword}">Error</span>
+        </div>
+
+        <form th:action="@{/restablecer-contrasena}" method="POST" id="resetForm">
+            <input type="hidden" name="token" th:value="${token}">
+
+            <div class="mb-3">
+                <label for="password" class="form-label fw-semibold">Nueva Contraseña</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Mínimo 8 caracteres" required>
+                
+                <!-- Password rules checklist -->
+                <div class="mt-2 p-2 bg-light rounded-3" style="border: 1px dashed rgba(0,0,0,0.08);">
+                    <div class="requirement-item" id="req-length"><i class="bi bi-x-circle-fill"></i> Mínimo 8 caracteres</div>
+                    <div class="requirement-item" id="req-upper"><i class="bi bi-x-circle-fill"></i> Una letra mayúscula</div>
+                    <div class="requirement-item" id="req-lower"><i class="bi bi-x-circle-fill"></i> Una letra minúscula</div>
+                    <div class="requirement-item" id="req-number"><i class="bi bi-x-circle-fill"></i> Un número</div>
+                    <div class="requirement-item" id="req-special"><i class="bi bi-x-circle-fill"></i> Un carácter especial (@$!%*?&._-)</div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="confirmPassword" class="form-label fw-semibold">Confirmar Contraseña</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Repite la contraseña" required>
+                <div class="text-danger small mt-1" th:if="${errorConfirmPassword}" th:text="${errorConfirmPassword}"></div>
+                <div class="text-danger small mt-1" id="confirmError" style="display: none;">Las contraseñas no coinciden</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary-custom ripple-btn mt-2">Guardar Contraseña</button>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const passwordInput = document.getElementById('password');
+        const confirmInput = document.getElementById('confirmPassword');
+        const confirmError = document.getElementById('confirmError');
+        const form = document.getElementById('resetForm');
+
+        // Password requirements elements
+        const reqLength = document.getElementById('req-length');
+        const reqUpper = document.getElementById('req-upper');
+        const reqLower = document.getElementById('req-lower');
+        const reqNumber = document.getElementById('req-number');
+        const reqSpecial = document.getElementById('req-special');
+
+        function validatePassword() {
+            const val = passwordInput.value;
+            
+            const hasLength = val.length >= 8;
+            updateReq(reqLength, hasLength);
+
+            const hasUpper = /[A-Z]/.test(val);
+            updateReq(reqUpper, hasUpper);
+
+            const hasLower = /[a-z]/.test(val);
+            updateReq(reqLower, hasLower);
+
+            const hasNumber = /\d/.test(val);
+            updateReq(reqNumber, hasNumber);
+
+            const hasSpecial = /[@$!%*?&._\-#/]/.test(val);
+            updateReq(reqSpecial, hasSpecial);
+
+            return hasLength && hasUpper && hasLower && hasNumber && hasSpecial;
+        }
+
+        function updateReq(el, met) {
+            if (met) {
+                el.classList.add('met');
+                el.querySelector('i').className = 'bi bi-check-circle-fill';
+            } else {
+                el.classList.remove('met');
+                el.querySelector('i').className = 'bi bi-x-circle-fill';
+            }
+        }
+
+        passwordInput.addEventListener('input', validatePassword);
+
+        confirmInput.addEventListener('input', function() {
+            if (confirmInput.value !== passwordInput.value) {
+                confirmError.style.display = 'block';
+            } else {
+                confirmError.style.display = 'none';
+            }
+        });
+
+        form.addEventListener('submit', function(e) {
+            const isPasswordValid = validatePassword();
+            const isMatch = confirmInput.value === passwordInput.value;
+            
+            if (!isPasswordValid || !isMatch) {
+                e.preventDefault();
+                if (!isMatch) {
+                    confirmError.style.display = 'block';
+                }
+            }
+        });
+    </script>
+</body>
+</html>

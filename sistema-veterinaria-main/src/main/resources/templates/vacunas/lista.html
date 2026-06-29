@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Control de Vacunación')}">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-virus me-2" style="color: var(--primary);"></i>
+                    Control de Vacunación
+                </h1>
+                <a th:href="@{/vacunas/nuevo}" class="btn btn-primary-custom">
+                    <i class="bi bi-plus-circle me-1"></i> Registrar Vacunación
+                </a>
+            </div>
+
+            <!-- Mensajes Flash -->
+            <div th:if="${mensajeExito}" class="alert alert-custom-success mb-4 d-flex align-items-center" role="alert">
+                <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+                <span th:text="${mensajeExito}">Éxito</span>
+            </div>
+
+            <div th:if="${mensajeError}" class="alert alert-custom-danger mb-4 d-flex align-items-center" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                <span th:text="${mensajeError}">Error</span>
+            </div>
+
+            <!-- Buscador y Filtros -->
+            <div class="card-custom mb-4">
+                <div class="card-body-custom py-3 px-4">
+                    <form th:action="@{/vacunas}" method="get" class="row g-3 align-items-end">
+                        <!-- Buscador -->
+                        <div class="col-md-5">
+                            <label for="buscarMascota" class="form-label-custom">
+                                <i class="bi bi-search me-1"></i> Buscar por Mascota
+                            </label>
+                            <input type="text" id="buscarMascota" name="nombreMascota" th:value="${nombreMascota}"
+                                class="form-control form-control-custom"
+                                placeholder="Escriba el nombre de la mascota...">
+                        </div>
+
+                        <!-- Filtro Especie -->
+                        <div class="col-md-4">
+                            <label for="filtrarEspecie" class="form-label-custom">
+                                <i class="bi bi-funnel me-1"></i> Filtrar por Especie
+                            </label>
+                            <select id="filtrarEspecie" name="especie" class="form-control form-control-custom">
+                                <option value="TODAS" th:selected="${especieSeleccionada == 'TODAS'}">Todas las especies</option>
+                                <option th:each="esp : ${especies}" th:value="${esp.name()}" th:text="${esp.name()}"
+                                    th:selected="${especieSeleccionada == esp.name()}">ESPECIE</option>
+                            </select>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="col-md-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-outline-custom w-100 py-2">
+                                <i class="bi bi-filter me-1"></i> Filtrar
+                            </button>
+                            <a th:href="@{/vacunas}"
+                                class="btn btn-secondary-custom w-100 py-2 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-arrow-clockwise me-1"></i> Limpiar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tabla de Vacunas -->
+            <div class="card-custom">
+                <div class="card-header-custom d-flex align-items-center">
+                    <i class="bi bi-list-ul me-2"></i>
+                    Historial de Vacunación Registrado
+                </div>
+                <div class="card-body-custom p-0">
+
+                    <!-- Tabla con datos -->
+                    <div th:if="${!vacunasPage.isEmpty()}" class="table-responsive">
+                        <table class="table table-custom mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Mascota</th>
+                                    <th>Especie</th>
+                                    <th>Vacuna</th>
+                                    <th>Fecha Aplicación</th>
+                                    <th>Próxima Dosis</th>
+                                    <th>Estado</th>
+                                    <th>Veterinario</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="vacuna : ${vacunasPage.content}">
+                                    <td>
+                                        <span class="badge-custom text-white"
+                                            style="background: var(--secondary); font-family: monospace;"
+                                            th:text="${vacuna.codigoVacunaAplicada}">VAC-000001</span>
+                                    </td>
+                                    <td>
+                                        <strong th:text="${vacuna.mascota.nombre}">Mascota</strong>
+                                    </td>
+                                    <td>
+                                        <span class="badge-custom bg-light text-dark" th:text="${vacuna.mascota.especie}">Perro</span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold" th:text="${vacuna.vacuna.nombre}">Rabia</span>
+                                    </td>
+                                    <td th:text="${vacuna.fechaAplicacion}">2026-06-14</td>
+                                    <td th:text="${vacuna.fechaProximaDosis}">2027-06-14</td>
+                                    <td>
+                                        <!-- Badges dinámicos para estado de vacuna -->
+                                        <span th:if="${vacuna.estado.name() == 'PROGRAMADA'}"
+                                            class="badge-custom bg-info-subtle text-info-emphasis">
+                                            Programada
+                                        </span>
+                                        <span th:if="${vacuna.estado.name() == 'APLICADA'}"
+                                            class="badge-custom bg-success-subtle text-success-emphasis">
+                                            Aplicada
+                                        </span>
+                                        <span th:if="${vacuna.estado.name() == 'PROXIMA_A_VENCER'}"
+                                            class="badge-custom bg-warning-subtle text-warning-emphasis">
+                                            Próxima a vencer
+                                        </span>
+                                        <span th:if="${vacuna.estado.name() == 'VENCIDA'}"
+                                            class="badge-custom bg-danger-subtle text-danger-emphasis">
+                                            Vencida
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <i class="bi bi-person-fill-gear me-1" style="color: var(--accent);"></i>
+                                        <span th:text="${vacuna.veterinario}">Veterinario</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="action-buttons justify-content-center d-flex gap-1">
+                                            <a th:href="@{/vacunas/detalle/{id}(id=${vacuna.id})}"
+                                                class="btn btn-outline-custom btn-sm py-1 px-2" title="Ver Detalle">
+                                                <i class="bi bi-eye"></i> Detalle
+                                            </a>
+                                            <a th:href="@{/vacunas/editar/{id}(id=${vacuna.id})}"
+                                                class="btn btn-warning-custom btn-sm py-1 px-2" title="Editar">
+                                                <i class="bi bi-pencil-square"></i> Editar
+                                            </a>
+                                            <a th:href="@{/vacunas/eliminar/{id}(id=${vacuna.id})}"
+                                                class="btn btn-danger-custom btn-sm py-1 px-2" title="Eliminar"
+                                                onclick="return confirm('¿Está seguro de eliminar este registro de vacuna?')">
+                                                <i class="bi bi-trash3"></i> Eliminar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginación -->
+                    <div th:if="${!vacunasPage.isEmpty() && vacunasPage.totalPages > 1}"
+                        class="d-flex justify-content-between align-items-center p-3 border-top bg-light">
+                        <div class="text-muted small">
+                            Mostrando página <span th:text="${vacunasPage.number + 1}">1</span> de <span
+                                th:text="${vacunasPage.totalPages}">5</span> (<span
+                                th:text="${vacunasPage.totalElements}">25</span> registros en total)
+                        </div>
+                        <nav aria-label="Paginación de vacunas">
+                            <ul class="pagination mb-0 gap-1">
+                                <!-- Anterior -->
+                                <li class="page-item" th:classappend="${vacunasPage.first} ? 'disabled'">
+                                    <a class="page-link"
+                                        th:href="@{/vacunas(page=${vacunasPage.number - 1}, nombreMascota=${nombreMascota}, especie=${especieSeleccionada})}"
+                                        aria-label="Anterior">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <!-- Páginas -->
+                                <li class="page-item"
+                                    th:each="i : ${#numbers.sequence(0, vacunasPage.totalPages - 1)}"
+                                    th:classappend="${vacunasPage.number == i} ? 'active'">
+                                    <a class="page-link"
+                                        th:href="@{/vacunas(page=${i}, nombreMascota=${nombreMascota}, especie=${especieSeleccionada})}"
+                                        th:text="${i + 1}">1</a>
+                                </li>
+                                <!-- Siguiente -->
+                                <li class="page-item" th:classappend="${vacunasPage.last} ? 'disabled'">
+                                    <a class="page-link"
+                                        th:href="@{/vacunas(page=${vacunasPage.number + 1}, nombreMascota=${nombreMascota}, especie=${especieSeleccionada})}"
+                                        aria-label="Siguiente">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <!-- Estado vacío -->
+                    <div th:if="${vacunasPage.isEmpty()}" class="empty-state">
+                        <i class="bi bi-virus d-block fs-1 text-muted"></i>
+                        <h5>No hay vacunas registradas</h5>
+                        <p>No se encontraron registros de vacunas aplicadas con los filtros seleccionados.</p>
+                        <a th:href="@{/vacunas/nuevo}" class="btn btn-primary-custom mt-3">
+                            <i class="bi bi-plus-circle me-1"></i> Registrar Vacunación
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>

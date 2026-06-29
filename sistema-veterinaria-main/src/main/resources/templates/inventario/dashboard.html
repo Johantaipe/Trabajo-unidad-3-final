@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Dashboard de Inventario')}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-box-seam-fill me-2" style="color: var(--primary);"></i>
+                    Inventario Inteligente
+                </h1>
+                <div class="action-buttons">
+                    <a th:href="@{/inventario/nuevo}" class="btn btn-primary-custom">
+                        <i class="bi bi-plus-circle me-1"></i> Registrar Producto
+                    </a>
+                </div>
+            </div>
+
+            <!-- Submenus horizontal pills -->
+            <div class="card-custom mb-4 bg-white p-2">
+                <div class="d-flex flex-wrap gap-2 justify-content-center justify-content-lg-start">
+                    <a th:href="@{/inventario/medicamentos}" class="btn btn-outline-custom">💉 Medicamentos</a>
+                    <a th:href="@{/inventario/alimentos}" class="btn btn-outline-custom">🍖 Alimentos</a>
+                    <a th:href="@{/inventario/accesorios}" class="btn btn-outline-custom">🧸 Accesorios</a>
+                    <a th:href="@{/inventario/insumos}" class="btn btn-outline-custom">🩹 Insumos Médicos</a>
+                    <a th:href="@{/inventario/proveedores}" class="btn btn-outline-custom">👥 Proveedores</a>
+                    <a th:href="@{/inventario/movimientos}" class="btn btn-outline-custom">🔄 Movimientos</a>
+                    <a th:href="@{/inventario/vencimientos}" class="btn btn-outline-custom">⚠️ Vencimientos</a>
+                    <a th:href="@{/inventario/reportes}" class="btn btn-outline-custom">📊 Reportes Inventario</a>
+                </div>
+            </div>
+
+            <!-- Summary metrics -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-primary d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold d-block">Total Productos</span>
+                            <strong class="fs-4 text-dark" th:text="${totalProductos}">0</strong>
+                        </div>
+                        <i class="bi bi-boxes fs-2 text-primary opacity-75"></i>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-danger d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold d-block">Stock Crítico (<= 3)</span>
+                            <strong class="fs-4 text-dark" th:text="${stockCriticoCount}">0</strong>
+                        </div>
+                        <i class="bi bi-exclamation-triangle-fill fs-2 text-danger opacity-75"></i>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-warning d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold d-block">Próximos a Vencer</span>
+                            <strong class="fs-4 text-dark" th:text="${porVencerCount}">0</strong>
+                        </div>
+                        <i class="bi bi-calendar-x-fill fs-2 text-warning opacity-75"></i>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-success d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold d-block">Medicamentos</span>
+                            <strong class="fs-4 text-dark" th:text="${totalMedicamentos}">0</strong>
+                        </div>
+                        <i class="bi bi-capsule fs-2 text-success opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                
+                <!-- Critical Stock Alerts Table -->
+                <div class="col-lg-6">
+                    <div class="card-custom bg-white shadow-sm mb-4">
+                        <div class="card-header-custom bg-danger">
+                            <i class="bi bi-exclamation-circle-fill me-1"></i> Productos con Stock Crítico (Falta Abastecer)
+                        </div>
+                        <div class="card-body-custom p-0">
+                            <div th:if="${!criticos.isEmpty()}" class="table-responsive">
+                                <table class="table table-custom mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Stock</th>
+                                            <th>Mínimo</th>
+                                            <th class="text-center">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="c : ${criticos}">
+                                            <td th:text="${c.nombre}">Amoxicilina</td>
+                                            <td>
+                                                <span class="badge bg-danger" th:text="${c.stock}">0</span>
+                                            </td>
+                                            <td th:text="${c.stockMinimo}">5</td>
+                                            <td class="text-center">
+                                                <button class="btn btn-warning-custom btn-sm" th:onclick="'window.location.href=\'/inventario/ficha/\' + ' + ${c.id}">
+                                                    Abastecer
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div th:if="${criticos.isEmpty()}" class="empty-state">
+                                <i class="bi bi-check-circle-fill text-success fs-3 d-block mb-2"></i>
+                                <h5>Inventario Abastecido</h5>
+                                <p>No hay productos con stock por debajo del límite crítico.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Movements -->
+                <div class="col-lg-6">
+                    <div class="card-custom bg-white shadow-sm mb-4">
+                        <div class="card-header-custom">
+                            <i class="bi bi-clock-history me-1"></i> Auditoría de Movimientos Recientes
+                        </div>
+                        <div class="card-body-custom p-0">
+                            <div th:if="${!recientes.isEmpty()}" class="table-responsive">
+                                <table class="table table-custom mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Concepto</th>
+                                            <th>Tipo</th>
+                                            <th>Cantidad</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="m : ${recientes}">
+                                            <td th:text="${#temporals.format(m.fechaRegistro, 'yyyy-MM-dd HH:mm')}">2026-06-15</td>
+                                            <td th:text="${m.productoNombre}">Amoxicilina</td>
+                                            <td>
+                                                <span th:if="${m.cantidad > 0}" class="badge bg-success">INGRESO</span>
+                                                <span th:if="${m.cantidad < 0}" class="badge bg-danger">SALIDA</span>
+                                            </td>
+                                            <td class="font-monospace" th:text="${m.cantidad}">+10</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div th:if="${recientes.isEmpty()}" class="empty-state">
+                                <i class="bi bi-info-circle d-block"></i>
+                                <h5>Sin movimientos registrados</h5>
+                                <p>Las operaciones de inventario se registrarán aquí.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

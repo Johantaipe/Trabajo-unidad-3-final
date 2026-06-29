@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Términos de Uso de VET EXPERTS. Conozca las condiciones de uso de nuestro sistema de gestión veterinaria, reservas y pagos.">
+    <title>Términos de Uso | VET EXPERTS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link th:href="@{/css/public.css}" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f4f7f5;
+        }
+        .legal-header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            padding: 5rem 0 4rem 0;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 5px solid var(--secondary);
+        }
+        .legal-header h1 {
+            color: white;
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+        .legal-header p {
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .legal-header::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -10%;
+            width: 40%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(82, 183, 136, 0.15) 0%, rgba(0,0,0,0) 80%);
+            z-index: 1;
+        }
+        .legal-container {
+            margin-top: -2rem;
+            position: relative;
+            z-index: 10;
+        }
+        .legal-card {
+            background: var(--bg-white);
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(0,0,0,0.05);
+            padding: 3rem;
+        }
+        .sidebar-sticky {
+            position: sticky;
+            top: 100px;
+            background: var(--bg-white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-sm);
+        }
+        .sidebar-sticky .nav-link {
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .sidebar-sticky .nav-link:hover {
+            color: var(--primary);
+            background-color: rgba(82, 183, 136, 0.08);
+            transform: translateX(3px);
+        }
+        .sidebar-sticky .nav-link.active {
+            color: white;
+            background-color: var(--primary);
+        }
+        .legal-section {
+            scroll-margin-top: 100px;
+            margin-bottom: 3.5rem;
+        }
+        .legal-section h3 {
+            font-size: 1.6rem;
+            color: var(--primary-dark);
+            border-bottom: 2px solid rgba(82, 183, 136, 0.15);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .legal-section h3 i {
+            color: var(--primary-light);
+        }
+        .legal-section p, .legal-section li {
+            color: var(--text-dark);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        .legal-section ul {
+            padding-left: 1.5rem;
+        }
+        .legal-section li {
+            margin-bottom: 0.5rem;
+        }
+        .navbar-sticky .navbar-brand {
+            font-weight: 800;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-dark);
+        }
+        .btn-ingresar {
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+        .btn-ingresar:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#legalSidebar" data-bs-offset="120">
+
+    <!-- ========== HEADER STICKY (Navbar) ========== -->
+    <nav class="navbar navbar-expand-lg navbar-sticky scrolled">
+        <div class="container">
+            <a class="navbar-brand text-decoration-none" th:href="@{/}">
+                <img th:src="@{/img/logo.png}" alt="VET EXPERTS" style="height: 38px;">
+                <span>VET<span style="color: var(--secondary);">Experts</span></span>
+            </a>
+            <a th:href="@{/}" class="btn btn-ingresar py-2 px-4">Volver al Inicio</a>
+        </div>
+    </nav>
+
+    <!-- ========== HERO BANNER ========== -->
+    <header class="legal-header">
+        <div class="container">
+            <h1 class="animate-fade-in">Términos de Uso</h1>
+            <p class="animate-fade-in" style="animation-delay: 0.1s;">Última actualización: 23 de Junio de 2026</p>
+        </div>
+    </header>
+
+    <!-- ========== LEGAL CONTENT SECTION ========== -->
+    <main class="container legal-container pb-5">
+        <div class="row g-4">
+            <!-- Sidebar Table of Contents -->
+            <div class="col-lg-3 d-none d-lg-block">
+                <nav id="legalSidebar" class="sidebar-sticky">
+                    <h5 class="fw-bold text-dark mb-3">Secciones</h5>
+                    <div class="nav flex-column nav-pills gap-1">
+                        <a class="nav-link active" href="#uso-adecuado"><i class="bi bi-shield-check"></i> 1. Uso Adecuado</a>
+                        <a class="nav-link" href="#proteccion-datos"><i class="bi bi-lock"></i> 2. Protección de Datos</a>
+                        <a class="nav-link" href="#responsabilidad"><i class="bi bi-person-exclamation"></i> 3. Responsabilidad</a>
+                        <a class="nav-link" href="#reservas"><i class="bi bi-calendar-event"></i> 4. Reservas de Citas</a>
+                        <a class="nav-link" href="#cancelaciones"><i class="bi bi-x-circle"></i> 5. Cancelaciones</a>
+                        <a class="nav-link" href="#pagos"><i class="bi bi-credit-card"></i> 6. Pagos y Boletas</a>
+                        <a class="nav-link" href="#intelectual"><i class="bi bi-award"></i> 7. Propiedad Intelectual</a>
+                        <a class="nav-link" href="#normativa"><i class="bi bi-globe-americas"></i> 8. Normativa Peruana</a>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Content Area -->
+            <div class="col-lg-9">
+                <div class="legal-card">
+                    
+                    <!-- Section 1 -->
+                    <section id="uso-adecuado" class="legal-section">
+                        <h3><i class="bi bi-shield-check"></i> 1. Uso Adecuado del Sistema</h3>
+                        <p>El portal web y el sistema de gestión de <strong>VET EXPERTS</strong> se ponen a disposición de los usuarios y clientes para facilitar la reserva de citas veterinarias, consulta de historias médicas, cartillas de vacunas y desparasitación, y descarga de comprobantes electrónicos de compra de sus mascotas.</p>
+                        <p>Los usuarios se comprometen a:</p>
+                        <ul>
+                            <li>Utilizar el sistema únicamente para fines legítimos de atención veterinaria de sus mascotas.</li>
+                            <li>Proporcionar información verdadera, exacta y actualizada durante el registro de su cuenta y de sus mascotas.</li>
+                            <li>No intentar interferir con el correcto funcionamiento del software ni burlar las medidas de seguridad del servidor.</li>
+                        </ul>
+                    </section>
+
+                    <!-- Section 2 -->
+                    <section id="proteccion-datos" class="legal-section">
+                        <h3><i class="bi bi-lock"></i> 2. Protección de Datos y Privacidad</h3>
+                        <p>VET EXPERTS toma muy en serio la seguridad de la información. El acceso al portal del cliente está resguardado mediante contraseñas cifradas con el estándar industrial <strong>BCrypt</strong>.</p>
+                        <p>Los datos ingresados se almacenan en una base de datos segura y el envío de códigos OTP y notificaciones se realiza a través de servidores de correo electrónico SMTP validados.</p>
+                        <p>Para conocer el alcance completo del tratamiento de sus datos personales, por favor consulte nuestra <a th:href="@{/politica-privacidad}" class="text-success fw-bold">Política de Privacidad</a>.</p>
+                    </section>
+
+                    <!-- Section 3 -->
+                    <section id="responsabilidad" class="legal-section">
+                        <h3><i class="bi bi-person-exclamation"></i> 3. Responsabilidad del Usuario</h3>
+                        <p>Como titular de la cuenta, usted es el único responsable de mantener la confidencialidad de sus credenciales de acceso (correo electrónico y contraseña). Cualquier actividad que se realice bajo su cuenta se asumirá como autorizada por usted.</p>
+                        <p>Si sospecha que su contraseña ha sido comprometida, le aconsejamos restablecerla de inmediato utilizando nuestro formulario de recuperación de acceso o contactándonos de forma directa.</p>
+                    </section>
+
+                    <!-- Section 4 -->
+                    <section id="reservas" class="legal-section">
+                        <h3><i class="bi bi-calendar-event"></i> 4. Reservas de Citas</h3>
+                        <p>El Portal del Cliente le permite reservar citas de manera virtual y obtener una confirmación automática instantánea en la agenda de la clínica.</p>
+                        <ul>
+                            <li>Las reservas están sujetas a la disponibilidad de los horarios cargados en el sistema por el personal administrativo.</li>
+                            <li>Al reservar, el cliente debe seleccionar la mascota correspondiente, el tipo de servicio (consultas, vacunas, baños, etc.) y confirmar la fecha y hora seleccionada.</li>
+                            <li>La confirmación automática genera de inmediato el registro en nuestro sistema interno para evitar cruces o duplicidades en las atenciones.</li>
+                        </ul>
+                    </section>
+
+                    <!-- Section 5 -->
+                    <section id="cancelaciones" class="legal-section">
+                        <h3><i class="bi bi-x-circle"></i> 5. Cancelaciones y Reprogramaciones</h3>
+                        <p>Buscando optimizar la atención de todos nuestros pacientes, solicitamos que cualquier cancelación o modificación de cita sea informada con al menos <strong>2 horas de anticipación</strong>.</p>
+                        <p>Las cancelaciones se pueden realizar de manera directa desde el Portal del Cliente, permitiendo liberar el bloque horario para otras mascotas que requieran atención médica urgente.</p>
+                    </section>
+
+                    <!-- Section 6 -->
+                    <section id="pagos" class="legal-section">
+                        <h3><i class="bi bi-credit-card"></i> 6. Pagos y Comprobantes</h3>
+                        <p>Las tarifas de las consultas y servicios prestados en la clínica se rigen por la lista de precios vigente en el establecimiento administrativo. El sistema en línea le permite visualizar e imprimir de forma segura sus comprobantes (boletas y recibos) en formato PDF.</p>
+                        <p>Cualquier transacción monetaria o pago en línea (en caso de ser integrado) se realiza bajo protocolos seguros de comunicación HTTPS. VET EXPERTS no almacena datos de tarjetas de crédito o débito de forma directa.</p>
+                    </section>
+
+                    <!-- Section 7 -->
+                    <section id="intelectual" class="legal-section">
+                        <h3><i class="bi bi-award"></i> 7. Propiedad Intelectual</h3>
+                        <p>Todo el contenido disponible en este portal, incluyendo textos, gráficos, logotipos, íconos, imágenes, clips de audio, descargas digitales y compilaciones de datos, son propiedad exclusiva de VET EXPERTS o de sus proveedores de contenido, y están protegidos por las leyes de propiedad intelectual internacionales y nacionales.</p>
+                    </section>
+
+                    <!-- Section 8 -->
+                    <section id="normativa" class="legal-section">
+                        <h3><i class="bi bi-globe-americas"></i> 8. Jurisdicción y Normativa Peruana</h3>
+                        <p>Estos Términos de Uso se rigen e interpretan bajo la legislación de la República del Perú. Cualquier controversia derivada del uso del sistema o de la prestación de los servicios de la veterinaria será resuelta por los tribunales de la ciudad de <strong>Huancayo, Junín, Perú</strong>, con renuncia expresa de las partes a cualquier otro fuero.</p>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer-public mt-auto">
+        <div class="container text-center py-4 border-top border-secondary border-opacity-25">
+            <div class="row pt-3 small">
+                <div class="col-md-6 text-white-50 text-md-start">
+                    &copy; 2026 <strong>VET EXPERTS</strong>. Todos los derechos reservados.
+                </div>
+                <div class="col-md-6 text-white-50 text-md-end mt-2 mt-md-0 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    Huancayo, Junín, Perú
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

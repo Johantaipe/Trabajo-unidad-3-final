@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Ficha de Producto')}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-file-earmark-medical me-2" style="color: var(--primary);"></i>
+                    Ficha Técnica de Producto
+                </h1>
+                <div class="action-buttons">
+                    <a th:href="@{/inventario}" class="btn btn-secondary-custom">
+                        <i class="bi bi-arrow-left"></i> Volver a Inventario
+                    </a>
+                    <a th:href="@{/inventario/editar/{id}(id=${p.id})}" class="btn btn-warning-custom">
+                        <i class="bi bi-pencil-square"></i> Modificar Datos
+                    </a>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                
+                <!-- Product overview sheet -->
+                <div class="col-lg-5">
+                    <div class="card-custom bg-white p-4 text-center mb-4">
+                        <div class="py-3 bg-light rounded mb-4">
+                            <img th:if="${p.fotoUrl != null}" th:src="${p.fotoUrl}" alt="Imagen Producto" style="max-height: 200px; object-fit: contain;">
+                            <i th:if="${p.fotoUrl == null}" class="bi bi-box-seam d-block fs-1 text-muted py-4"></i>
+                        </div>
+
+                        <h3 class="fw-bold mb-1" th:text="${p.nombre}">Nombre</h3>
+                        <span class="badge bg-secondary mb-4" th:text="${p.categoria}">CATEGORIA</span>
+
+                        <div class="row g-3 border-top pt-3 text-start">
+                            <div class="col-6">
+                                <span class="text-muted small d-block">Código:</span>
+                                <strong th:text="${p.codigoProducto}">PROD-000</strong>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted small d-block">Lote / Vencimiento:</span>
+                                <strong th:text="${(p.lote != null ? p.lote : '-') + ' / ' + (p.fechaVencimiento != null ? p.fechaVencimiento : '-')}">-</strong>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted small d-block">Precio Compra:</span>
+                                <strong class="text-dark" th:text="${'S/ ' + p.precioCompra}">S/ 0.00</strong>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted small d-block">Precio Venta:</span>
+                                <strong class="text-primary fs-5" th:text="${'S/ ' + p.precioVenta}">S/ 0.00</strong>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted small d-block">Stock Mínimo:</span>
+                                <strong th:text="${p.stockMinimo}">5</strong>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted small d-block">Stock Actual:</span>
+                                <strong class="fs-5 text-dark" th:text="${p.stock}">0</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product details and movements list -->
+                <div class="col-lg-7">
+                    <!-- General details card -->
+                    <div class="card-custom bg-white mb-4">
+                        <div class="card-header-custom">
+                            <i class="bi bi-journal-text"></i> Detalles y Observaciones
+                        </div>
+                        <div class="card-body-custom">
+                            <div class="mb-3">
+                                <h6 class="text-uppercase fw-bold text-muted small">Descripción</h6>
+                                <p th:text="${p.descripcion != null && !p.descripcion.isEmpty() ? p.descripcion : 'Sin descripción registrada.'}"></p>
+                            </div>
+                            <div class="mb-3">
+                                <h6 class="text-uppercase fw-bold text-muted small">Proveedor principal</h6>
+                                <p th:text="${p.proveedor != null ? p.proveedor.razonSocial : 'Sin proveedor asignado.'}"></p>
+                            </div>
+                            <div class="mb-1">
+                                <h6 class="text-uppercase fw-bold text-muted small">Observaciones Internas</h6>
+                                <p th:text="${p.observaciones != null && !p.observaciones.isEmpty() ? p.observaciones : 'Sin observaciones de control.'}"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Product movements audit card -->
+                    <div class="card-custom bg-white">
+                        <div class="card-header-custom">
+                            <i class="bi bi-clock-history"></i> Historial Clínico y de Movimientos de Stock
+                        </div>
+                        <div class="card-body-custom p-0">
+                            <div th:if="${!movimientos.isEmpty()}" class="table-responsive">
+                                <table class="table table-custom mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>Usuario</th>
+                                            <th>Tipo</th>
+                                            <th>Cantidad</th>
+                                            <th>Motivo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="m : ${movimientos}">
+                                            <td th:text="${#temporals.format(m.fechaRegistro, 'yyyy-MM-dd HH:mm')}">2026-06-15</td>
+                                            <td th:text="${m.usuario}">Usuario</td>
+                                            <td>
+                                                <span th:if="${m.cantidad > 0}" class="badge bg-success">INGRESO</span>
+                                                <span th:if="${m.cantidad < 0}" class="badge bg-danger">SALIDA</span>
+                                            </td>
+                                            <td class="font-monospace fw-bold" th:text="${m.cantidad > 0 ? '+' + m.cantidad : m.cantidad}">+10</td>
+                                            <td th:text="${m.tipoMovimiento + ': ' + m.motivo}">INGRESO</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div th:if="${movimientos.isEmpty()}" class="empty-state">
+                                <i class="bi bi-info-circle d-block"></i>
+                                <h5>Sin movimientos registrados para este producto</h5>
+                                <p>Las operaciones de reabastecimiento o venta aparecerán aquí.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

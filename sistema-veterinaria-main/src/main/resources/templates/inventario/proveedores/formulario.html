@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head(${proveedor.id == null ? 'Nuevo Proveedor' : 'Editar Proveedor'})}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="form-card-wrapper">
+                <div class="form-card">
+                    <div class="form-header">
+                        <h4 th:text="${proveedor.id == null ? 'Registrar Proveedor' : 'Modificar Proveedor'}">Registrar Proveedor</h4>
+                        <p>Complete los datos fiscales y de contacto de la distribuidora.</p>
+                    </div>
+
+                    <form th:action="${proveedor.id == null} ? @{/inventario/proveedores/guardar} : @{/inventario/proveedores/actualizar/{id}(id=${proveedor.id})}"
+                          th:object="${proveedor}" method="post" class="form-body">
+                        
+                        <input type="hidden" th:field="*{id}" />
+
+                        <div class="row g-3">
+                            <!-- Razón Social -->
+                            <div class="col-md-12">
+                                <label for="razonSocial" class="form-label-custom">Razón Social o Nombre Comercial</label>
+                                <input type="text" id="razonSocial" th:field="*{razonSocial}" class="form-control form-control-custom" placeholder="Ej: FarmaVet Distribuciones S.A.C." th:classappend="${#fields.hasErrors('razonSocial')} ? 'is-invalid'" required />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('razonSocial')}" th:errors="*{razonSocial}"></div>
+                            </div>
+
+                            <!-- RUC -->
+                            <div class="col-md-6">
+                                <label for="ruc" class="form-label-custom">RUC (11 dígitos)</label>
+                                <input type="text" id="ruc" th:field="*{ruc}" class="form-control form-control-custom" placeholder="Ej: 20601234567" th:classappend="${#fields.hasErrors('ruc')} ? 'is-invalid'" required />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('ruc')}" th:errors="*{ruc}"></div>
+                            </div>
+
+                            <!-- Contacto Representante -->
+                            <div class="col-md-6">
+                                <label for="contacto" class="form-label-custom">Persona de Contacto</label>
+                                <input type="text" id="contacto" th:field="*{contacto}" class="form-control form-control-custom" placeholder="Ej: Juan Pérez (Asesor Comercial)" />
+                            </div>
+
+                            <!-- Teléfono -->
+                            <div class="col-md-6">
+                                <label for="telefono" class="form-label-custom">Teléfono</label>
+                                <input type="text" id="telefono" th:field="*{telefono}" class="form-control form-control-custom" placeholder="Ej: 987654321" />
+                            </div>
+
+                            <!-- Correo -->
+                            <div class="col-md-6">
+                                <label for="correo" class="form-label-custom">Correo Electrónico</label>
+                                <input type="email" id="correo" th:field="*{correo}" class="form-control form-control-custom" placeholder="Ej: contacto@distribuidora.com" />
+                            </div>
+
+                            <!-- Dirección -->
+                            <div class="col-md-12">
+                                <label for="direccion" class="form-label-custom">Dirección Fiscal / Oficina</label>
+                                <input type="text" id="direccion" th:field="*{direccion}" class="form-control form-control-custom" placeholder="Dirección de la empresa..." />
+                            </div>
+
+                            <!-- Productos Suministrados -->
+                            <div class="col-md-12">
+                                <label for="productosSuministrados" class="form-label-custom">Líneas de Distribución o Productos suministrados</label>
+                                <input type="text" id="productosSuministrados" th:field="*{productosSuministrados}" class="form-control form-control-custom" placeholder="Ej: Vacunas, antibióticos, jeringas..." />
+                            </div>
+                        </div>
+
+                        <div class="form-footer mt-4">
+                            <a th:href="@{/inventario/proveedores}" class="btn btn-secondary-custom">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary-custom">
+                                <i class="bi bi-save me-1"></i> Guardar Proveedor
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

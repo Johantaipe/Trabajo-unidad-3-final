@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VET EXPERTS - Sistema de gestión veterinaria">
+    <title th:text="${title} + ' | VET EXPERTS'">VET EXPERTS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" th:href="@{/img/logo.png}">
+</head>
+<body>
+
+<!-- ========== MOBILE TOPBAR (Visible only on small screens) ========== -->
+<div th:fragment="navbar" class="w-100">
+    <div class="mobile-topbar">
+        <a class="navbar-brand-custom text-decoration-none d-flex align-items-center gap-2" th:href="@{/dashboard}">
+            <img th:src="@{/img/logo.png}" alt="VET EXPERTS" style="height: 30px;">
+            <span style="font-weight:800; font-size:1.1rem; color: var(--secondary);">VET<span style="color: #f7b032;">Experts</span></span>
+        </a>
+        <button class="mobile-toggle-btn" id="btnMobileToggle">
+            <i class="bi bi-list"></i>
+        </button>
+    </div>
+
+    <!-- ========== FIXED LEFT SIDEBAR ========== -->
+    <aside class="sidebar-custom">
+        <!-- Brand Header -->
+        <div class="sidebar-brand">
+            <a class="sidebar-brand-link text-decoration-none" th:href="@{/dashboard}">
+                <img th:src="@{/img/logo.png}" alt="VET EXPERTS">
+                <span>VET<span style="color: #f7b032;">Experts</span></span>
+            </a>
+            <button class="sidebar-toggle" id="btnSidebarToggle">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+        </div>
+
+        <!-- Navigation Menu -->
+        <ul class="sidebar-menu">
+            <!-- Dashboard -->
+            <li class="sidebar-item" th:if="${session.rol == 'VETERINARIO' or session.rol == 'SECRETARIA'}">
+                <a th:href="@{/dashboard}" class="sidebar-link" th:classappend="${activePage == 'dashboard'} ? 'active'" title="Dashboard">
+                    <i class="bi bi-house-door-fill"></i>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+            </li>
+
+            <!-- Propietarios -->
+            <li class="sidebar-item" th:if="${session.rol == 'ADMIN' or session.rol == 'SECRETARIA'}">
+                <a th:href="@{/propietarios}" class="sidebar-link" th:classappend="${activePage == 'propietarios'} ? 'active'" title="Propietarios">
+                    <i class="bi bi-person-fill"></i>
+                    <span class="nav-text">Propietarios</span>
+                </a>
+            </li>
+
+            <!-- Mascotas -->
+            <li class="sidebar-item" th:if="${session.rol == 'ADMIN' or session.rol == 'SECRETARIA'}">
+                <a th:href="@{/mascotas}" class="sidebar-link" th:classappend="${activePage == 'mascotas'} ? 'active'" title="Mascotas">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                    <span class="nav-text">Mascotas</span>
+                </a>
+            </li>
+
+            <!-- Historias Clínicas -->
+            <li class="sidebar-item" th:if="${session.rol == 'ADMIN' or session.rol == 'VETERINARIO'}">
+                <a th:href="@{/historias}" class="sidebar-link" th:classappend="${activePage == 'historias'} ? 'active'" title="Historias Clínicas">
+                    <i class="bi bi-journal-medical"></i>
+                    <span class="nav-text">Historias Clínicas</span>
+                </a>
+            </li>
+
+            <!-- Vacunas -->
+            <li class="sidebar-item" th:if="${session.rol == 'ADMIN' or session.rol == 'VETERINARIO'}">
+                <a th:href="@{/vacunas}" class="sidebar-link" th:classappend="${activePage == 'vacunas'} ? 'active'" title="Vacunas">
+                    <i class="bi bi-virus"></i>
+                    <span class="nav-text">Vacunas</span>
+                </a>
+            </li>
+
+            <!-- Desparasitaciones -->
+            <li class="sidebar-item" th:if="${session.rol == 'ADMIN' or session.rol == 'VETERINARIO'}">
+                <a th:href="@{/desparasitaciones}" class="sidebar-link" th:classappend="${activePage == 'desparasitaciones'} ? 'active'" title="Desparasitaciones">
+                    <i class="bi bi-shield-check"></i>
+                    <span class="nav-text">Desparasitaciones</span>
+                </a>
+            </li>
+
+            <!-- Agenda -->
+            <li class="sidebar-item" th:if="${session.rol == 'ADMIN' or session.rol == 'VETERINARIO' or session.rol == 'SECRETARIA'}">
+                <a th:href="@{/agenda}" class="sidebar-link" th:classappend="${activePage == 'agenda'} ? 'active'" title="Agenda">
+                    <i class="bi bi-calendar-week-fill"></i>
+                    <span class="nav-text">Agenda</span>
+                </a>
+            </li>
+
+            <!-- Inventario (solo personal autorizado) -->
+            <li class="sidebar-item" th:if="${session.rol == 'ADMIN' or session.rol == 'SECRETARIA'}">
+                <a th:href="@{/inventario}" class="sidebar-link" th:classappend="${activePage == 'inventario'} ? 'active'" title="Inventario">
+                    <i class="bi bi-box-seam-fill"></i>
+                    <span class="nav-text">Inventario</span>
+                </a>
+            </li>
+
+            <!-- Caja (solo personal autorizado) -->
+            <li class="sidebar-item" th:if="${session.rol == 'ADMIN' or session.rol == 'SECRETARIA'}">
+                <a th:href="@{/caja}" class="sidebar-link" th:classappend="${activePage == 'caja'} ? 'active'" title="Caja">
+                    <i class="bi bi-cash-coin"></i>
+                    <span class="nav-text">Caja</span>
+                </a>
+            </li>
+
+            <!-- Hospitalizacion -->
+            <li class="sidebar-item" th:if="${session.rol == 'ADMIN' or session.rol == 'VETERINARIO'}">
+                <a th:href="@{/hospitalizacion}" class="sidebar-link" th:classappend="${activePage == 'hospitalizacion'} ? 'active'" title="Hospitalización">
+                    <i class="bi bi-hospital"></i>
+                    <span class="nav-text">Hospitalización</span>
+                </a>
+            </li>
+
+            <!-- Alertas -->
+            <li class="sidebar-item" th:if="${session.rol == 'ADMIN'}">
+                <a th:href="@{/alertas}" class="sidebar-link" th:classappend="${activePage == 'alertas'} ? 'active'" title="Alertas">
+                    <i class="bi bi-bell-fill"></i>
+                    <span class="nav-text">Alertas</span>
+                </a>
+            </li>
+
+            <!-- Reportes -->
+            <li class="sidebar-item" th:if="${session.rol == 'ADMIN'}">
+                <a th:href="@{/reportes}" class="sidebar-link" th:classappend="${activePage == 'reportes'} ? 'active'" title="Reportes">
+                    <i class="bi bi-bar-chart-line-fill"></i>
+                    <span class="nav-text">Reportes</span>
+                </a>
+            </li>
+
+            <!-- Promociones -->
+            <li class="sidebar-item" th:if="${session.rol == 'ADMIN'}">
+                <a th:href="@{/promociones}" class="sidebar-link" th:classappend="${activePage == 'promociones'} ? 'active'" title="Promociones">
+                    <i class="bi bi-tag-fill text-warning"></i>
+                    <span class="nav-text">Promociones</span>
+                </a>
+            </li>
+
+
+
+            <!-- Configuracion -->
+            <li class="sidebar-item" th:if="${session.rol == 'ADMIN'}">
+                <a th:href="@{/configuracion}" class="sidebar-link" th:classappend="${activePage == 'configuracion'} ? 'active'" title="Configuración">
+                    <i class="bi bi-gear-fill"></i>
+                    <span class="nav-text">Configuración</span>
+                </a>
+            </li>
+
+            <!-- Usuarios (solo ADMIN) -->
+            <li class="sidebar-item" th:if="${session.rol == 'ADMIN'}">
+                <a th:href="@{/usuarios}" class="sidebar-link" th:classappend="${activePage == 'usuarios'} ? 'active'" title="Usuarios">
+                    <i class="bi bi-people-fill"></i>
+                    <span class="nav-text">Usuarios</span>
+                </a>
+            </li>
+        </ul>
+
+        <!-- Sidebar Footer & Session Details -->
+        <div class="sidebar-footer">
+            <div class="sidebar-user">
+                <i class="bi bi-person-circle sidebar-user-avatar"></i>
+                <div class="sidebar-user-info">
+                    <span class="sidebar-username" th:text="${session.username}">Usuario</span>
+                    <span class="sidebar-user-role" th:text="${session.rol}">ROL</span>
+                </div>
+            </div>
+            <a th:href="@{/auth/logout}" class="btn btn-outline-danger btn-sm w-100 btn-logout d-flex align-items-center justify-content-center gap-2">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Salir</span>
+            </a>
+        </div>
+    </aside>
+</div>
+
+<!-- ========== FOOTER ========== -->
+<footer th:fragment="footer" class="footer-custom py-3 text-center">
+    <div class="container">
+        <p class="mb-0">&copy; 2026 <strong>VET EXPERTS</strong> — Lo mejor para tu mascota</p>
+    </div>
+</footer>
+
+<!-- ========== SCRIPTS ========== -->
+<div th:fragment="scripts">
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Sidebar Toggle Logic -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebar = document.querySelector(".sidebar-custom");
+            const btnToggle = document.getElementById("btnSidebarToggle");
+            const btnMobileToggle = document.getElementById("btnMobileToggle");
+            const mainContent = document.querySelector(".main-content");
+            const footer = document.querySelector(".footer-custom");
+
+            // Restore state from localStorage
+            if (localStorage.getItem("sidebar-collapsed") === "true") {
+                if (sidebar) sidebar.classList.add("collapsed");
+                if (mainContent) mainContent.classList.add("expanded");
+                if (footer) footer.classList.add("expanded");
+            }
+
+            if (btnToggle && sidebar) {
+                btnToggle.addEventListener("click", function() {
+                    sidebar.classList.toggle("collapsed");
+                    const isCollapsed = sidebar.classList.contains("collapsed");
+                    localStorage.setItem("sidebar-collapsed", isCollapsed);
+                    
+                    if (mainContent) mainContent.classList.toggle("expanded", isCollapsed);
+                    if (footer) footer.classList.toggle("expanded", isCollapsed);
+                });
+            }
+
+            if (btnMobileToggle && sidebar) {
+                btnMobileToggle.addEventListener("click", function(e) {
+                    e.stopPropagation();
+                    sidebar.classList.toggle("mobile-show");
+                });
+            }
+
+            // Close mobile sidebar on click outside
+            document.addEventListener("click", function(e) {
+                if (sidebar && sidebar.classList.contains("mobile-show")) {
+                    if (!sidebar.contains(e.target) && e.target !== btnMobileToggle && !btnMobileToggle.contains(e.target)) {
+                        sidebar.classList.remove("mobile-show");
+                    }
+                }
+            });
+        });
+    </script>
+</div>
+
+</body>
+</html>

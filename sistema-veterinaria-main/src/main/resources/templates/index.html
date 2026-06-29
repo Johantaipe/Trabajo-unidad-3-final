@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VET EXPERTS - El cuidado profesional que tu mascota merece. Especialistas en medicina veterinaria.">
+    <title>VET EXPERTS | Clínica Veterinaria</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <!-- AOS (Animate On Scroll) CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link th:href="@{/css/public.css}" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" th:href="@{/img/logo.png}">
+</head>
+<body>
+
+    <!-- ========== HEADER STICKY (Navbar) ========== -->
+    <nav class="navbar navbar-expand-lg navbar-sticky" id="mainNavbar">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <img th:src="@{/img/logo.png}" alt="VET EXPERTS" style="height: 38px;">
+                <span>VET<span style="color: var(--secondary);">Experts</span></span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-1">
+                    <li class="nav-item"><a class="nav-link active" href="#inicio">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#servicios">Servicios</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#nosotros">Nosotros</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#valores">Valores</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#especialidades">Especialidades</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#promociones">Promociones</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+                </ul>
+                <div class="d-flex align-items-center gap-2">
+                    <!-- Si no hay sesión activa -->
+                    <th:block th:if="${session.usuario == null}">
+                        <a th:href="@{/registro-cliente}" class="btn btn-crear-cuenta-premium ripple-btn" id="btnCrearCuenta">Crear Cuenta</a>
+                        <a th:href="@{/login-cliente}" class="btn btn-ingresar ripple-btn" id="btnIngresar" style="background: linear-gradient(135deg, #2d6a4f, #52b788); color: #fff; border: none; font-weight: 700;">Ingresar</a>
+                        <div class="dropdown" id="dropdownAccesoPersonal">
+                            <button class="btn btn-acceso-personal ripple-btn dropdown-toggle" type="button" id="btnAccesoPersonal" data-bs-toggle="dropdown" aria-expanded="false" style="background: linear-gradient(135deg, #1a2a4a, #2d4a7a); color: #fff; border: none; font-weight: 700; letter-spacing: 0.02em; padding: 0.45rem 1.1rem; border-radius: 10px; font-size: 0.88rem; display: flex; align-items: center; gap: 0.4rem; box-shadow: 0 2px 12px rgba(30,60,120,0.18); transition: all 0.2s;">
+                                <i class="bi bi-lock-fill" style="font-size: 0.85rem;"></i> Acceso Personal
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-2 rounded-3" aria-labelledby="btnAccesoPersonal" style="background: rgba(25, 30, 48, 0.98); backdrop-filter: blur(10px); padding: 0.5rem;">
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded-2 text-white" th:href="@{/login-admin}" style="font-size: 0.85rem; transition: all 0.2s;">
+                                        👑 Administrador
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded-2 text-white" th:href="@{/login-secretaria}" style="font-size: 0.85rem; transition: all 0.2s;">
+                                        💼 Secretaria
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center gap-2 py-2 px-3 rounded-2 text-white" th:href="@{/login-veterinario}" style="font-size: 0.85rem; transition: all 0.2s;">
+                                        🩺 Veterinario
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </th:block>
+                    
+                    <!-- Si hay sesión activa -->
+                    <th:block th:if="${session.usuario != null}">
+                        <!-- Si el rol es CLIENTE -->
+                        <th:block th:if="${session.rol == 'CLIENTE'}">
+                            <span class="text-dark fw-bold me-2">
+                                <i class="bi bi-person-circle text-success me-1"></i> Hola, <span th:text="${session.usuario.nombre}">Cliente</span>
+                            </span>
+                            <a th:href="@{/portal-cliente/dashboard}" class="btn btn-crear-cuenta-premium ripple-btn me-2 py-1 px-3" style="font-size: 0.85rem;">Mi Portal</a>
+                            <a th:href="@{/logout-cliente}" class="btn btn-ingresar ripple-btn py-1 px-3" style="font-size: 0.85rem;">Cerrar Sesión</a>
+                        </th:block>
+                        
+                        <!-- Si el rol es ADMIN, VETERINARIO o SECRETARIA -->
+                        <th:block th:if="${session.rol == 'ADMIN' or session.rol == 'VETERINARIO' or session.rol == 'SECRETARIA'}">
+                            <a th:href="@{/dashboard}" class="btn btn-crear-cuenta-premium ripple-btn me-2">Panel Admin</a>
+                            <a th:href="@{/auth/logout}" class="btn btn-ingresar ripple-btn py-1 px-3" style="font-size: 0.85rem;">Cerrar Sesión</a>
+                        </th:block>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== SECCIÓN HERO ========== -->
+    <section class="hero-section" id="inicio">
+        <!-- Fondo dinámico (Glow Blobs) -->
+        <div class="hero-bg-blobs">
+            <div class="glow-blob glow-blob-1"></div>
+            <div class="glow-blob glow-blob-2"></div>
+        </div>
+
+        <!-- Huellas flotantes decorativas -->
+        <div class="floating-paw" style="top: 18%; left: 6%; animation-delay: 0s;"><i class="bi bi-paw-fill"></i></div>
+        <div class="floating-paw" style="top: 75%; left: 48%; animation-delay: 2s; font-size: 2.2rem;"><i class="bi bi-paw-fill"></i></div>
+        <div class="floating-paw" style="top: 25%; right: 12%; animation-delay: 4s; font-size: 3.5rem;"><i class="bi bi-paw-fill"></i></div>
+        <div class="floating-paw" style="top: 80%; left: 9%; animation-delay: 1.5s; font-size: 2rem;"><i class="bi bi-paw-fill"></i></div>
+
+        <!-- Mascotas flotantes SVG -->
+        <svg class="floating-svg-pet float-dog" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 36c-2 0-4-2-4-5s2-5 4-5 4 2 4 5-2 5-4 5zm28 0c-2 0-4-2-4-5s2-5 4-5 4 2 4 5-2 5-4 5zM32 30v8M28 42c2 1 6 1 8 0M10 20c0 0 6-4 12-2M54 20c0 0-6-4-12-2M20 48c4 4 20 4 24 0M14 30c-4-4-4-10 0-14s10-4 14 0M50 30c4-4 4-10 0-14s-10-4-14 0" />
+        </svg>
+        <svg class="floating-svg-pet float-cat" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 24c0-6 4-10 10-10s10 4 10 10-4 10-10 10-10-4-10-10zm30 0c0-6 4-10 10-10s10 4 10 10-4 10-10 10-10-4-10-10zM12 14l6-8 4 6M52 14l-6-8-4 6M32 38v4M26 46c2.5 1.5 9.5 1.5 12 0M14 44c4-1 8-1 12 1M50 44c-4-1-8-1-12 1" />
+        </svg>
+        <svg class="floating-svg-pet float-rabbit" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M22 28c-3 0-6-2-6-5s3-5 6-5 6 2 6 5-3 5-6 5zm20 0c-3 0-6-2-6-5s3-5 6-5 6 2 6 5-3 5-6 5zM22 18V6c0-2 2-4 4-4s4 2 4 4v12M42 18V6c0-2-2-4-4-4s-4 2-4 4v12M32 36v3M28 42c2.5.5 5.5.5 8 0" />
+        </svg>
+        <svg class="floating-svg-pet float-bird" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+            <path d="M16 32c0-8 6-14 14-14s14 6 14 14-6 14-14 14-14-6-14-14zM44 26l8-4-4 8M22 28c1-2 3-2 4 0M38 28c1-2 3-2 4 0M26 38c2 2 10 2 12 0M20 42c-4 4-10 6-10 6s6-6 6-10" />
+        </svg>
+        
+        <div class="container">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6" data-aos="fade-right">
+                    <div class="pe-lg-4 text-center text-lg-start">
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-bold mb-3">
+                            <i class="bi bi-heart-pulse-fill me-1"></i> Especialistas en el cuidado animal
+                        </span>
+                        <h1 class="hero-title" style="min-height: 110px;">El cuidado de tu mascota:<br><span id="typed-text" style="color: var(--primary);">Cuidamos a quienes más amas</span><span class="typed-cursor">|</span></h1>
+                        <p class="hero-subtitle">Agenda citas, realiza seguimiento clínico y recibe atención veterinaria profesional y de calidad superior.</p>
+                        <div class="d-flex align-items-center gap-3 justify-content-center justify-content-lg-start flex-wrap">
+                            <a href="#contacto" class="btn btn-crear-cuenta-premium btn-lg px-4 py-3 fs-6 ripple-btn"><i class="bi bi-calendar-check me-1"></i> Reservar Cita</a>
+                            <a href="#servicios" class="btn btn-ingresar btn-lg px-4 py-3 fs-6 ripple-btn"><i class="bi bi-search me-1"></i> Conocer Servicios</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="hero-img-container">
+                        <img th:src="@{/img/hero_vet.jpg}" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Veterinaria Vet Experts" class="hero-img">
+                        <div class="hero-badge">
+                            <div class="bg-success text-white rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                <i class="bi bi-patch-check-fill fs-5"></i>
+                            </div>
+                            <div>
+                                <span class="d-block fw-bold text-dark">Atención Emergencias</span>
+                                <small class="text-muted">Estamos listos 24/7</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECCIÓN SERVICIOS ========== -->
+    <section class="py-6 bg-light" id="servicios" style="padding: 8rem 0;">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Nuestros Servicios</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Ofrecemos soluciones integrales y preventivas para mantener a tu fiel compañero feliz y saludable.</p>
+            
+            <div class="row g-4">
+                <!-- Servicio 1: Consulta Veterinaria -->
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-card">
+                        <div class="service-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&q=80&w=600" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Consulta Veterinaria">
+                            <span class="service-badge">Médico</span>
+                        </div>
+                        <div class="service-body">
+                            <h4 class="service-card-title">Consulta Veterinaria</h4>
+                            <p class="text-muted small mb-0">Chequeos clínicos exhaustivos, diagnóstico por imagen y tratamiento de la mano de médicos expertos.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Servicio 2: Vacunación -->
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-card">
+                        <div class="service-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1628009368231-7bb7cfcb0def?auto=format&fit=crop&q=80&w=600" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Vacunación">
+                            <span class="service-badge">Prevención</span>
+                        </div>
+                        <div class="service-body">
+                            <h4 class="service-card-title">Vacunación</h4>
+                            <p class="text-muted small mb-0">Programas de inmunización completos y personalizados para proteger a cachorros y adultos contra virus graves.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Servicio 3: Desparasitación -->
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-card">
+                        <div class="service-img-wrapper">
+                            <img th:src="@{/img/service_desparasitacion.jpg}" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Desparasitación" style="object-fit: cover;">
+                            <span class="service-badge">Cuidado Antiparasitario</span>
+                        </div>
+                        <div class="service-body">
+                            <h4 class="service-card-title">Desparasitación</h4>
+                            <p class="text-muted small mb-0">Control eficaz de parásitos internos y externos mediante tratamientos preventivos para perros y gatos saludables.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Servicio: Higiene Dental -->
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-card">
+                        <div class="service-img-wrapper">
+                            <img th:src="@{/img/service_dental.jpg}" onerror="this.onerror=null; this.src='/img/default-dental.jpg';" alt="Higiene Dental" style="object-fit: cover;">
+                            <span class="service-badge">Higiene Oral</span>
+                        </div>
+                        <div class="service-body">
+                            <h4 class="service-card-title">Higiene Dental</h4>
+                            <p class="text-muted small mb-0">Limpieza y profilaxis profunda para prevenir sarro, gingivitis y asegurar el aliento fresco de tu mascota.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Servicio 4: Hospitalización -->
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="service-card">
+                        <div class="service-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=600" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Hospitalización">
+                            <span class="service-badge">Cuidado Intensivo</span>
+                        </div>
+                        <div class="service-body">
+                            <h4 class="service-card-title">Hospitalización</h4>
+                            <p class="text-muted small mb-0">Monitoreo continuo y atención médica las 24 horas en salas de recuperación seguras e higiénicas.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Servicio 5: Cirugía -->
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-card">
+                        <div class="service-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=600" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Cirugía">
+                            <span class="service-badge">Cirugía</span>
+                        </div>
+                        <div class="service-body">
+                            <h4 class="service-card-title">Cirugía</h4>
+                            <p class="text-muted small mb-0">Procedimientos quirúrgicos generales y especializados utilizando anestesia inhalatoria de vanguardia.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Servicio 6: Baño y Peluquería -->
+                <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="service-card">
+                        <div class="service-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1516734212186-a967f81ad0d7?auto=format&fit=crop&q=80&w=600" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Baño y Peluquería">
+                            <span class="service-badge">Estética</span>
+                        </div>
+                        <div class="service-body">
+                            <h4 class="service-card-title">Baño y Peluquería</h4>
+                            <p class="text-muted small mb-0">Higiene preventiva, baños medicados, corte estético por raza y cuidado del pelaje de tu mascota.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Servicio 7: Emergencias -->
+                <div class="col-12 col-md-6 col-lg-4 mx-auto" data-aos="fade-up" data-aos-delay="200">
+                    <div class="service-card border border-danger-subtle">
+                        <div class="service-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=600" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Emergencias">
+                            <span class="service-badge bg-danger text-white">Urgencias 24h</span>
+                        </div>
+                        <div class="service-body text-center">
+                            <h4 class="service-card-title text-danger">Emergencias</h4>
+                            <p class="text-muted small mb-0">Un equipo médico de urgencias disponible las 24 horas para intervenir y salvar vidas en situaciones críticas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECCIÓN NOSOTROS ========== -->
+    <section class="about-section" id="nosotros">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Nosotros</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Conoce nuestra trayectoria y el compromiso que asumimos con la salud de tus seres más queridos.</p>
+            
+            <div class="row g-4 align-items-stretch mb-5">
+                <!-- Historia -->
+                <div class="col-lg-6" data-aos="fade-right">
+                    <div class="about-card text-start">
+                        <div class="value-icon-circle text-start ms-0" style="margin:0;"><i class="bi bi-clock-history"></i></div>
+                        <h4 class="fw-bold mb-3 text-dark mt-3">Nuestra Historia</h4>
+                        <p class="text-muted mb-0">Fundada en 2018, **Vet Experts** nació con el firme propósito de revolucionar la atención médica veterinaria en el país. Lo que comenzó como un pequeño consultorio local se ha transformado en un centro integral dotado de tecnología médica de última generación y un equipo multidisciplinario de profesionales altamente calificados, unidos por el amor y el respeto incondicional hacia los animales.</p>
+                    </div>
+                </div>
+                <!-- Mision -->
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+                    <div class="about-card">
+                        <div class="value-icon-circle"><i class="bi bi-rocket-takeoff-fill"></i></div>
+                        <h4 class="fw-bold mb-3 text-dark">Misión</h4>
+                        <p class="text-muted mb-0">Brindar servicios médicos veterinarios de excelencia y alta especialización, promoviendo el bienestar y la longevidad de las mascotas a través de diagnósticos oportunos y cuidados preventivos.</p>
+                    </div>
+                </div>
+                <!-- Vision -->
+                <div class="col-md-6 col-lg-3" data-aos="fade-up" data-aos-delay="200">
+                    <div class="about-card">
+                        <div class="value-icon-circle"><i class="bi bi-eye-fill"></i></div>
+                        <h4 class="fw-bold mb-3 text-dark">Visión</h4>
+                        <p class="text-muted mb-0">Ser reconocidos a nivel nacional como la clínica veterinaria líder en innovación tecnológica, ética profesional y calidad humana en el cuidado animal de compañía.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECCIÓN VALORES (CORRECCIÓN 2) ========== -->
+    <section class="py-5" id="valores" style="background-color: var(--bg-light);">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Nuestros Valores</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Nuestros pilares éticos definen cada interacción y tratamiento médico diario.</p>
+            
+            <div class="row g-4 justify-content-center">
+                <!-- Compasión -->
+                <div class="col-6 col-md-4 col-lg-2.4" style="width: 20%; min-width: 180px;" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="about-card p-4">
+                        <div class="value-icon-circle"><i class="bi bi-heart-fill"></i></div>
+                        <strong class="text-dark d-block mb-2">Compasión</strong>
+                        <small class="text-muted d-block" style="font-size: 0.8rem;">Cuidado con empatía y amor.</small>
+                    </div>
+                </div>
+                <!-- Responsabilidad -->
+                <div class="col-6 col-md-4 col-lg-2.4" style="width: 20%; min-width: 180px;" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="about-card p-4">
+                        <div class="value-icon-circle"><i class="bi bi-shield-fill-check"></i></div>
+                        <strong class="text-dark d-block mb-2">Responsabilidad</strong>
+                        <small class="text-muted d-block" style="font-size: 0.8rem;">Comprometidos con el bienestar.</small>
+                    </div>
+                </div>
+                <!-- Profesionalismo -->
+                <div class="col-6 col-md-4 col-lg-2.4" style="width: 20%; min-width: 180px;" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="about-card p-4">
+                        <div class="value-icon-circle"><i class="bi bi-person-workspace"></i></div>
+                        <strong class="text-dark d-block mb-2">Profesionalismo</strong>
+                        <small class="text-muted d-block" style="font-size: 0.8rem;">Médicos altamente calificados.</small>
+                    </div>
+                </div>
+                <!-- Compromiso -->
+                <div class="col-6 col-md-4 col-lg-2.4" style="width: 20%; min-width: 180px;" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="about-card p-4">
+                        <div class="value-icon-circle"><i class="bi bi-people-fill"></i></div>
+                        <strong class="text-dark d-block mb-2">Compromiso</strong>
+                        <small class="text-muted d-block" style="font-size: 0.8rem;">Dedicación total a tu amigo.</small>
+                    </div>
+                </div>
+                <!-- Innovación -->
+                <div class="col-6 col-md-4 col-lg-2.4" style="width: 20%; min-width: 180px;" data-aos="zoom-in" data-aos-delay="500">
+                    <div class="about-card p-4">
+                        <div class="value-icon-circle"><i class="bi bi-lightbulb-fill"></i></div>
+                        <strong class="text-dark d-block mb-2">Innovación</strong>
+                        <small class="text-muted d-block" style="font-size: 0.8rem;">Equipos y técnicas médicas modernas.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECCIÓN ESPECIALIDADES (VALOR AGREGADO NAVBAR) ========== -->
+    <section class="py-6 bg-white" id="especialidades" style="padding: 8rem 0;">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Especialidades Médicas</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Disponemos de especialidades complejas para atender diagnósticos específicos y tratamientos avanzados.</p>
+            
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-3" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="p-4 bg-light rounded-4 text-center border h-100 transition-all card-hover-style" style="transition: var(--transition);">
+                        <i class="bi bi-activity text-success fs-1 mb-3 d-block"></i>
+                        <h5 class="fw-bold mb-2">Cardiología</h5>
+                        <p class="text-muted small mb-0">Estudio, diagnóstico y tratamiento de patologías cardíacas crónicas y agudas en mascotas senior.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="p-4 bg-light rounded-4 text-center border h-100 transition-all card-hover-style" style="transition: var(--transition);">
+                        <i class="bi bi-bandaid-fill text-success fs-1 mb-3 d-block"></i>
+                        <h5 class="fw-bold mb-2">Traumatología</h5>
+                        <p class="text-muted small mb-0">Tratamiento quirúrgico y ortopédico de fracturas, luxaciones y roturas ligamentosas.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="p-4 bg-light rounded-4 text-center border h-100 transition-all card-hover-style" style="transition: var(--transition);">
+                        <i class="bi bi-virus2 text-success fs-1 mb-3 d-block"></i>
+                        <h5 class="fw-bold mb-2">Dermatología</h5>
+                        <p class="text-muted small mb-0">Control y tratamiento de alergias, infecciones fúngicas, dermatitis y problemas de piel.</p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-3" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="p-4 bg-light rounded-4 text-center border h-100 transition-all card-hover-style" style="transition: var(--transition);">
+                        <i class="bi bi-eye-fill text-success fs-1 mb-3 d-block"></i>
+                        <h5 class="fw-bold mb-2">Oftalmología</h5>
+                        <p class="text-muted small mb-0">Cirugía de cataratas, tratamiento de úlceras corneales y control de presión ocular.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECCIÓN ESTADÍSTICAS (CONTADORES ANIMADOS) ========== -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Counter 1 -->
+                <div class="col-6 col-md-3">
+                    <div class="stat-item" data-aos="fade-up" data-aos-delay="100">
+                        <div class="stat-number" data-target="1500" data-prefix="+">+0</div>
+                        <div class="stat-label">Mascotas Atendidas</div>
+                    </div>
+                </div>
+                <!-- Counter 2 -->
+                <div class="col-6 col-md-3">
+                    <div class="stat-item" data-aos="fade-up" data-aos-delay="200">
+                        <div class="stat-number" data-target="500" data-prefix="+">+0</div>
+                        <div class="stat-label">Vacunaciones</div>
+                    </div>
+                </div>
+                <!-- Counter 3 -->
+                <div class="col-6 col-md-3">
+                    <div class="stat-item" data-aos="fade-up" data-aos-delay="300">
+                        <div class="stat-number" data-target="300" data-prefix="+">+0</div>
+                        <div class="stat-label">Cirugías Exitosas</div>
+                    </div>
+                </div>
+                <!-- Counter 4 -->
+                <div class="col-6 col-md-3">
+                    <div class="stat-item" data-aos="fade-up" data-aos-delay="400">
+                        <div class="stat-number" data-target="8" data-prefix="+">+0</div>
+                        <div class="stat-label">Años de Experiencia</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECCIÓN PROMOCIONES ========== -->
+    <section class="promo-section" id="promociones">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Promociones Especiales</h2>
+            <p class="section-subtitle text-white-50" data-aos="fade-up" data-aos-delay="100">Aprovecha nuestras ofertas y campañas vigentes diseñadas para la salud de tu mascota.</p>
+            
+            <div id="promoCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000" data-aos="zoom-in">
+                <div class="carousel-inner">
+                    <!-- Iteración dinámica sobre promociones -->
+                    <div th:each="promo, iterStat : ${promociones}" 
+                         th:class="${iterStat.first} ? 'carousel-item active' : 'carousel-item'">
+                        <div class="row align-items-center g-4 px-lg-5">
+                            <div class="col-lg-6">
+                                <div class="promo-card">
+                                    <div class="promo-discount" th:text="${promo.descuento}">20% OFF</div>
+                                    <h3 class="fw-bold mb-3 text-white" th:text="${promo.titulo}">Título de la Promoción</h3>
+                                    <p class="text-white-50 mb-4" th:text="${promo.descripcion}">Descripción detallada de la oferta...</p>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <span class="badge bg-secondary text-dark fw-bold px-3 py-2 rounded-pill">
+                                            Vence: <span th:text="${#temporals.format(promo.fechaFin, 'dd/MM/yyyy')}">30/06/2026</span>
+                                        </span>
+                                        <a href="https://wa.me/51987551480?text=Hola,%20deseo%20adquirir%20la%20promoci%C3%B3n%20vigente." target="_blank" class="btn btn-whatsapp-header text-white py-2 px-3">
+                                            <i class="bi bi-whatsapp"></i> Reclamar Oferta
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                 <img th:src="${promo.imagenUrl != null ? promo.imagenUrl : '/img/default-pet.jpg'}" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Promoción" class="promo-img">
+                             </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Si no hay promociones activas en la BD, mostrar una por defecto -->
+                    <div th:if="${#lists.isEmpty(promociones)}" class="carousel-item active">
+                        <div class="row align-items-center g-4 px-lg-5">
+                            <div class="col-lg-6">
+                                <div class="promo-card">
+                                    <div class="promo-discount">15% OFF</div>
+                                    <h3 class="fw-bold mb-3 text-white">Campaña de Vacunación Puppy</h3>
+                                    <p class="text-white-50 mb-4">Protege a tu cachorro con las primeras vacunas óctuple y parvovirus. Incluye consulta médica gratis.</p>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <span class="badge bg-secondary text-dark fw-bold px-3 py-2 rounded-pill">Vigente todo el año</span>
+                                        <a href="https://wa.me/51987551480?text=Hola,%20deseo%20información%20sobre%20la%20campaña%20de%20vacunación." target="_blank" class="btn btn-whatsapp-header text-white">
+                                            <i class="bi bi-whatsapp"></i> Reservar Ahora
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                 <img th:src="@{/img/promo_vaccination.jpg}" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Vacunas" class="promo-img">
+                             </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Controles del Carrusel -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#promoCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#promoCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECCIÓN GALERÍA MASONRY ========== -->
+    <section class="gallery-section" id="galeria">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Nuestras Mascotas Felices</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Instantes de felicidad y recuperación de los pequeños de la casa que visitan nuestra clínica.</p>
+            
+            <div class="masonry-gallery" data-aos="fade-up">
+                <!-- Item 1: Pequeño cachorro en recuperación -->
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img th:src="@{/img/gallery_puppy_recovery.jpg}" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Pequeño cachorro en recuperación">
+                    <div class="gallery-overlay">
+                        <i class="bi bi-zoom-in"></i>
+                        <h6 class="fw-bold mb-0">Milo</h6>
+                        <small>Pequeño cachorro en recuperación</small>
+                    </div>
+                </div>
+                <!-- Item 2 -->
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&q=80&w=500" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Cachorro Golden recuperado">
+                    <div class="gallery-overlay">
+                        <i class="bi bi-zoom-in"></i>
+                        <h6 class="fw-bold mb-0">Max</h6>
+                        <small>Control Preventivo</small>
+                    </div>
+                </div>
+                <!-- Item 3 -->
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img src="https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&q=80&w=450" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Gatito con lentes descansando">
+                    <div class="gallery-overlay">
+                        <i class="bi bi-zoom-in"></i>
+                        <h6 class="fw-bold mb-0">Luna</h6>
+                        <small>Profilaxis Dental</small>
+                    </div>
+                </div>
+                <!-- Item 4 -->
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&q=80&w=400" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Perro sonriente en el jardín">
+                    <div class="gallery-overlay">
+                        <i class="bi bi-zoom-in"></i>
+                        <h6 class="fw-bold mb-0">Rocky</h6>
+                        <small>Vacunación Anual</small>
+                    </div>
+                </div>
+                <!-- Item 5: Perro después de baño e higiene -->
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img th:src="@{/img/gallery_dog_clean.jpg}" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Perro después de baño e higiene">
+                    <div class="gallery-overlay">
+                        <i class="bi bi-zoom-in"></i>
+                        <h6 class="fw-bold mb-0">Coco</h6>
+                        <small>Perro después de baño e higiene</small>
+                    </div>
+                </div>
+                <!-- Item 6 -->
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&q=80&w=400" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Perrito feliz tras su consulta">
+                    <div class="gallery-overlay">
+                        <i class="bi bi-zoom-in"></i>
+                        <h6 class="fw-bold mb-0">Toby</h6>
+                        <small>Consulta General</small>
+                    </div>
+                </div>
+                <!-- Item 7 -->
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img src="https://images.unsplash.com/photo-1518791841217-8f162f1e1131?auto=format&fit=crop&q=80&w=500" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Gato saludable en casa">
+                    <div class="gallery-overlay">
+                        <i class="bi bi-zoom-in"></i>
+                        <h6 class="fw-bold mb-0">Simba</h6>
+                        <small>Desparasitación</small>
+                    </div>
+                </div>
+                <!-- Item 8 -->
+                <div class="gallery-item" onclick="openLightbox(this)">
+                    <img src="https://images.unsplash.com/photo-1535268647977-a403b69fc756?auto=format&fit=crop&q=80&w=400" onerror="this.onerror=null; this.src='/img/default-pet.jpg';" alt="Perro tras baño de higiene">
+                    <div class="gallery-overlay">
+                        <i class="bi bi-zoom-in"></i>
+                        <h6 class="fw-bold mb-0">Bella</h6>
+                        <small>Baño Medicado</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECCIÓN BLOG / CONSEJOS ========== -->
+    <section class="blog-section" id="blog">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Consejos de Bienestar</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Aprende consejos y sugerencias redactadas por nuestros médicos para darle la mejor calidad de vida a tu mascota.</p>
+            
+            <div class="row g-4">
+                <!-- Blog 1 -->
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="blog-card">
+                        <div class="blog-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=600" alt="Nutrición Pet">
+                        </div>
+                        <div class="blog-body">
+                            <div class="blog-meta"><i class="bi bi-calendar"></i> 18 Junio, 2026 | Dr. Julio R.</div>
+                            <h4 class="blog-title text-dark">Alimentación Balanceada: Claves para evitar la obesidad en perros</h4>
+                            <p class="text-muted small">Descubre cómo calcular la porción ideal de alimento y cuáles son los snacks saludables para tu compañero.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Blog 2 -->
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="blog-card">
+                        <div class="blog-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=600" alt="Vacunas felinas">
+                        </div>
+                        <div class="blog-body">
+                            <div class="blog-meta"><i class="bi bi-calendar"></i> 12 Junio, 2026 | Dra. Lucía M.</div>
+                            <h4 class="blog-title text-dark">La importancia del calendario de vacunas en felinos de interior</h4>
+                            <p class="text-muted small">Incluso los gatos que no salen de casa necesitan protección inmunológica. Te explicamos los motivos principales.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Blog 3 -->
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="blog-card">
+                        <div class="blog-img-wrapper">
+                            <img src="https://images.unsplash.com/photo-1537151608828-ea2b117b6281?auto=format&fit=crop&q=80&w=600" alt="Higiene dental">
+                        </div>
+                        <div class="blog-body">
+                            <div class="blog-meta"><i class="bi bi-calendar"></i> 05 Junio, 2026 | Dr. Carlos T.</div>
+                            <h4 class="blog-title text-dark">Salud dental en mascotas: Cómo cepillar y prevenir el sarro dental</h4>
+                            <p class="text-muted small">El sarro dental puede causar fallas orgánicas severas. Aprende la técnica correcta de cepillado y profilaxis.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECCIÓN TESTIMONIOS ========== -->
+    <section class="testimonial-section" id="testimonios">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Testimonios de Clientes</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Historias reales de dueños que confiaron la salud de sus mejores amigos en nuestras manos.</p>
+            
+            <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000" data-aos="zoom-in">
+                <div class="carousel-inner">
+                    <!-- Testimonio 1 -->
+                    <div class="carousel-item active">
+                        <div class="testimonial-card">
+                            <i class="bi bi-quote fs-1 text-success opacity-50 mb-3 d-block"></i>
+                            <p class="testimonial-quote">"El servicio en Vet Experts es inigualable. Lleve a mi perrito Lucas para una cirugía compleja de cadera y la atención del Dr. Carlos fue excelente. La hospitalización fue súper pulcra y me mantenían al tanto de su estado constantemente."</p>
+                            <div class="testimonial-user">
+                                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150" alt="María P." class="testimonial-avatar">
+                                <div class="text-start">
+                                    <h6 class="fw-bold mb-0 text-dark">María Prado</h6>
+                                    <small class="text-muted">Dueña de Lucas (Golden Retriever)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Testimonio 2 -->
+                    <div class="carousel-item">
+                        <div class="testimonial-card">
+                            <i class="bi bi-quote fs-1 text-success opacity-50 mb-3 d-block"></i>
+                            <p class="testimonial-quote">"Tienen un trato muy dulce con los gatos. Mi gatita Nala es extremadamente nerviosa, pero en su campaña de desparasitación la trataron con tanta delicadeza y paciencia que no se estresó para nada. ¡Muy recomendados!"</p>
+                            <div class="testimonial-user">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=150" alt="Juan K." class="testimonial-avatar">
+                                <div class="text-start">
+                                    <h6 class="fw-bold mb-0 text-dark">Juan Carlos K.</h6>
+                                    <small class="text-muted">Dueño de Nala (Persa)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Testimonio 3 -->
+                    <div class="carousel-item">
+                        <div class="testimonial-card">
+                            <i class="bi bi-quote fs-1 text-success opacity-50 mb-3 d-block"></i>
+                            <p class="testimonial-quote">"Llegamos de madrugada por una emergencia por intoxicación. El equipo médico actuó rapidísimo, salvándole la vida a mi mascota. Estaré eternamente agradecido por su profesionalismo y rapidez."</p>
+                            <div class="testimonial-user">
+                                <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150" alt="Andrea C." class="testimonial-avatar">
+                                <div class="text-start">
+                                    <h6 class="fw-bold mb-0 text-dark">Andrea Cerna</h6>
+                                    <small class="text-muted">Dueña de Max (Pastor Alemán)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Controles -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                    <span class="visually-hidden">Anterior</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                    <span class="visually-hidden">Siguiente</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECCIÓN FAQ ========== -->
+    <section class="py-6 bg-light" id="faq" style="padding: 8rem 0;">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Preguntas Frecuentes</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Resolvemos tus dudas principales respecto a nuestros servicios y horarios.</p>
+            
+            <div class="row justify-content-center">
+                <div class="col-lg-8" data-aos="fade-up">
+                    <div class="accordion faq-accordion" id="accordionFAQ">
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="headingOne">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    ¿Es obligatorio agendar una cita previa?
+                                </button>
+                            </h3>
+                            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionFAQ">
+                                <div class="accordion-body">
+                                    Para consultas generales, profilaxis, baños o cirugías programadas, sí es recomendable agendar una cita para garantizar tu atención oportuna. No obstante, atendemos urgencias y emergencias de inmediato las 24 horas.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    ¿Qué vacunas necesita obligatoriamente mi perro al año de edad?
+                                </button>
+                            </h3>
+                            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionFAQ">
+                                <div class="accordion-body">
+                                    Anualmente, tu perro necesita el refuerzo de la vacuna Óctuple (o Séxtuple) y la vacuna Antirrábica. Adicionalmente, recomendamos la vacuna contra la Tos de las perreras (Traqueobronquitis infecciosa).
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="headingThree">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    ¿Cuentan con servicio de movilidad o traslado de mascotas?
+                                </button>
+                            </h3>
+                            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionFAQ">
+                                <div class="accordion-body">
+                                    Sí, disponemos de una Vet-Móvil equipada para el recojo y traslado seguro de tu mascota para servicios de baño, peluquería o consultas programadas en Lima Metropolitana.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h3 class="accordion-header" id="headingFour">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    ¿Qué formas de pago aceptan?
+                                </button>
+                            </h3>
+                            <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#accordionFAQ">
+                                <div class="accordion-body">
+                                    Aceptamos efectivo, tarjetas de débito/crédito (Visa, Mastercard, Amex) y pagos digitales a través de Yape, Plin y transferencia bancaria directa.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== SECCIÓN CONTACTO (CORRECCIÓN 4) ========== -->
+    <section class="contact-section" id="contacto">
+        <div class="container">
+            <h2 class="section-title" data-aos="fade-up">Contáctanos</h2>
+            <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Estamos listos para atender tus requerimientos. Envíanos un mensaje o visítanos.</p>
+            
+            <!-- Alerta de éxito de formulario de contacto -->
+            <div th:if="${mensajeExito}" class="alert alert-success d-flex align-items-center gap-2 alert-dismissible fade show mb-4 shadow-sm" role="alert" data-aos="fade-up">
+                <i class="bi bi-check-circle-fill"></i>
+                <span th:text="${mensajeExito}">¡Éxito!</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="row g-5">
+                <div class="col-lg-5" data-aos="fade-right">
+                    <div class="pe-lg-4">
+                        <h3 class="fw-bold mb-4 text-dark">Información de Contacto</h3>
+                        
+                        <div class="contact-info-item">
+                            <div class="contact-icon"><i class="bi bi-geo-alt-fill"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-dark">Dirección Oficial</h6>
+                                <span class="text-muted d-block small">Ca. Alhelíes #100</span>
+                                <span class="text-muted d-block small">Cuadra 12 de Calmell del Solar</span>
+                                <span class="text-muted d-block small">Frente a la Clínica Municipal</span>
+                                <span class="text-muted d-block small">Parque Miguel Grau - El Tambo</span>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-info-item">
+                            <div class="contact-icon"><i class="bi bi-telephone-fill"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-dark">Teléfono / Emergencias</h6>
+                                <span class="text-muted">987551480</span>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-info-item">
+                            <div class="contact-icon"><i class="bi bi-envelope-fill"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-dark">Correo Electrónico</h6>
+                                <a href="mailto:vetexperts@gmail.com" class="text-decoration-none text-muted">vetexperts@gmail.com</a>
+                            </div>
+                        </div>
+
+                        <div class="contact-info-item">
+                            <div class="contact-icon" style="background: rgba(37, 211, 102, 0.08);"><i class="bi bi-whatsapp text-success"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-1 text-dark">WhatsApp Directo</h6>
+                                <span class="text-muted">987551480</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-7" data-aos="fade-left">
+                    <div class="contact-form-card">
+                        <h3 class="fw-bold text-dark mb-4"><i class="bi bi-chat-square-dots-fill text-success me-2"></i>Envíanos un Mensaje</h3>
+                        <form th:action="@{/contacto/enviar}" method="post">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="nombre" class="form-label fw-semibold">Nombre Completo</label>
+                                    <input type="text" class="form-control bg-white py-2" id="nombre" name="nombre" placeholder="Ej: Juan Pérez" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label fw-semibold">Correo Electrónico</label>
+                                    <input type="email" class="form-control bg-white py-2" id="email" name="email" placeholder="Ej: juan@gmail.com" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="telefono" class="form-label fw-semibold">Teléfono / Celular</label>
+                                    <input type="tel" class="form-control bg-white py-2" id="telefono" name="telefono" placeholder="Ej: 999888777">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="asunto" class="form-label fw-semibold">Asunto</label>
+                                    <input type="text" class="form-control bg-white py-2" id="asunto" name="asunto" placeholder="Ej: Consulta sobre Vacunas" required>
+                                </div>
+                                <div class="col-12">
+                                    <label for="mensaje" class="form-label fw-semibold">Mensaje</label>
+                                    <textarea class="form-control bg-white" id="mensaje" name="mensaje" rows="4" placeholder="Escribe aquí tu consulta en detalle..." required></textarea>
+                                </div>
+                                <div class="col-12 mt-4">
+                                    <button type="submit" class="btn btn-crear-cuenta-premium w-100 py-3 fs-6">
+                                        <i class="bi bi-send-fill me-1"></i> Enviar Mensaje
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAPA GOOGLE ANCHO COMPLETO CON MARCADOR Y CONTROLES -->
+            <div class="map-full-container" data-aos="fade-up">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3901.6705353133614!2d-75.2014763!3d-12.0661298!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9108933b9148d2eb%3A0xe54fb7a213bc54df!2sParque%20Miguel%20Grau!5e0!3m2!1ses!2spe!4v1719164000000!5m2!1ses!2spe" 
+                        width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Ubicación Vet Experts"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer-public">
+        <!-- Ondas decorativas SVG -->
+        <div class="footer-waves-container">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,1,321.39,56.44Z" class="shape-fill"></path>
+            </svg>
+        </div>
+        <div class="container">
+            <div class="row g-4 mb-5">
+                <div class="col-lg-4">
+                    <a class="navbar-brand text-white fw-extrabold fs-4 d-flex align-items-center gap-2 mb-3" href="#inicio">
+                        <img th:src="@{/img/logo.png}" alt="VET EXPERTS" style="height: 38px;">
+                        <span>VET<span style="color: var(--secondary);">Experts</span></span>
+                    </a>
+                    <p class="text-white-50 small mb-4">Brindando servicios médicos veterinarios integrales y de especialidad con equipamiento avanzado y cuidado compasivo.</p>
+                    <div class="footer-socials">
+                        <a href="https://www.facebook.com/p/VET-Experts-Veterinaria-61572844033893/" 
+                           class="footer-social-icon" 
+                           target="_blank" 
+                           title="Síguenos en Facebook">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-6 col-lg-2">
+                    <h5>Enlaces Rápidos</h5>
+                    <ul class="list-unstyled d-flex flex-column gap-2 small">
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#servicios">Servicios</a></li>
+                        <li><a href="#nosotros">Nosotros</a></li>
+                        <li><a href="#valores">Valores</a></li>
+                        <li><a href="#especialidades">Especialidades</a></li>
+                        <li><a href="#promociones">Promociones</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-6 col-lg-2">
+                    <h5>Soporte Legal</h5>
+                    <ul class="list-unstyled d-flex flex-column gap-2 small">
+                        <li><a th:href="@{/politica-privacidad}">Política de Privacidad</a></li>
+                        <li><a th:href="@{/terminos-de-uso}">Términos de Uso</a></li>
+                        <li class="d-flex align-items-center gap-1">
+                            <i class="bi bi-journal-bookmark-fill text-warning"></i>
+                            <a href="#contacto">Libro de Reclamaciones</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-lg-4">
+                    <h5>Horario de Atención</h5>
+                    <ul class="list-unstyled text-white-50 d-flex flex-column gap-2 small">
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Lunes a Sábado:</strong> 8:00 AM - 9:00 PM</li>
+                        <li><i class="bi bi-check-circle-fill text-success me-2"></i><strong>Domingos y Feriados:</strong> 9:00 AM - 6:00 PM</li>
+                        <li><i class="bi bi-exclamation-triangle-fill text-danger me-2"></i><strong>Urgencias:</strong> 24 horas / 365 días</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <hr class="border-secondary opacity-25">
+            
+            <div class="row pt-3 small text-center text-md-start">
+                <div class="col-md-6 text-white-50">
+                    &copy; 2026 <strong>VET EXPERTS</strong>. Todos los derechos reservados.
+                </div>
+                <div class="col-md-6 text-md-end mt-2 mt-md-0 text-white-50 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    Ubicación: Ca. Alhelíes #100, El Tambo, Huancayo
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== FLOATING WHATSAPP BUTTON (CORRECCIÓN 5) ========== -->
+    <div class="floating-whatsapp-wrapper floating-whatsapp-premium">
+        <a href="https://wa.me/51987551480?text=Hola,%20deseo%20informaci%C3%B3n%20sobre%20los%20servicios%20de%20Vet%20Experts." 
+           class="floating-whatsapp ripple-btn" 
+           target="_blank">
+            <i class="bi bi-whatsapp"></i>
+        </a>
+    </div>
+
+    <!-- ========== MASCOTA GUIA ANIMADA (CORRECCIÓN 5) ========== -->
+    <svg class="guiding-pet" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <!-- Tail -->
+        <path class="pet-tail" d="M35 75c-10 5-15 15-12 22 2 5 8 5 10 0 4-10 0-20 2-22z" fill="#f7b032" />
+        
+        <!-- Body & Legs -->
+        <ellipse cx="50" cy="75" rx="20" ry="18" fill="#2d6a4f" />
+        <circle cx="42" cy="88" r="6" fill="#1b4332" />
+        <circle cx="58" cy="88" r="6" fill="#1b4332" />
+        
+        <!-- Head -->
+        <circle cx="50" cy="50" r="22" fill="#f7b032" />
+        
+        <!-- Ears -->
+        <polygon points="32,36 24,16 42,28" fill="#f7b032" />
+        <polygon points="68,36 76,16 58,28" fill="#f7b032" />
+        <polygon points="34,34 28,20 40,28" fill="#e0981b" />
+        <polygon points="66,34 72,20 60,28" fill="#e0981b" />
+        
+        <!-- Eyes -->
+        <ellipse class="pet-eye" cx="42" cy="46" rx="3" ry="4" fill="#1b4332" />
+        <ellipse class="pet-eye" cx="58" cy="46" rx="3" ry="4" fill="#1b4332" />
+        
+        <!-- Nose / Mouth -->
+        <polygon points="50,52 46,49 54,49" fill="#1b4332" />
+        <path d="M48 54c1 2 3 2 4 0" stroke="#1b4332" stroke-width="1.5" fill="none" stroke-linecap="round" />
+        
+        <!-- Cheeks -->
+        <circle cx="36" cy="52" r="2" fill="#ffb3c1" opacity="0.6" />
+        <circle cx="64" cy="52" r="2" fill="#ffb3c1" opacity="0.6" />
+    </svg>
+
+    <!-- ========== LIGHTBOX MODAL PARA LA GALERÍA MASONRY ========== -->
+    <div class="modal fade" id="lightboxModal" tabindex="-1" aria-hidden="true" style="background-color: rgba(0,0,0,0.85);">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content bg-transparent border-0">
+                <div class="modal-body p-0 text-center position-relative">
+                    <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3 fs-4" data-bs-dismiss="modal" aria-label="Close" style="z-index: 1050; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));"></button>
+                    <img id="lightboxImage" src="" alt="Mascota Feliz Grande" class="img-fluid rounded-4 shadow-lg border" style="max-height: 85vh; border: 4px solid #fff;">
+                    <div id="lightboxCaption" class="text-white mt-3 fw-bold fs-5 text-center" style="text-shadow: 0 2px 4px rgba(0,0,0,0.8);">Mascota</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS (Animate On Scroll) JS -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    
+    <script>
+        // Inicializar animaciones AOS
+        AOS.init({
+            duration: 900,
+            once: true,
+            easing: 'ease-out-cubic'
+        });
+
+        // Cambiar estilo de la cabecera al hacer scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('mainNavbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Activación de enlaces del menú según scroll
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.navbar-sticky .nav-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= (sectionTop - 120)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                }
+            });
+        });
+
+        // FUNCIONALIDAD CONTADORES ANIMADOS (Intersection Observer)
+        document.addEventListener('DOMContentLoaded', () => {
+            const counters = document.querySelectorAll('.stat-number');
+            const speed = 60; // velocidad de animación
+
+            const animateCounter = (counter) => {
+                const target = +counter.getAttribute('data-target');
+                const prefix = counter.getAttribute('data-prefix') || '';
+                const suffix = counter.getAttribute('data-suffix') || '';
+                let count = 0;
+                
+                const increment = Math.ceil(target / speed);
+                
+                const update = () => {
+                    count += increment;
+                    if (count >= target) {
+                        counter.innerText = prefix + target + suffix;
+                    } else {
+                        counter.innerText = prefix + count + suffix;
+                        setTimeout(update, 20);
+                    }
+                };
+                update();
+            };
+
+            const statsSection = document.querySelector('.stats-section');
+            if (statsSection) {
+                const observer = new IntersectionObserver((entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            counters.forEach(c => animateCounter(c));
+                            observer.unobserve(statsSection);
+                        }
+                    });
+                }, { threshold: 0.3 });
+                observer.observe(statsSection);
+            }
+        });
+
+        // FUNCIONALIDAD ABRIR IMAGEN MASONRY EN MODAL LIGHTBOX
+        function openLightbox(item) {
+            const img = item.querySelector('img');
+            const captionTitle = item.querySelector('h6').textContent;
+            const captionSubtitle = item.querySelector('small').textContent;
+            
+            const lightboxImg = document.getElementById('lightboxImage');
+            const lightboxCap = document.getElementById('lightboxCaption');
+            
+            lightboxImg.src = img.src;
+            lightboxCap.textContent = captionTitle + ' - ' + captionSubtitle;
+            
+            var modal = new bootstrap.Modal(document.getElementById('lightboxModal'));
+            modal.show();
+        }
+
+        // FUNCIONALIDAD EFECTO ESCRITURA (TYPING EFFECT)
+        document.addEventListener('DOMContentLoaded', () => {
+            const typedTextElement = document.getElementById('typed-text');
+            if (typedTextElement) {
+                const phrases = [
+                    "Cuidamos a quienes más amas",
+                    "Salud y bienestar para tu mascota"
+                ];
+                let phraseIndex = 0;
+                let charIndex = 0;
+                let isDeleting = false;
+                const typingSpeed = 100;
+                const deletingSpeed = 50;
+                const delayBetweenPhrases = 2500;
+
+                function typeAnimation() {
+                    const currentPhrase = phrases[phraseIndex];
+                    if (isDeleting) {
+                        typedTextElement.textContent = currentPhrase.substring(0, charIndex - 1);
+                        charIndex--;
+                    } else {
+                        typedTextElement.textContent = currentPhrase.substring(0, charIndex + 1);
+                        charIndex++;
+                    }
+
+                    if (!isDeleting && charIndex === currentPhrase.length) {
+                        isDeleting = true;
+                        setTimeout(typeAnimation, delayBetweenPhrases);
+                    } else if (isDeleting && charIndex === 0) {
+                        isDeleting = false;
+                        phraseIndex = (phraseIndex + 1) % phrases.length;
+                        setTimeout(typeAnimation, 500);
+                    } else {
+                        setTimeout(typeAnimation, isDeleting ? deletingSpeed : typingSpeed);
+                    }
+                }
+                setTimeout(typeAnimation, 1000);
+            }
+        });
+
+        // FUNCIONALIDAD CURSOR CON HUELLAS DE MASCOTAS
+        document.addEventListener('DOMContentLoaded', () => {
+            let lastX = 0;
+            let lastY = 0;
+            const distanceThreshold = 35; // px
+
+            document.addEventListener('mousemove', (e) => {
+                // Desactivar en pantallas táctiles (dispositivos móviles/coarse pointer)
+                if (window.matchMedia('(pointer: coarse)').matches) return;
+
+                const currentX = e.pageX;
+                const currentY = e.pageY;
+
+                const dist = Math.hypot(currentX - lastX, currentY - lastY);
+                if (dist > distanceThreshold) {
+                    createFootprint(currentX, currentY);
+                    lastX = currentX;
+                    lastY = currentY;
+                }
+            });
+
+            function createFootprint(x, y) {
+                const paw = document.createElement('i');
+                paw.className = 'bi bi-paw-fill cursor-pawprint';
+                paw.style.left = (x - 8) + 'px';
+                paw.style.top = (y - 8) + 'px';
+                
+                // Rotación e inclinación aleatoria
+                const rotation = Math.floor(Math.random() * 40) - 20; // -20deg a 20deg
+                paw.style.transform = `rotate(${rotation}deg) scale(0.8)`;
+                
+                document.body.appendChild(paw);
+
+                // Forzar reflow y animar salida
+                setTimeout(() => {
+                    paw.style.opacity = '0';
+                    paw.style.transform = `rotate(${rotation}deg) scale(0.4) translateY(10px)`;
+                }, 50);
+
+                // Eliminar del DOM tras completarse el desvanecimiento
+                setTimeout(() => {
+                    paw.remove();
+                }, 700);
+            }
+        });
+
+        // FUNCIONALIDAD EFECTO PARALLAX SUAVE
+        window.addEventListener('scroll', () => {
+            const scrollY = window.pageYOffset;
+            
+            // Parallax en Hero
+            const heroSection = document.getElementById('inicio');
+            if (heroSection) {
+                const speed = 0.15;
+                const heroPaws = heroSection.querySelectorAll('.floating-paw');
+                heroPaws.forEach((paw, idx) => {
+                    const factor = (idx + 1) * 0.05;
+                    paw.style.transform = `translateY(${scrollY * factor}px)`;
+                });
+                
+                const heroBlobs = heroSection.querySelector('.hero-bg-blobs');
+                if (heroBlobs) {
+                    heroBlobs.style.transform = `translateY(${scrollY * 0.1}px)`;
+                }
+            }
+            
+            // Parallax en Promociones
+            const promoSection = document.getElementById('promociones');
+            if (promoSection) {
+                const rect = promoSection.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    const offset = (window.innerHeight - rect.top) * 0.06;
+                    const cards = promoSection.querySelectorAll('.promo-card');
+                    cards.forEach(card => {
+                        card.style.transform = `translateY(${offset}px)`;
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

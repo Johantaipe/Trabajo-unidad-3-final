@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head th:replace="~{fragments/layout :: head('Consultas Clínicas')}">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-file-medical-fill me-2" style="color: var(--primary);"></i>
+                    Historias Clínicas
+                </h1>
+                <a th:href="@{/historias/nuevo}" class="btn btn-primary-custom">
+                    <i class="bi bi-plus-circle me-1"></i> Nueva Consulta
+                </a>
+            </div>
+
+            <!-- Mensajes Flash -->
+            <div th:if="${mensajeExito}" class="alert alert-custom-success mb-4 d-flex align-items-center" role="alert">
+                <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+                <span th:text="${mensajeExito}">Éxito</span>
+            </div>
+
+            <div th:if="${mensajeError}" class="alert alert-custom-danger mb-4 d-flex align-items-center" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                <span th:text="${mensajeError}">Error</span>
+            </div>
+
+            <!-- Buscador y Filtros -->
+            <div class="card-custom mb-4">
+                <div class="card-body-custom py-3 px-4">
+                    <form th:action="@{/historias}" method="get" class="row g-3 align-items-end">
+                        <!-- Buscador -->
+                        <div class="col-md-5">
+                            <label for="buscarMascota" class="form-label-custom">
+                                <i class="bi bi-search me-1"></i> Buscar por Nombre Mascota
+                            </label>
+                            <input type="text" id="buscarMascota" name="nombreMascota" th:value="${nombreMascota}"
+                                class="form-control form-control-custom"
+                                placeholder="Escriba el nombre de la mascota...">
+                        </div>
+
+                        <!-- Filtro Estado -->
+                        <div class="col-md-4">
+                            <label for="filtrarEstado" class="form-label-custom">
+                                <i class="bi bi-funnel me-1"></i> Filtrar por Estado
+                            </label>
+                            <select id="filtrarEstado" name="estado" class="form-control form-control-custom">
+                                <option value="TODOS" th:selected="${estadoSeleccionado == 'TODOS'}">Todos los estados
+                                </option>
+                                <option th:each="est : ${estados}" th:value="${est.name()}" th:text="${est.name()}"
+                                    th:selected="${estadoSeleccionado == est.name()}">ESTADO</option>
+                            </select>
+                        </div>
+
+                        <!-- Botones de Acción -->
+                        <div class="col-md-3 d-flex gap-2">
+                            <button type="submit" class="btn btn-outline-custom w-100 py-2">
+                                <i class="bi bi-filter me-1"></i> Filtrar
+                            </button>
+                            <a th:href="@{/historias}"
+                                class="btn btn-secondary-custom w-100 py-2 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-arrow-clockwise me-1"></i> Limpiar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tabla de Historias Clínicas -->
+            <div class="card-custom">
+                <div class="card-header-custom d-flex align-items-center">
+                    <i class="bi bi-list-ul me-2"></i>
+                    Historial de Consultas Médicas
+                </div>
+                <div class="card-body-custom p-0">
+
+                    <!-- Tabla con datos -->
+                    <div th:if="${!consultasPage.isEmpty()}" class="table-responsive">
+                        <table class="table table-custom mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Fecha</th>
+                                    <th>Mascota</th>
+                                    <th>Propietario</th>
+                                    <th>Veterinario</th>
+                                    <th>Estado</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="consulta : ${consultasPage.content}">
+                                    <td>
+                                        <span class="badge-custom"
+                                            style="background: var(--secondary); color: var(--white); font-family: monospace;"
+                                            th:text="${consulta.codigoConsulta}">CONS-000001</span>
+                                    </td>
+                                    <td>
+                                        <strong th:text="${consulta.fechaConsulta}">2026-06-14</strong>
+                                    </td>
+                                    <td>
+                                        <a th:href="@{/historias/mascota/{id}(id=${consulta.mascota.id})}"
+                                            class="fw-bold text-decoration-underline"
+                                            style="color: var(--primary-dark);"
+                                            title="Ver Historial Clínico de Mascota">
+                                            <i class="bi bi-heart-pulse-fill me-1"></i>
+                                            <span th:text="${consulta.mascota.nombre}">Mascota</span>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <i class="bi bi-person me-1" style="color: var(--secondary);"></i>
+                                        <span
+                                            th:text="${consulta.mascota.propietario.nombre + ' ' + consulta.mascota.propietario.apellido}">Propietario</span>
+                                    </td>
+                                    <td>
+                                        <i class="bi bi-person-fill-gear me-1" style="color: var(--accent);"></i>
+                                        <span th:text="${consulta.veterinario}">Veterinario</span>
+                                    </td>
+                                    <td>
+                                        <!-- Badges dinámicos para estado de consulta -->
+                                        <span th:if="${consulta.estadoConsulta.name() == 'PENDIENTE'}"
+                                            class="badge-custom bg-warning-subtle text-warning-emphasis">
+                                            Pendiente
+                                        </span>
+                                        <span th:if="${consulta.estadoConsulta.name() == 'ATENDIDA'}"
+                                            class="badge-custom bg-success-subtle text-success-emphasis">
+                                            Atendida
+                                        </span>
+                                        <span th:if="${consulta.estadoConsulta.name() == 'OBSERVACION'}"
+                                            class="badge-custom bg-info-subtle text-info-emphasis">
+                                            En Observación
+                                        </span>
+                                        <span th:if="${consulta.estadoConsulta.name() == 'HOSPITALIZADA'}"
+                                            class="badge-custom bg-danger-subtle text-danger-emphasis">
+                                            Hospitalizada
+                                        </span>
+                                        <span th:if="${consulta.estadoConsulta.name() == 'CERRADA'}"
+                                            class="badge-custom bg-secondary-subtle text-secondary-emphasis">
+                                            Cerrada
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="action-buttons justify-content-center">
+                                            <a th:href="@{/historias/detalle/{id}(id=${consulta.id})}"
+                                                class="btn btn-outline-custom btn-sm" title="Ver Detalle Consulta">
+                                                <i class="bi bi-eye"></i> Detalle
+                                            </a>
+                                            <a th:href="@{/historias/editar/{id}(id=${consulta.id})}"
+                                                class="btn btn-warning-custom btn-sm" title="Editar Consulta">
+                                                <i class="bi bi-pencil-square"></i> Editar
+                                            </a>
+                                            <a th:href="@{/historias/eliminar/{id}(id=${consulta.id})}"
+                                                class="btn btn-danger-custom btn-sm" title="Eliminar"
+                                                onclick="return confirm('¿Está seguro de eliminar esta consulta del historial clínico?')">
+                                                <i class="bi bi-trash3"></i> Eliminar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Paginación -->
+                    <div th:if="${!consultasPage.isEmpty() && consultasPage.totalPages > 1}"
+                        class="d-flex justify-content-between align-items-center p-3 border-top bg-light">
+                        <div class="text-muted-custom small">
+                            Mostrando página <span th:text="${consultasPage.number + 1}">1</span> de <span
+                                th:text="${consultasPage.totalPages}">5</span> (<span
+                                th:text="${consultasPage.totalElements}">25</span> registros en total)
+                        </div>
+                        <nav aria-label="Paginación de consultas">
+                            <ul class="pagination mb-0 gap-1">
+                                <!-- Anterior -->
+                                <li class="page-item" th:classappend="${consultasPage.first} ? 'disabled'">
+                                    <a class="page-link"
+                                        th:href="@{/historias(page=${consultasPage.number - 1}, nombreMascota=${nombreMascota}, estado=${estadoSeleccionado})}"
+                                        aria-label="Anterior">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <!-- Páginas -->
+                                <li class="page-item"
+                                    th:each="i : ${#numbers.sequence(0, consultasPage.totalPages - 1)}"
+                                    th:classappend="${consultasPage.number == i} ? 'active'">
+                                    <a class="page-link"
+                                        th:href="@{/historias(page=${i}, nombreMascota=${nombreMascota}, estado=${estadoSeleccionado})}"
+                                        th:text="${i + 1}">1</a>
+                                </li>
+                                <!-- Siguiente -->
+                                <li class="page-item" th:classappend="${consultasPage.last} ? 'disabled'">
+                                    <a class="page-link"
+                                        th:href="@{/historias(page=${consultasPage.number + 1}, nombreMascota=${nombreMascota}, estado=${estadoSeleccionado})}"
+                                        aria-label="Siguiente">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <!-- Estado vacío -->
+                    <div th:if="${consultasPage.isEmpty()}" class="empty-state">
+                        <i class="bi bi-file-medical d-block"></i>
+                        <h5>No hay consultas registradas</h5>
+                        <p>No se encontraron registros de consultas médicas con los filtros aplicados.</p>
+                        <a th:href="@{/historias/nuevo}" class="btn btn-primary-custom mt-3">
+                            <i class="bi bi-plus-circle me-1"></i> Registrar Consulta
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+
+</html>

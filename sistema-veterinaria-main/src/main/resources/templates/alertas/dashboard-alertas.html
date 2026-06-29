@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Panel de Alertas Inteligentes')}">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-bell-fill me-2" style="color: var(--primary);"></i>
+                    Panel de Alertas Inteligentes
+                </h1>
+                <span class="badge-role bg-secondary-dark text-white p-2 rounded-3 small">
+                    <i class="bi bi-robot me-1"></i> Automatización Activa
+                </span>
+            </div>
+
+            <!-- KPI Cards Row -->
+            <div class="row g-4 mb-4">
+                
+                <!-- KPI: Total Vacunas Aplicadas -->
+                <div class="col-6 col-lg-3">
+                    <div class="dashboard-card py-3">
+                        <div class="icon text-success mb-2">
+                            <i class="bi bi-shield-check-fill fs-2"></i>
+                        </div>
+                        <h4 class="mb-0 fw-bold" th:text="${totalVacunasAplicadas}">0</h4>
+                        <p class="text-secondary small mb-0">Vacunas Aplicadas</p>
+                    </div>
+                </div>
+
+                <!-- KPI: Vacunas Pendientes -->
+                <div class="col-6 col-lg-3">
+                    <div class="dashboard-card py-3">
+                        <div class="icon text-info mb-2">
+                            <i class="bi bi-calendar-range-fill fs-2"></i>
+                        </div>
+                        <h4 class="mb-0 fw-bold" th:text="${vacunasPendientes}">0</h4>
+                        <p class="text-secondary small mb-0">Vacunas Pendientes</p>
+                    </div>
+                </div>
+
+                <!-- KPI: Vacunas Vencidas -->
+                <div class="col-6 col-lg-3">
+                    <div class="dashboard-card py-3">
+                        <div class="icon text-danger mb-2">
+                            <i class="bi bi-exclamation-octagon-fill fs-2"></i>
+                        </div>
+                        <h4 class="mb-0 fw-bold" th:text="${vacunasVencidas}">0</h4>
+                        <p class="text-secondary small mb-0">Vacunas Vencidas</p>
+                    </div>
+                </div>
+
+                <!-- KPI: Desparasitaciones Activas -->
+                <div class="col-6 col-lg-3">
+                    <div class="dashboard-card py-3">
+                        <div class="icon text-primary mb-2">
+                            <i class="bi bi-activity fs-2"></i>
+                        </div>
+                        <h4 class="mb-0 fw-bold" th:text="${desparasitacionesActivas}">0</h4>
+                        <p class="text-secondary small mb-0">Desparasitaciones Activas</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Alerts Grid Section -->
+            <div class="row g-4">
+                
+                <!-- 1. Vacunas Vencidas (Alerta Crítica - Rojo) -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100 rounded-3 overflow-hidden">
+                        <div class="card-header bg-danger text-white py-3">
+                            <h5 class="card-title mb-0 d-flex align-items-center">
+                                <i class="bi bi-x-circle-fill me-2"></i>
+                                Vacunas Vencidas (Requiere Acción)
+                                <span class="badge bg-white text-danger ms-auto" th:text="${vacunasVencidas.size()}">0</span>
+                            </h5>
+                        </div>
+                        <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+                            
+                            <div th:if="${vacunasVencidas.isEmpty()}" class="p-4 text-center text-muted">
+                                <i class="bi bi-shield-check fs-2 text-success d-block mb-2"></i>
+                                <span>No hay vacunas vencidas.</span>
+                            </div>
+
+                            <ul class="list-group list-group-flush" th:if="${!vacunasVencidas.isEmpty()}">
+                                <li class="list-group-item p-3 border-bottom d-flex align-items-center justify-content-between" th:each="v : ${vacunasVencidas}">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-danger">
+                                            <span th:text="${v.mascota.nombre}">Mascota</span> — <span th:text="${v.vacuna.nombre}">Rabia</span>
+                                        </h6>
+                                        <p class="mb-1 text-secondary small">
+                                            <strong>Propietario:</strong> <span th:text="${v.mascota.propietario.nombre + ' ' + v.mascota.propietario.apellido}">Contacto</span> | 
+                                            <strong>Tel:</strong> <span th:text="${v.mascota.propietario.telefono}">123456</span>
+                                        </p>
+                                        <span class="badge bg-danger-subtle text-danger small">Venció el: <span th:text="${v.fechaProximaDosis}">Fecha</span></span>
+                                    </div>
+                                    <div class="d-flex flex-column gap-1">
+                                        <a th:href="@{/vacunas/detalle/{id}(id=${v.id})}" class="btn btn-outline-danger btn-sm px-2 py-1">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Vacunas Próximas a Vencer (Advertencia - Amarillo) -->
+                <div class="col-md-6">
+                    <div class="card shadow-sm border-0 h-100 rounded-3 overflow-hidden">
+                        <div class="card-header bg-warning text-dark py-3">
+                            <h5 class="card-title mb-0 d-flex align-items-center">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                Vacunas Próximas a Vencer (30 Días)
+                                <span class="badge bg-dark text-white ms-auto" th:text="${vacunasProximas.size()}">0</span>
+                            </h5>
+                        </div>
+                        <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+                            
+                            <div th:if="${vacunasProximas.isEmpty()}" class="p-4 text-center text-muted">
+                                <i class="bi bi-calendar-check fs-2 text-success d-block mb-2"></i>
+                                <span>Sin vacunas próximas a vencer.</span>
+                            </div>
+
+                            <ul class="list-group list-group-flush" th:if="${!vacunasProximas.isEmpty()}">
+                                <li class="list-group-item p-3 border-bottom d-flex align-items-center justify-content-between" th:each="v : ${vacunasProximas}">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-dark">
+                                            <span th:text="${v.mascota.nombre}">Mascota</span> — <span th:text="${v.vacuna.nombre}">Rabia</span>
+                                        </h6>
+                                        <p class="mb-1 text-secondary small">
+                                            <strong>Propietario:</strong> <span th:text="${v.mascota.propietario.nombre + ' ' + v.mascota.propietario.apellido}">Contacto</span> | 
+                                            <strong>Tel:</strong> <span th:text="${v.mascota.propietario.telefono}">123456</span>
+                                        </p>
+                                        <span class="badge bg-warning-subtle text-warning-emphasis small">Vence el: <span th:text="${v.fechaProximaDosis}">Fecha</span></span>
+                                    </div>
+                                    <div>
+                                        <a th:href="@{/vacunas/detalle/{id}(id=${v.id})}" class="btn btn-outline-warning btn-sm text-dark px-2 py-1">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Desparasitaciones Vencidas (Púrpura / Dark Red) -->
+                <div class="col-md-6 mt-4">
+                    <div class="card shadow-sm border-0 h-100 rounded-3 overflow-hidden">
+                        <div class="card-header bg-secondary-dark text-white py-3" style="background-color: #5d3f8c !important;">
+                            <h5 class="card-title mb-0 d-flex align-items-center">
+                                <i class="bi bi-bug-fill me-2"></i>
+                                Desparasitaciones Vencidas
+                                <span class="badge bg-white text-dark ms-auto" style="color: #5d3f8c !important;" th:text="${desparasitacionesVencidas.size()}">0</span>
+                            </h5>
+                        </div>
+                        <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+                            
+                            <div th:if="${desparasitacionesVencidas.isEmpty()}" class="p-4 text-center text-muted">
+                                <i class="bi bi-shield-check-fill fs-2 text-success d-block mb-2"></i>
+                                <span>No hay desparasitaciones vencidas.</span>
+                            </div>
+
+                            <ul class="list-group list-group-flush" th:if="${!desparasitacionesVencidas.isEmpty()}">
+                                <li class="list-group-item p-3 border-bottom d-flex align-items-center justify-content-between" th:each="d : ${desparasitacionesVencidas}">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold" style="color: #5d3f8c;">
+                                            <span th:text="${d.mascota.nombre}">Mascota</span> — <span th:text="${d.producto}">Producto</span>
+                                        </h6>
+                                        <p class="mb-1 text-secondary small">
+                                            <strong>Tipo:</strong> <span th:text="${d.tipo}">INTERNA</span> | 
+                                            <strong>Propietario:</strong> <span th:text="${d.mascota.propietario.nombre}">Nombre</span>
+                                        </p>
+                                        <span class="badge bg-light text-dark small" style="border: 1px solid #5d3f8c;">Venció el: <span th:text="${d.fechaProximaAplicacion}">Fecha</span></span>
+                                    </div>
+                                    <div>
+                                        <a th:href="@{/desparasitaciones/detalle/{id}(id=${d.id})}" class="btn btn-sm text-white px-2 py-1" style="background-color: #5d3f8c;">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Desparasitaciones Próximas (Azul / Cyan) -->
+                <div class="col-md-6 mt-4">
+                    <div class="card shadow-sm border-0 h-100 rounded-3 overflow-hidden">
+                        <div class="card-header bg-info text-white py-3">
+                            <h5 class="card-title mb-0 d-flex align-items-center">
+                                <i class="bi bi-shield-fill-check me-2"></i>
+                                Desparasitaciones Próximas (30 Días)
+                                <span class="badge bg-white text-info ms-auto" th:text="${desparasitacionesProximas.size()}">0</span>
+                            </h5>
+                        </div>
+                        <div class="card-body p-0" style="max-height: 400px; overflow-y: auto;">
+                            
+                            <div th:if="${desparasitacionesProximas.isEmpty()}" class="p-4 text-center text-muted">
+                                <i class="bi bi-check-circle fs-2 text-success d-block mb-2"></i>
+                                <span>Sin desparasitaciones próximas.</span>
+                            </div>
+
+                            <ul class="list-group list-group-flush" th:if="${!desparasitacionesProximas.isEmpty()}">
+                                <li class="list-group-item p-3 border-bottom d-flex align-items-center justify-content-between" th:each="d : ${desparasitacionesProximas}">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold text-info">
+                                            <span th:text="${d.mascota.nombre}">Mascota</span> — <span th:text="${d.producto}">Producto</span>
+                                        </h6>
+                                        <p class="mb-1 text-secondary small">
+                                            <strong>Tipo:</strong> <span th:text="${d.tipo}">INTERNA</span> | 
+                                            <strong>Propietario:</strong> <span th:text="${d.mascota.propietario.nombre}">Nombre</span>
+                                        </p>
+                                        <span class="badge bg-info-subtle text-info-emphasis small">Próxima el: <span th:text="${d.fechaProximaAplicacion}">Fecha</span></span>
+                                    </div>
+                                    <div>
+                                        <a th:href="@{/desparasitaciones/detalle/{id}(id=${d.id})}" class="btn btn-outline-info btn-sm px-2 py-1">
+                                            <i class="bi bi-eye"></i> Ver
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+</html>

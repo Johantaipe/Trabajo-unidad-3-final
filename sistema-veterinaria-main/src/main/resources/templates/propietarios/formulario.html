@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Formulario Propietario')}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="bi bi-person-plus me-2" style="color: var(--primary);"
+                   th:if="${propietario.id == null}"></i>
+                <i class="bi bi-person-gear me-2" style="color: var(--primary);"
+                   th:if="${propietario.id != null}"></i>
+                <span th:text="${propietario.id == null} ? 'Nuevo Propietario' : 'Editar Propietario'">Formulario</span>
+            </h1>
+            <a th:href="@{/propietarios}" class="btn btn-secondary-custom">
+                <i class="bi bi-arrow-left me-1"></i> Volver a la lista
+            </a>
+        </div>
+
+        <!-- Formulario centrado -->
+        <div class="form-card-wrapper">
+            <div class="form-card">
+
+                <!-- Header del formulario -->
+                <div class="form-header">
+                    <h4>
+                        <i class="bi bi-clipboard-data me-2"></i>
+                        <span th:text="${propietario.id == null} ? 'Registrar Nuevo Propietario' : 'Actualizar Datos del Propietario'">
+                            Formulario
+                        </span>
+                    </h4>
+                    <p>Complete todos los campos obligatorios (*)</p>
+                </div>
+
+                <!-- Body del formulario -->
+                <div class="form-body">
+
+                    <!-- Error DNI duplicado -->
+                    <div th:if="${errorDni}" class="alert alert-custom-danger mb-4 d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                        <span th:text="${errorDni}">Error de DNI</span>
+                    </div>
+
+                    <!-- Formulario -->
+                    <form th:action="${propietario.id == null} ? @{/propietarios/guardar} : @{/propietarios/actualizar/{id}(id=${propietario.id})}"
+                          method="post"
+                          th:object="${propietario}"
+                          id="formPropietario">
+
+                        <!-- Nombre -->
+                        <div class="mb-custom">
+                            <label for="nombre" class="form-label-custom">
+                                <i class="bi bi-person me-1"></i> Nombre <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   id="nombre" 
+                                   th:field="*{nombre}"
+                                   class="form-control form-control-custom"
+                                   th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'"
+                                   placeholder="Ingrese el nombre del propietario">
+                            <div th:if="${#fields.hasErrors('nombre')}" class="invalid-feedback">
+                                <i class="bi bi-exclamation-circle me-1"></i>
+                                <span th:errors="*{nombre}">Error</span>
+                            </div>
+                        </div>
+
+                        <!-- Apellido -->
+                        <div class="mb-custom">
+                            <label for="apellido" class="form-label-custom">
+                                <i class="bi bi-person me-1"></i> Apellido <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   id="apellido" 
+                                   th:field="*{apellido}"
+                                   class="form-control form-control-custom"
+                                   th:classappend="${#fields.hasErrors('apellido')} ? 'is-invalid'"
+                                   placeholder="Ingrese el apellido del propietario">
+                            <div th:if="${#fields.hasErrors('apellido')}" class="invalid-feedback">
+                                <i class="bi bi-exclamation-circle me-1"></i>
+                                <span th:errors="*{apellido}">Error</span>
+                            </div>
+                        </div>
+
+                        <!-- DNI -->
+                        <div class="mb-custom">
+                            <label for="dni" class="form-label-custom">
+                                <i class="bi bi-credit-card me-1"></i> DNI <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <input type="text" 
+                                       id="dni" 
+                                       th:field="*{dni}"
+                                       class="form-control form-control-custom"
+                                       th:classappend="${#fields.hasErrors('dni')} ? 'is-invalid'"
+                                       placeholder="Ingrese el DNI (8 dígitos)"
+                                       maxlength="8">
+                                <button type="button" id="btnConsultarReniec" class="btn btn-outline-custom">
+                                    <i class="bi bi-search me-1"></i> Consultar RENIEC
+                                </button>
+                            </div>
+                            <div th:if="${#fields.hasErrors('dni')}" class="invalid-feedback">
+                                <i class="bi bi-exclamation-circle me-1"></i>
+                                <span th:errors="*{dni}">Error</span>
+                            </div>
+                            <small class="text-muted-custom">
+                                <i class="bi bi-info-circle me-1"></i> Solo números, exactamente 8 dígitos
+                            </small>
+                            <div id="reniecStatus" class="small mt-1 text-info" style="display: none;"></div>
+                        </div>
+
+                        <!-- Teléfono -->
+                        <div class="mb-custom">
+                            <label for="telefono" class="form-label-custom">
+                                <i class="bi bi-telephone me-1"></i> Teléfono <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   id="telefono" 
+                                   th:field="*{telefono}"
+                                   class="form-control form-control-custom"
+                                   th:classappend="${#fields.hasErrors('telefono')} ? 'is-invalid'"
+                                   placeholder="Ingrese el teléfono (9 dígitos)"
+                                   maxlength="9">
+                            <div th:if="${#fields.hasErrors('telefono')}" class="invalid-feedback">
+                                <i class="bi bi-exclamation-circle me-1"></i>
+                                <span th:errors="*{telefono}">Error</span>
+                            </div>
+                            <small class="text-muted-custom">
+                                <i class="bi bi-info-circle me-1"></i> Solo números, exactamente 9 dígitos
+                            </small>
+                        </div>
+
+                        <!-- Correo -->
+                        <div class="mb-custom">
+                            <label for="correo" class="form-label-custom">
+                                <i class="bi bi-envelope me-1"></i> Correo Electrónico <span class="text-danger">*</span>
+                            </label>
+                            <input type="email" 
+                                   id="correo" 
+                                   th:field="*{correo}"
+                                   class="form-control form-control-custom"
+                                   th:classappend="${#fields.hasErrors('correo')} ? 'is-invalid'"
+                                   placeholder="ejemplo@correo.com">
+                            <div th:if="${#fields.hasErrors('correo')}" class="invalid-feedback">
+                                <i class="bi bi-exclamation-circle me-1"></i>
+                                <span th:errors="*{correo}">Error</span>
+                            </div>
+                        </div>
+
+                        <!-- Dirección -->
+                        <div class="mb-custom">
+                            <label for="direccion" class="form-label-custom">
+                                <i class="bi bi-geo-alt me-1"></i> Dirección
+                            </label>
+                            <input type="text" 
+                                   id="direccion" 
+                                   th:field="*{direccion}"
+                                   class="form-control form-control-custom"
+                                   placeholder="Ingrese la dirección (opcional)">
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <!-- Botones -->
+                        <div class="d-flex gap-3 justify-content-end flex-wrap">
+                            <a th:href="@{/propietarios}" class="btn btn-secondary-custom">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary-custom">
+                                <i class="bi bi-check-circle me-1"
+                                   th:if="${propietario.id == null}"></i>
+                                <i class="bi bi-arrow-repeat me-1"
+                                   th:if="${propietario.id != null}"></i>
+                                <span th:text="${propietario.id == null} ? 'Registrar Propietario' : 'Actualizar Propietario'">
+                                    Guardar
+                                </span>
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const btnReniec = document.getElementById("btnConsultarReniec");
+    const dniInput = document.getElementById("dni");
+    const statusDiv = document.getElementById("reniecStatus");
+    const nombreInput = document.getElementById("nombre");
+    const apellidoInput = document.getElementById("apellido");
+
+    if (btnReniec) {
+        btnReniec.addEventListener("click", function() {
+            const dni = dniInput.value.trim();
+            if (dni.length !== 8 || isNaN(dni)) {
+                alert("Por favor, ingrese un DNI válido de 8 dígitos.");
+                return;
+            }
+
+            statusDiv.style.display = "block";
+            statusDiv.innerHTML = "<i class='bi bi-hourglass-split me-1'></i>Consultando RENIEC...";
+            statusDiv.className = "small mt-1 text-info";
+
+            fetch("/api/reniec/" + dni)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("DNI no encontrado o error en servidor.");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    statusDiv.innerHTML = "<i class='bi bi-check-circle me-1'></i>Consulta exitosa.";
+                    statusDiv.className = "small mt-1 text-success";
+                    if (data.nombres) nombreInput.value = data.nombres;
+                    if (data.apellidos) apellidoInput.value = data.apellidos;
+                })
+                .catch(error => {
+                    statusDiv.innerHTML = "<i class='bi bi-exclamation-triangle me-1'></i>No se pudo conectar con RENIEC. Ingrese los datos manualmente.";
+                    statusDiv.className = "small mt-1 text-warning";
+                    console.error("Error al consultar RENIEC:", error);
+                });
+        });
+    }
+});
+</script>
+
+</body>
+</html>

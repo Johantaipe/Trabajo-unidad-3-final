@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Registrar Alta de Hospitalización')}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="form-card-wrapper">
+                <div class="form-card">
+                    <div class="form-header">
+                        <h4>Registrar Alta Médica</h4>
+                        <p>Complete los datos del alta y los medicamentos utilizados para descontar del inventario y generar la facturación en Caja.</p>
+                    </div>
+
+                    <form th:action="@{/hospitalizacion/alta/{id}(id=${hospitalizacion.id})}" th:object="${hospitalizacion}" method="post" class="form-body">
+                        <div class="row g-3">
+                            <!-- Datos informativos -->
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Mascota</label>
+                                <input type="text" class="form-control form-control-custom" th:value="${hospitalizacion.mascota.nombre}" disabled />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Fecha Ingreso</label>
+                                <input type="text" class="form-control form-control-custom" th:value="${hospitalizacion.fechaIngreso}" disabled />
+                            </div>
+
+                            <!-- Diagnóstico de Salida -->
+                            <div class="col-md-12">
+                                <label for="diagnostico" class="form-label-custom">Diagnóstico Clínico de Salida</label>
+                                <textarea id="diagnostico" th:field="*{diagnostico}" class="form-control form-control-custom" rows="3" placeholder="Indique la conclusión del tratamiento o causa del alta..." required></textarea>
+                            </div>
+
+                            <!-- Medicamentos utilizados -->
+                            <div class="col-md-12">
+                                <label for="medicamentos" class="form-label-custom">Medicamentos Suministrados (Separados por coma)</label>
+                                <input type="text" id="medicamentos" th:field="*{medicamentos}" class="form-control form-control-custom" placeholder="Ej: Amoxicilina 250mg, Meloxicam Gotas..." />
+                                <small class="text-muted">Escriba el nombre exacto de los medicamentos para descontar su stock del inventario automáticamente.</small>
+                            </div>
+
+                            <!-- Recomendaciones / Observaciones -->
+                            <div class="col-md-12">
+                                <label for="observaciones" class="form-label-custom">Recomendaciones de Cuidado en Casa</label>
+                                <textarea id="observaciones" th:field="*{observaciones}" class="form-control form-control-custom" rows="3" placeholder="Instrucciones para el propietario..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-footer mt-4">
+                            <a th:href="@{/hospitalizacion}" class="btn btn-secondary-custom">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-success-custom">
+                                <i class="bi bi-check-circle me-1"></i> Registrar Alta y Cobro
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

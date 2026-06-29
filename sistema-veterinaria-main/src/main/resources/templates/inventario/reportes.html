@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Reportes de Inventario')}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-bar-chart-fill me-2" style="color: var(--primary);"></i>
+                    Reportes e Indicadores de Inventario
+                </h1>
+                <a th:href="@{/inventario}" class="btn btn-secondary-custom">
+                    <i class="bi bi-arrow-left"></i> Volver a Inventario
+                </a>
+            </div>
+
+            <!-- Category distribution -->
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-success shadow-sm text-center">
+                        <span class="text-muted small text-uppercase fw-bold d-block">Medicamentos</span>
+                        <h3 class="fw-bold mb-0 text-dark" th:text="${medsCount}">0</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-primary shadow-sm text-center">
+                        <span class="text-muted small text-uppercase fw-bold d-block">Alimentos</span>
+                        <h3 class="fw-bold mb-0 text-dark" th:text="${alimsCount}">0</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-warning shadow-sm text-center">
+                        <span class="text-muted small text-uppercase fw-bold d-block">Accesorios</span>
+                        <h3 class="fw-bold mb-0 text-dark" th:text="${accsCount}">0</h3>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-danger shadow-sm text-center">
+                        <span class="text-muted small text-uppercase fw-bold d-block">Insumos Médicos</span>
+                        <h3 class="fw-bold mb-0 text-dark" th:text="${insCount}">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Details summaries -->
+            <div class="row g-4">
+                
+                <!-- Stock warnings -->
+                <div class="col-lg-6">
+                    <div class="card-custom bg-white shadow-sm">
+                        <div class="card-header-custom bg-danger">
+                            <i class="bi bi-exclamation-triangle-fill"></i> Resumen de Stock Crítico
+                        </div>
+                        <div class="card-body-custom p-0">
+                            <div th:if="${!criticos.isEmpty()}" class="table-responsive">
+                                <table class="table table-custom mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Stock Actual</th>
+                                            <th>Mínimo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="p : ${criticos}">
+                                            <td th:text="${p.nombre}">Producto</td>
+                                            <td class="text-danger fw-bold" th:text="${p.stock}">0</td>
+                                            <td th:text="${p.stockMinimo}">5</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div th:if="${criticos.isEmpty()}" class="empty-state">
+                                <i class="bi bi-check-circle-fill text-success fs-3 d-block mb-2"></i>
+                                <h5>Todo en orden</h5>
+                                <p>No hay productos con stock crítico.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Expiration summary -->
+                <div class="col-lg-6">
+                    <div class="card-custom bg-white shadow-sm">
+                        <div class="card-header-custom bg-warning text-dark">
+                            <i class="bi bi-calendar-x-fill"></i> Resumen de Productos Vencidos
+                        </div>
+                        <div class="card-body-custom p-0">
+                            <div th:if="${!vencidos.isEmpty()}" class="table-responsive">
+                                <table class="table table-custom mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Fecha Vence</th>
+                                            <th>Lote</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="p : ${vencidos}">
+                                            <td th:text="${p.nombre}">Producto</td>
+                                            <td class="text-danger fw-bold" th:text="${p.fechaVencimiento}">2026-06-14</td>
+                                            <td th:text="${p.lote}">LOT-X</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div th:if="${vencidos.isEmpty()}" class="empty-state">
+                                <i class="bi bi-check-circle-fill text-success fs-3 d-block mb-2"></i>
+                                <h5>Sin productos vencidos</h5>
+                                <p>No hay merma por vencimiento de productos.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Detalle de Hospitalización')}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-file-medical me-2" style="color: var(--primary);"></i>
+                    Detalle de Hospitalización
+                </h1>
+                <a th:href="@{/hospitalizacion}" class="btn btn-secondary-custom">
+                    <i class="bi bi-arrow-left me-1"></i> Volver al Listado
+                </a>
+            </div>
+
+            <div class="row g-4">
+                <!-- Ficha Clínica Principal -->
+                <div class="col-lg-8">
+                    <div class="card-custom mb-4">
+                        <div class="card-header-custom">
+                            <i class="bi bi-clipboard-pulse me-1"></i> Ficha Clínica (<span th:text="${h.codigoHospitalizacion}"></span>)
+                        </div>
+                        <div class="card-body-custom">
+                            <div class="mb-4">
+                                <h6 class="text-uppercase fw-bold text-muted small">Motivo de Ingreso</h6>
+                                <p class="fs-5" th:text="${h.motivo}">Motivo</p>
+                            </div>
+
+                            <div class="mb-4" th:if="${h.diagnostico != null}">
+                                <h6 class="text-uppercase fw-bold text-muted small">Diagnóstico de Salida</h6>
+                                <p class="fs-5 text-dark" th:text="${h.diagnostico}">Diagnóstico</p>
+                            </div>
+
+                            <div class="mb-4" th:if="${h.medicamentos != null}">
+                                <h6 class="text-uppercase fw-bold text-muted small">Medicamentos Suministrados</h6>
+                                <p class="font-monospace" th:text="${h.medicamentos}">Medicamentos</p>
+                            </div>
+
+                            <div class="mb-2" th:if="${h.observaciones != null}">
+                                <h6 class="text-uppercase fw-bold text-muted small">Observaciones / Recomendaciones</h6>
+                                <p th:text="${h.observaciones}">Observaciones</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumen Administrativo Lateral -->
+                <div class="col-lg-4">
+                    <div class="card-custom">
+                        <div class="card-header-custom" style="background: linear-gradient(135deg, var(--secondary-dark) 0%, #000 100%);">
+                            <i class="bi bi-info-circle me-1"></i> Resumen de Internamiento
+                        </div>
+                        <div class="card-body-custom">
+                            <ul class="list-group list-group-flush mb-4">
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span>Mascota:</span>
+                                    <strong th:text="${h.mascota.nombre}">Mascota</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span>Propietario:</span>
+                                    <span th:text="${h.mascota.propietario.nombre + ' ' + h.mascota.propietario.apellido}">Propietario</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span>Fecha Ingreso:</span>
+                                    <strong th:text="${h.fechaIngreso}">2026-06-14</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span>Fecha Alta:</span>
+                                    <strong th:text="${h.fechaAlta != null ? h.fechaAlta : 'Internado'}">2026-06-14</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                    <span>Costo por Día:</span>
+                                    <strong th:text="${'S/ ' + h.precioPorDia}">S/ 80.00</strong>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0" th:if="${h.estado == 'ALTA'}">
+                                    <span>Estado:</span>
+                                    <span class="badge bg-success">DADO DE ALTA</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0" th:if="${h.estado == 'INGRESADO'}">
+                                    <span>Estado:</span>
+                                    <span class="badge bg-danger animate-pulse">INTERNADO</span>
+                                </li>
+                            </ul>
+
+                            <div class="d-grid gap-2" th:if="${h.estado == 'INGRESADO'}">
+                                <a th:href="@{/hospitalizacion/alta/{id}(id=${h.id})}" class="btn btn-success-custom w-100">
+                                    <i class="bi bi-check2-circle me-1"></i> Dar Alta Médica
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

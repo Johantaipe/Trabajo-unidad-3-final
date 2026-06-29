@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Agenda de Citas')}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-calendar-week-fill me-2" style="color: var(--primary);"></i>
+                    Agenda Veterinaria
+                </h1>
+                <a th:href="@{/agenda/nuevo}" class="btn btn-primary-custom">
+                    <i class="bi bi-calendar-plus-fill me-1"></i> Nueva Cita
+                </a>
+            </div>
+
+            <!-- Dashboard Summary Statistics (using precalculated variables to avoid SpEL lambda evaluation errors) -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-warning d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold d-block">Citas Programadas</span>
+                            <strong class="fs-4 text-dark" th:text="${countProgramadas}">0</strong>
+                        </div>
+                        <i class="bi bi-calendar-event fs-2 text-warning opacity-75"></i>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-success d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold d-block">Confirmadas</span>
+                            <strong class="fs-4 text-dark" th:text="${countConfirmadas}">0</strong>
+                        </div>
+                        <i class="bi bi-check-circle-fill fs-2 text-success opacity-75"></i>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-danger d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold d-block">Urgencias</span>
+                            <strong class="fs-4 text-dark" th:text="${countUrgentes}">0</strong>
+                        </div>
+                        <i class="bi bi-exclamation-triangle-fill fs-2 text-danger opacity-75"></i>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-primary d-flex align-items-center justify-content-between">
+                        <div>
+                            <span class="text-muted small text-uppercase fw-bold d-block">Total Registrado</span>
+                            <strong class="fs-4 text-dark" th:text="${lista.size()}">0</strong>
+                        </div>
+                        <i class="bi bi-grid-fill fs-2 text-primary opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View mode tabs -->
+            <div class="mb-4">
+                <ul class="nav nav-pills gap-2" id="agendaTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="btn btn-outline-custom active" id="calendar-tab" data-bs-toggle="pill" data-bs-target="#calendar-view" type="button" role="tab" aria-controls="calendar-view" aria-selected="true">
+                            <i class="bi bi-calendar3 me-1"></i> Vista Calendario
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="btn btn-outline-custom" id="list-tab" data-bs-toggle="pill" data-bs-target="#list-view" type="button" role="tab" aria-controls="list-view" aria-selected="false">
+                            <i class="bi bi-list-task me-1"></i> Vista Listado
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="tab-content" id="agendaTabsContent">
+                <!-- Interactive Calendar View -->
+                <div class="tab-pane fade show active" id="calendar-view" role="tabpanel" aria-labelledby="calendar-tab">
+                    <div class="card-custom bg-white p-3 shadow-sm">
+                        <!-- FullCalendar styles injection -->
+                        <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet" />
+                        <!-- Calendar Element -->
+                        <div id="calendar" style="min-height: 600px;"></div>
+                    </div>
+                </div>
+
+                <!-- Traditional Table List View -->
+                <div class="tab-pane fade" id="list-view" role="tabpanel" aria-labelledby="list-tab">
+                    <div class="card-custom">
+                        <div class="card-header-custom d-flex align-items-center">
+                            <i class="bi bi-list-columns-reverse me-2"></i> Listado Completo de Citas
+                        </div>
+                        <div class="card-body-custom p-0">
+                            <div th:if="${!lista.isEmpty()}" class="table-responsive">
+                                <table class="table table-custom mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Cita</th>
+                                            <th>Mascota</th>
+                                            <th>Fecha y Hora</th>
+                                            <th>Duración</th>
+                                            <th>Veterinario</th>
+                                            <th>Tipo de Cita</th>
+                                            <th>Estado</th>
+                                            <th>Prioridad</th>
+                                            <th class="text-center">Acciones</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="c : ${lista}">
+                                            <td><strong th:text="${c.codigoCita}">CITA-000001</strong></td>
+                                            <td>
+                                                <i class="bi bi-paw-fill me-1" style="color: var(--primary);"></i>
+                                                <span th:text="${c.mascota.nombre}">Nombre</span>
+                                                <small class="text-muted d-block" th:text="${'Propietario: ' + c.propietario.nombre + ' ' + c.propietario.apellido}"></small>
+                                            </td>
+                                            <td>
+                                                <i class="bi bi-calendar-event me-1 text-primary"></i>
+                                                <span th:text="${c.fecha}">2026-06-15</span>
+                                                <span class="badge bg-light text-dark ms-1" th:text="${c.hora}">09:00</span>
+                                            </td>
+                                            <td th:text="${c.duracionMinutos + ' min'}">30 min</td>
+                                            <td th:text="${c.veterinario}">Dr. Juan</td>
+                                            <td>
+                                                <span th:text="${c.tipoCita}">CONSULTA_GENERAL</span>
+                                            </td>
+                                            <td>
+                                                <span th:if="${c.estado.name() == 'PROGRAMADA'}" class="badge bg-warning text-dark">PROGRAMADA</span>
+                                                <span th:if="${c.estado.name() == 'CONFIRMADA'}" class="badge bg-success">CONFIRMADA</span>
+                                                <span th:if="${c.estado.name() == 'EN_CURSO'}" class="badge bg-info">EN CURSO</span>
+                                                <span th:if="${c.estado.name() == 'FINALIZADA'}" class="badge bg-primary">FINALIZADA</span>
+                                                <span th:if="${c.estado.name() == 'CANCELADA'}" class="badge bg-secondary">CANCELADA</span>
+                                                <span th:if="${c.estado.name() == 'NO_ASISTIO'}" class="badge bg-danger">NO ASISTIÓ</span>
+                                                <span th:if="${c.estado.name() == 'REPROGRAMADA'}" class="badge bg-dark">REPROGRAMADA</span>
+                                            </td>
+                                            <td>
+                                                <span th:if="${c.prioridad.name() == 'URGENTE'}" class="badge bg-danger">URGENTE</span>
+                                                <span th:if="${c.prioridad.name() == 'ALTA'}" class="badge bg-warning text-dark">ALTA</span>
+                                                <span th:if="${c.prioridad.name() == 'NORMAL'}" class="badge bg-info">NORMAL</span>
+                                                <span th:if="${c.prioridad.name() == 'BAJA'}" class="badge bg-secondary">BAJA</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="action-buttons justify-content-center">
+                                                    <a th:href="@{/agenda/editar/{id}(id=${c.id})}" class="btn btn-warning-custom btn-sm">
+                                                        <i class="bi bi-pencil-square"></i> Editar
+                                                    </a>
+                                                    <a th:if="${c.estado.name() != 'CANCELADA'}" th:href="@{/agenda/cancelar/{id}(id=${c.id})}" class="btn btn-danger-custom btn-sm" onclick="return confirm('¿Está seguro de cancelar esta cita?')">
+                                                        <i class="bi bi-x-circle"></i> Cancelar
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div th:if="${lista.isEmpty()}" class="empty-state">
+                                <i class="bi bi-calendar-x d-block"></i>
+                                <h5>No hay citas registradas en la agenda</h5>
+                                <p>Registre una nueva cita médica o de peluquería para comenzar la gestión horaria.</p>
+                                <a th:href="@{/agenda/nuevo}" class="btn btn-primary-custom mt-3">
+                                    <i class="bi bi-calendar-plus-fill me-1"></i> Nueva Cita
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal Detalle de Cita (FullCalendar Clic) -->
+    <div class="modal fade" id="modalDetalleCita" tabindex="-1" aria-labelledby="modalDetalleCitaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title fw-bold" id="modalDetalleCitaLabel">
+                        <i class="bi bi-calendar-check-fill me-2 text-primary"></i> Detalle de Cita Médica
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-grow-1">
+                            <span class="badge fs-6 mb-2" id="detEstado">ESTADO</span>
+                            <h4 class="fw-bold mb-0 text-dark" id="detMascota">Mascota</h4>
+                            <small class="text-muted" id="detEspecie">Especie: -</small>
+                        </div>
+                        <i class="bi bi-paw-fill fs-1 text-muted opacity-50"></i>
+                    </div>
+                    
+                    <div class="divider my-3" style="border-top: 1px solid #dee2e6;"></div>
+                    
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <span class="text-muted d-block small">Fecha y Hora</span>
+                            <strong class="text-dark" id="detFechaHora">-</strong>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted d-block small">Veterinario</span>
+                            <strong class="text-dark" id="detVeterinario">-</strong>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted d-block small">Propietario</span>
+                            <strong class="text-dark" id="detPropietario">-</strong>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted d-block small">Teléfono</span>
+                            <strong class="text-dark" id="detTelefono">-</strong>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted d-block small">Servicio / Cita</span>
+                            <strong class="text-dark" id="detServicio">-</strong>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-muted d-block small">Prioridad</span>
+                            <span class="badge" id="detPrioridad">NORMAL</span>
+                        </div>
+                        <div class="col-12">
+                            <span class="text-muted d-block small">Motivo</span>
+                            <p class="mb-0 bg-light p-2 rounded small text-dark" id="detMotivo">-</p>
+                        </div>
+                        <div class="col-12">
+                            <span class="text-muted d-block small">Observaciones</span>
+                            <p class="mb-0 bg-light p-2 rounded small text-muted" id="detObservaciones">-</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light d-flex justify-content-between">
+                    <div>
+                        <a id="btnEliminarCita" href="#" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Está seguro de cancelar esta cita?')">
+                            <i class="bi bi-x-circle"></i> Cancelar Cita
+                        </a>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+                        <a id="btnEditarCita" href="#" class="btn btn-warning-custom btn-sm">
+                           <i class="bi bi-pencil-square"></i> Editar Cita
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <!-- FullCalendar JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            if (calendarEl) {
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    locale: 'es',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    buttonText: {
+                        today: 'Hoy',
+                        month: 'Mes',
+                        week: 'Semana',
+                        day: 'Día'
+                    },
+                    events: '/api/agenda/citas',
+                    eventClick: function(info) {
+                        mostrarDetalleCita(info.event);
+                    }
+                });
+                calendar.render();
+
+                // Re-render calendar when tab switches to ensure proper layout sizing
+                var calendarTab = document.getElementById('calendar-tab');
+                if (calendarTab) {
+                    calendarTab.addEventListener('shown.bs.tab', function () {
+                        calendar.updateSize();
+                    });
+                }
+            }
+        });
+
+        function mostrarDetalleCita(event) {
+            const props = event.extendedProps;
+            
+            document.getElementById('detMascota').textContent = props.mascotaNombre;
+            document.getElementById('detEspecie').textContent = 'Especie: ' + props.especie;
+            document.getElementById('detPropietario').textContent = props.propietarioNombre;
+            document.getElementById('detTelefono').textContent = props.propietarioTelefono || '-';
+            document.getElementById('detVeterinario').textContent = props.veterinario;
+            document.getElementById('detServicio').textContent = props.servicio;
+            document.getElementById('detMotivo').textContent = props.motivo;
+            document.getElementById('detObservaciones').textContent = props.observaciones || 'Sin observaciones.';
+            
+            // Format start/end times
+            const start = new Date(event.start);
+            const dateStr = start.toLocaleDateString('es-PE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const timeStr = start.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('detFechaHora').textContent = dateStr + ' ' + timeStr;
+            
+            // State Badge formatting
+            const estBadge = document.getElementById('detEstado');
+            estBadge.textContent = props.estado.replace('_', ' ');
+            estBadge.className = 'badge fs-6 mb-2';
+            if (props.estado === 'PROGRAMADA') estBadge.classList.add('bg-warning', 'text-dark');
+            else if (props.estado === 'CONFIRMADA') estBadge.classList.add('bg-success');
+            else if (props.estado === 'EN_CURSO') estBadge.classList.add('bg-info');
+            else if (props.estado === 'FINALIZADA') estBadge.classList.add('bg-primary');
+            else if (props.estado === 'CANCELADA') estBadge.classList.add('bg-secondary');
+            else if (props.estado === 'NO_ASISTIO') estBadge.classList.add('bg-danger');
+            else estBadge.classList.add('bg-dark');
+            
+            // Priority Badge formatting
+            const priBadge = document.getElementById('detPrioridad');
+            priBadge.textContent = props.prioridad;
+            priBadge.className = 'badge';
+            if (props.prioridad === 'URGENTE') priBadge.classList.add('bg-danger');
+            else if (props.prioridad === 'ALTA') priBadge.classList.add('bg-warning', 'text-dark');
+            else if (props.prioridad === 'NORMAL') priBadge.classList.add('bg-info');
+            else priBadge.classList.add('bg-secondary');
+            
+            // Setup detail view action links
+            document.getElementById('btnEditarCita').href = '/agenda/editar/' + event.id;
+            
+            const btnEliminar = document.getElementById('btnEliminarCita');
+            if (props.estado === 'CANCELADA') {
+                btnEliminar.classList.add('d-none');
+            } else {
+                btnEliminar.classList.remove('d-none');
+                btnEliminar.href = '/agenda/cancelar/' + event.id;
+            }
+            
+            // Trigger bootstrap modal
+            var modal = new bootstrap.Modal(document.getElementById('modalDetalleCita'));
+            modal.show();
+        }
+    </script>
+</body>
+</html>

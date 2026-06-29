@@ -1,0 +1,1069 @@
+/* ====================================================
+   VET EXPERTS - ESTILOS CAPA PÚBLICA (CSS PREMIUM V1.2)
+   ==================================================== */
+
+:root {
+    --primary: #2d6a4f;
+    --primary-light: #52b788;
+    --primary-dark: #1b4332;
+    --secondary: #f7b032;
+    --secondary-hover: #e0981b;
+    --whatsapp: #25d366;
+    --whatsapp-dark: #128c7e;
+    --text-dark: #1d2d24;
+    --text-muted: #62756a;
+    --bg-light: #f4f7f5;
+    --bg-white: #ffffff;
+    --glass: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.06), 0 4px 6px rgba(0, 0, 0, 0.03);
+    --shadow-lg: 0 20px 30px rgba(0, 0, 0, 0.08), 0 10px 15px rgba(0, 0, 0, 0.04);
+}
+
+/* --- Reset & Generalidades --- */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--text-dark);
+    background-color: var(--bg-light);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* --- Títulos & Subtítulos --- */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 800;
+    color: var(--primary-dark);
+}
+
+.section-title {
+    font-size: 2.5rem;
+    position: relative;
+    padding-bottom: 1.25rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    letter-spacing: -0.5px;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    width: 60px;
+    height: 4px;
+    background-color: var(--secondary);
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin: 0 auto 3.5rem auto;
+    font-size: 1.15rem;
+}
+
+/* --- Sticky Navbar --- */
+.navbar-sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--glass-border);
+    transition: var(--transition);
+}
+
+.navbar-sticky.scrolled {
+    box-shadow: var(--shadow-md);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 0.4rem 0;
+}
+
+.navbar-sticky .navbar-brand {
+    font-weight: 800;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--primary-dark);
+}
+
+.navbar-sticky .nav-link {
+    font-weight: 600;
+    color: var(--text-dark);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.navbar-sticky .nav-link:hover,
+.navbar-sticky .nav-link.active {
+    color: var(--primary);
+    background-color: rgba(45, 106, 79, 0.06);
+}
+
+/* --- Botones Premium con Hover Glow & Scale --- */
+.btn-ingresar {
+    background-color: transparent;
+    color: var(--primary) !important;
+    border: 2px solid var(--primary);
+    border-radius: 30px;
+    font-weight: 700;
+    padding: 0.5rem 1.5rem;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-ingresar:hover {
+    background-color: var(--primary);
+    color: var(--bg-white) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(45, 106, 79, 0.3), var(--shadow-sm);
+}
+
+.btn-crear-cuenta-premium {
+    background-color: var(--primary);
+    color: var(--bg-white) !important;
+    font-weight: 700;
+    border: 2px solid var(--primary);
+    border-radius: 30px;
+    padding: 0.5rem 1.5rem;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-crear-cuenta-premium:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(45, 106, 79, 0.4), var(--shadow-lg);
+}
+
+/* Ripple effect classes for click interactions */
+.ripple-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple-btn::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease-out, height 0.6s ease-out;
+}
+
+.ripple-btn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* --- Hero Section --- */
+.hero-section {
+    padding: 13rem 0 9rem 0;
+    background: linear-gradient(135deg, rgba(82, 183, 136, 0.08) 0%, rgba(247, 176, 50, 0.04) 100%), var(--bg-white);
+    position: relative;
+    overflow: hidden;
+}
+
+/* FONDO DINÁMICO HERO (Glow Blobs & Partículas) */
+.hero-bg-blobs {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    z-index: 1;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.glow-blob {
+    position: absolute;
+    background: radial-gradient(circle, rgba(82, 183, 136, 0.2) 0%, rgba(247, 176, 50, 0.04) 50%, rgba(255, 255, 255, 0) 70%);
+    border-radius: 50%;
+    filter: blur(80px);
+    animation: move-blob 22s infinite alternate ease-in-out;
+    will-change: transform;
+}
+
+.glow-blob-1 {
+    width: 450px;
+    height: 450px;
+    top: -120px;
+    left: -100px;
+}
+
+.glow-blob-2 {
+    width: 550px;
+    height: 550px;
+    bottom: -150px;
+    right: -100px;
+    animation-duration: 28s;
+    animation-delay: -6s;
+}
+
+@keyframes move-blob {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(100px, 60px) scale(1.15); }
+}
+
+/* DECORATIVAS VET MASCOTAS FLOTANTES SVG */
+.floating-svg-pet {
+    position: absolute;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.12;
+    fill: var(--primary);
+    will-change: transform;
+}
+
+.float-dog {
+    width: 70px;
+    height: 70px;
+    top: 22%;
+    left: 8%;
+    animation: float-dog-anim 8s ease-in-out infinite alternate;
+}
+
+.float-cat {
+    width: 65px;
+    height: 65px;
+    top: 68%;
+    left: 10%;
+    animation: float-cat-anim 9s ease-in-out infinite alternate;
+}
+
+.float-rabbit {
+    width: 60px;
+    height: 60px;
+    top: 18%;
+    right: 18%;
+    animation: float-rabbit-anim 10s ease-in-out infinite alternate;
+}
+
+.float-bird {
+    width: 55px;
+    height: 55px;
+    top: 58%;
+    right: 8%;
+    animation: float-bird-anim 7s ease-in-out infinite alternate;
+}
+
+@keyframes float-dog-anim {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-25px) rotate(8deg); }
+}
+
+@keyframes float-cat-anim {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-20px) rotate(-10deg); }
+}
+
+@keyframes float-rabbit-anim {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-18px) rotate(6deg); }
+}
+
+@keyframes float-bird-anim {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-22px) rotate(-8deg); }
+}
+
+/* HUELLAS FLOTANTES DECORATIVAS DE FONDO GENERAL */
+.floating-paw {
+    position: absolute;
+    color: rgba(82, 183, 136, 0.08);
+    font-size: 3rem;
+    pointer-events: none;
+    z-index: 1;
+    animation: float-paw 8s ease-in-out infinite alternate;
+    will-change: transform;
+}
+
+@keyframes float-paw {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-30px) rotate(20deg); }
+}
+
+/* TYPING ANIMATION STYLING */
+.typed-cursor {
+    animation: blink-cursor 0.8s infinite;
+    color: var(--secondary);
+    font-weight: 300;
+    margin-left: 5px;
+}
+
+@keyframes blink-cursor {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.hero-title {
+    font-size: 3.8rem;
+    line-height: 1.15;
+    margin-bottom: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    z-index: 3;
+    position: relative;
+}
+
+.hero-title span {
+    color: var(--primary);
+    position: relative;
+    display: inline-block;
+}
+
+.hero-subtitle {
+    font-size: 1.3rem;
+    color: var(--text-muted);
+    margin-bottom: 2.5rem;
+    font-weight: 400;
+    z-index: 3;
+    position: relative;
+}
+
+.hero-img-container {
+    position: relative;
+    z-index: 3;
+}
+
+.hero-img {
+    width: 100%;
+    border-radius: 32px;
+    box-shadow: var(--shadow-lg);
+    object-fit: cover;
+    border: 8px solid rgba(255, 255, 255, 0.5);
+}
+
+.hero-badge {
+    position: absolute;
+    bottom: 30px;
+    left: -20px;
+    background: var(--bg-white);
+    padding: 1.25rem 1.75rem;
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: floating-badge 4s ease-in-out infinite;
+}
+
+@keyframes floating-badge {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-12px); }
+    100% { transform: translateY(0px); }
+}
+
+/* --- Cards de Servicios (Elevación, Cambio de Borde y Sombra Premium) --- */
+.service-card {
+    background: var(--bg-white);
+    border: 2px solid transparent;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 300ms cubic-bezier(0.165, 0.84, 0.44, 1);
+    height: 100%;
+    position: relative;
+}
+
+.service-card:hover {
+    transform: translateY(-12px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+}
+
+.service-img-wrapper {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+}
+
+.service-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.service-card:hover img {
+    transform: scale(1.1);
+}
+
+.service-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: var(--secondary);
+    color: var(--primary-dark);
+    font-weight: 800;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 30px;
+    box-shadow: var(--shadow-sm);
+}
+
+.service-body {
+    padding: 1.75rem;
+}
+
+.service-card-title {
+    font-size: 1.35rem;
+    margin-bottom: 0.75rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+}
+
+/* --- Valores (Nosotros) --- */
+.about-section {
+    padding: 8rem 0;
+    background-color: var(--bg-white);
+}
+
+.about-card {
+    background: var(--bg-light);
+    border-radius: 24px;
+    padding: 2.5rem;
+    height: 100%;
+    border-left: 6px solid var(--primary);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition);
+    text-align: center;
+}
+
+.about-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-md);
+    background: var(--bg-white);
+}
+
+.value-icon-circle {
+    width: 70px;
+    height: 70px;
+    background: rgba(45, 106, 79, 0.08);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: var(--primary);
+    margin: 0 auto 1.5rem auto;
+    transition: var(--transition);
+}
+
+/* MICROANIMACIONES EN ICONOS (Escala 1.0 -> 1.15) */
+.about-card:hover .value-icon-circle {
+    background: var(--primary);
+    color: var(--bg-white);
+    transform: scale(1.15) rotate(360deg);
+}
+
+/* --- Especialidades --- */
+.card-hover-style {
+    border: 2px solid transparent !important;
+}
+
+.card-hover-style:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-light) !important;
+    background-color: var(--bg-white) !important;
+}
+
+/* --- Sección Estadísticas --- */
+.stats-section {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, #112d21 100%);
+    color: var(--bg-white);
+    padding: 6rem 0;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.stat-item {
+    padding: 1rem;
+}
+
+.stat-number {
+    font-size: 4rem;
+    font-weight: 800;
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+    line-height: 1;
+    font-family: 'Inter', sans-serif;
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+/* --- Promociones Carrusel --- */
+.promo-section {
+    background-color: var(--primary-dark);
+    color: var(--bg-white);
+    padding: 7rem 0;
+}
+
+.promo-section .section-title {
+    color: var(--bg-white);
+}
+
+.promo-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 32px;
+    overflow: hidden;
+    padding: 4rem 3rem;
+}
+
+.promo-discount {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--secondary);
+    line-height: 1;
+    margin-bottom: 1rem;
+}
+
+.promo-img {
+    border-radius: 24px;
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    box-shadow: var(--shadow-lg);
+    border: 6px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- Testimonios --- */
+.testimonial-section {
+    padding: 8rem 0;
+}
+
+.testimonial-card {
+    background: var(--bg-white);
+    border-radius: 32px;
+    padding: 3.5rem;
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+    border: 1px solid rgba(0, 0, 0, 0.02);
+}
+
+.testimonial-quote {
+    font-size: 1.35rem;
+    font-style: italic;
+    color: var(--text-dark);
+    margin-bottom: 2.5rem;
+    font-weight: 500;
+}
+
+.testimonial-user {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+}
+
+.testimonial-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--secondary);
+    box-shadow: var(--shadow-sm);
+}
+
+/* --- Blog --- */
+.blog-section {
+    padding: 8rem 0;
+    background-color: var(--bg-white);
+}
+
+.blog-card {
+    border: none;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    background: var(--bg-light);
+    height: 100%;
+    transition: var(--transition);
+}
+
+.blog-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+.blog-img-wrapper {
+    height: 220px;
+    overflow: hidden;
+}
+
+.blog-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+}
+
+.blog-card:hover img {
+    transform: scale(1.08);
+}
+
+.blog-body {
+    padding: 1.75rem;
+}
+
+.blog-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.blog-title {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+/* --- Galería Masonry ("Nuestras Mascotas Felices") --- */
+.gallery-section {
+    padding: 8rem 0;
+    background-color: var(--bg-light);
+}
+
+.masonry-gallery {
+    column-count: 4;
+    column-gap: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+    .masonry-gallery {
+        column-count: 3;
+    }
+}
+
+@media (max-width: 768px) {
+    .masonry-gallery {
+        column-count: 2;
+    }
+}
+
+@media (max-width: 480px) {
+    .masonry-gallery {
+        column-count: 1;
+    }
+}
+
+.gallery-item {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    background: var(--bg-white);
+    transition: var(--transition);
+    cursor: pointer;
+    border: 4px solid var(--bg-white);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: var(--transition);
+}
+
+.gallery-item:hover {
+    transform: scale(1.04);
+    box-shadow: var(--shadow-lg);
+}
+
+.gallery-item:hover img {
+    transform: scale(1.06);
+}
+
+.gallery-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(45, 106, 79, 0.88);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: #fff;
+    opacity: 0;
+    transition: var(--transition);
+    padding: 1rem;
+    text-align: center;
+}
+
+.gallery-item:hover .gallery-overlay {
+    opacity: 1;
+}
+
+.gallery-overlay i {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    color: var(--secondary);
+    transform: translateY(15px);
+    transition: var(--transition);
+}
+
+.gallery-item:hover .gallery-overlay i {
+    transform: translateY(0);
+}
+
+/* --- FAQ --- */
+.faq-section {
+    padding: 8rem 0;
+}
+
+.faq-accordion .accordion-item {
+    border: none;
+    background: var(--bg-white);
+    border-radius: 16px;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.faq-accordion .accordion-item:hover {
+    box-shadow: var(--shadow-md);
+}
+
+.faq-accordion .accordion-button {
+    font-weight: 700;
+    color: var(--primary-dark);
+    padding: 1.5rem;
+    font-size: 1.1rem;
+}
+
+.faq-accordion .accordion-button:not(.collapsed) {
+    background-color: rgba(82, 183, 136, 0.08);
+    color: var(--primary-dark);
+}
+
+/* --- Contacto & Mapa Google Completo --- */
+.contact-section {
+    padding: 8rem 0;
+    background-color: var(--bg-white);
+}
+
+.contact-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.contact-icon {
+    font-size: 1.6rem;
+    color: var(--primary);
+    background: rgba(45, 106, 79, 0.08);
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+
+.contact-info-item:hover .contact-icon {
+    background: var(--primary);
+    color: var(--bg-white);
+    transform: scale(1.1);
+}
+
+.contact-form-card {
+    background: var(--bg-light);
+    border-radius: 28px;
+    padding: 3rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(0, 0, 0, 0.01);
+}
+
+.map-full-container {
+    width: 100%;
+    height: 450px;
+    margin-top: 5rem;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    border: 4px solid var(--bg-white);
+}
+
+/* --- Footer Premium con Waves & Huellas --- */
+.footer-public {
+    background: linear-gradient(180deg, hsl(154, 42%, 19%) 0%, hsl(150, 45%, 9%) 100%);
+    color: rgba(255, 255, 255, 0.75);
+    padding: 8rem 0 2rem 0;
+    position: relative;
+    border-top: none;
+}
+
+/* ONDAS WAVY SVGS DE SEPARACIÓN EN FOOTER */
+.footer-waves-container {
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+    transform: rotate(180deg);
+}
+
+.footer-waves-container svg {
+    position: relative;
+    display: block;
+    width: calc(100% + 1.3px);
+    height: 60px;
+}
+
+.footer-waves-container .shape-fill {
+    fill: var(--primary-dark);
+}
+
+.footer-public h5 {
+    color: var(--bg-white);
+    font-weight: 800;
+    margin-bottom: 1.75rem;
+    font-size: 1.2rem;
+}
+
+.footer-public a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.footer-public a:hover {
+    color: var(--secondary);
+    padding-left: 6px;
+}
+
+.footer-socials {
+    display: flex;
+    gap: 1rem;
+}
+
+.footer-social-icon {
+    width: 44px;
+    height: 44px;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg-white);
+    transition: var(--transition);
+}
+
+.footer-social-icon:hover {
+    background-color: var(--secondary);
+    color: var(--primary-dark);
+    transform: translateY(-4px) scale(1.05);
+}
+
+/* --- Botón Flotante WhatsApp Premium (Rebote y Brillo) --- */
+.floating-whatsapp-wrapper {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 999;
+}
+
+.floating-whatsapp-premium {
+    animation: whatsapp-bounce 10s infinite;
+}
+
+.floating-whatsapp {
+    background-color: var(--whatsapp);
+    color: var(--bg-white);
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.45);
+    font-size: 2.2rem;
+    transition: var(--transition);
+    text-decoration: none;
+    overflow: hidden;
+    position: relative;
+    animation: pulse-whatsapp 2s infinite;
+}
+
+.floating-whatsapp:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 30px rgba(37, 211, 102, 0.6);
+    color: var(--bg-white);
+}
+
+@keyframes whatsapp-bounce {
+    0%, 80%, 100% { transform: scale(1) rotate(0); }
+    82%, 86% { transform: scale(1.15) rotate(-8deg); }
+    84%, 88% { transform: scale(1.15) rotate(8deg); }
+    90% { transform: scale(1) rotate(0); }
+}
+
+/* EFECTO BRILLO/SHINE EN WHATSAPP */
+.floating-whatsapp::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 30%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.35);
+    transform: rotate(35deg);
+    transition: none;
+    animation: shine-effect 4s infinite ease-in-out;
+}
+
+@keyframes shine-effect {
+    0% { left: -60%; }
+    15%, 100% { left: 130%; }
+}
+
+@keyframes pulse-whatsapp {
+    0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6); }
+    70% { box-shadow: 0 0 0 20px rgba(37, 211, 102, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
+/* TOOLTIP PREMIUM "¿NECESITAS AYUDA?" */
+.floating-whatsapp-wrapper::before {
+    content: "¿Necesitas ayuda?";
+    position: absolute;
+    right: 80px;
+    top: 50%;
+    transform: translateY(-50%) translateX(10px);
+    background-color: rgba(27, 67, 50, 0.95);
+    color: #fff;
+    padding: 0.6rem 1.1rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.floating-whatsapp-wrapper:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(-50%) translateX(0);
+}
+
+/* Botón WhatsApp en Promociones */
+.btn-whatsapp-header {
+    background-color: var(--whatsapp);
+    border: 2px solid var(--whatsapp);
+    font-weight: 700;
+    border-radius: 30px;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-whatsapp-header:hover {
+    background-color: var(--whatsapp-dark);
+    border-color: var(--whatsapp-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(37, 211, 102, 0.4), var(--shadow-sm);
+}
+
+/* --- CURSOR PERSONALIZADO (HUELLAS TEMPORALES EN DESKTOP) --- */
+.cursor-pawprint {
+    position: absolute;
+    pointer-events: none;
+    color: rgba(82, 183, 136, 0.25);
+    font-size: 1.1rem;
+    z-index: 10000;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    will-change: transform, opacity;
+}
+
+/* --- MASCOTA GUIA FIJA (Esquina Inferior Izquierda) --- */
+.guiding-pet {
+    position: fixed;
+    bottom: -5px;
+    left: 20px;
+    width: 100px;
+    height: 100px;
+    z-index: 998;
+    pointer-events: none;
+    opacity: 0.95;
+    transition: var(--transition);
+    transform-origin: bottom center;
+}
+
+/* Parpadeo y movimiento de cola de mascota guía */
+.pet-tail {
+    animation: wag-tail 1.5s ease-in-out infinite alternate;
+    transform-origin: 20px 80px;
+}
+
+.pet-eye {
+    animation: blink-eye 4.5s infinite;
+    transform-origin: center;
+}
+
+@keyframes wag-tail {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(20deg); }
+}
+
+@keyframes blink-eye {
+    0%, 90%, 100% { transform: scaleY(1); }
+    95% { transform: scaleY(0.1); }
+}
+
+@media (max-width: 991px) {
+    .guiding-pet {
+        display: none !important; /* Ocultar en móviles y tablets */
+    }
+}

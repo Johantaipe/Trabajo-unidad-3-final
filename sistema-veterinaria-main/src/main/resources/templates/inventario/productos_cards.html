@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head(${categoriaNombre})}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-tag-fill me-2" style="color: var(--primary);"></i>
+                    Catálogo de <span th:text="${categoriaNombre}">Categoría</span>
+                </h1>
+                <div class="action-buttons">
+                    <a th:href="@{/inventario}" class="btn btn-secondary-custom">
+                        <i class="bi bi-arrow-left"></i> Volver a Inventario
+                    </a>
+                </div>
+            </div>
+
+            <!-- Species Filter Pills (Only visible under Alimentos) -->
+            <div th:if="${categoriaNombre == 'Alimentos'}" class="mb-4">
+                <div class="d-flex gap-2">
+                    <a th:href="@{/inventario/alimentos(especie='TODOS')}" class="btn btn-sm btn-outline-secondary" th:classappend="${especieSeleccionada == null || especieSeleccionada == 'TODOS'} ? 'active'">Todos</a>
+                    <a th:href="@{/inventario/alimentos(especie='PERRO')}" class="btn btn-sm btn-outline-secondary" th:classappend="${especieSeleccionada == 'PERRO'} ? 'active'">🐶 Perros</a>
+                    <a th:href="@{/inventario/alimentos(especie='GATO')}" class="btn btn-sm btn-outline-secondary" th:classappend="${especieSeleccionada == 'GATO'} ? 'active'">🐱 Gatos</a>
+                    <a th:href="@{/inventario/alimentos(especie='CONEJO')}" class="btn btn-sm btn-outline-secondary" th:classappend="${especieSeleccionada == 'CONEJO'} ? 'active'">🐰 Conejos</a>
+                    <a th:href="@{/inventario/alimentos(especie='AVE')}" class="btn btn-sm btn-outline-secondary" th:classappend="${especieSeleccionada == 'AVE'} ? 'active'">🦜 Aves</a>
+                    <a th:href="@{/inventario/alimentos(especie='HAMSTER')}" class="btn btn-sm btn-outline-secondary" th:classappend="${especieSeleccionada == 'HAMSTER'} ? 'active'">🐹 Hámsteres</a>
+                </div>
+            </div>
+
+            <!-- Search field -->
+            <div class="card-custom mb-4">
+                <div class="card-body-custom py-3 px-4">
+                    <form method="get" class="row align-items-end g-2">
+                        <div class="col-md-9">
+                            <label class="form-label-custom">Buscador Inteligente (Código, Nombre, Proveedor, Lote, Laboratorio)</label>
+                            <input type="text" name="query" th:value="${query}" class="form-control form-control-custom" placeholder="Buscar producto en esta categoría...">
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary-custom w-100 py-2">
+                                <i class="bi bi-search me-1"></i> Buscar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Cards Grid Layout -->
+            <div class="row g-4" th:if="${!lista.isEmpty()}">
+                <div class="col-md-6 col-lg-4" th:each="p : ${lista}">
+                    <div class="card-custom bg-white d-flex flex-column h-100">
+                        
+                        <!-- Image representation -->
+                        <div class="product-image-wrapper bg-light text-center py-4 border-bottom position-relative">
+                            <img th:if="${p.fotoUrl != null}" th:src="${p.fotoUrl}" alt="Foto Producto" style="max-height: 140px; object-fit: contain;">
+                            <i th:if="${p.fotoUrl == null}" class="bi bi-box-seam d-block fs-1 text-muted py-4"></i>
+                            
+                            <!-- Badges -->
+                            <div class="position-absolute top-0 end-0 m-2">
+                                <span th:if="${p.stock <= 3}" class="badge bg-danger">STOCK CRÍTICO</span>
+                                <span th:if="${p.stock > 3 && p.stock <= p.stockMinimo}" class="badge bg-warning text-dark">STOCK BAJO</span>
+                            </div>
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="card-body-custom p-3 flex-grow-1">
+                            <h5 class="fw-bold mb-1 text-dark" th:text="${p.nombre}">Nombre</h5>
+                            <span class="text-muted small d-block mb-3" th:text="${'Código: ' + p.codigoProducto}">PROD-000</span>
+                            
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <span class="text-muted d-block small">Precio Venta:</span>
+                                    <strong class="text-primary font-monospace" th:text="${'S/ ' + p.precioVenta}">S/ 0.00</strong>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <span class="text-muted d-block small">Stock Disponible:</span>
+                                    <strong class="text-dark font-monospace" th:text="${p.stock}">0</strong>
+                                </div>
+                            </div>
+
+                            <ul class="list-group list-group-flush small mb-3">
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span>Laboratorio:</span>
+                                    <span th:text="${p.laboratorio != null ? p.laboratorio : '-'}">Zoetis</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span>Lote / Vence:</span>
+                                    <span class="font-monospace" th:text="${(p.lote != null ? p.lote : '-') + ' / ' + (p.fechaVencimiento != null ? p.fechaVencimiento : '-')}">-</span>
+                                </li>
+                            </ul>
+
+                            <div class="divider my-2"></div>
+
+                            <!-- Actions -->
+                            <div class="d-flex justify-content-between gap-1 flex-wrap mt-auto">
+                                <a th:href="@{/inventario/ficha/{id}(id=${p.id})}" class="btn btn-secondary-custom btn-sm flex-fill">
+                                    <i class="bi bi-eye"></i> Ficha
+                                </a>
+                                <button type="button" class="btn btn-warning-custom btn-sm flex-fill" data-bs-toggle="modal" th:data-bs-target="${'#modalAbastecer-' + p.id}">
+                                    <i class="bi bi-plus-circle"></i> Stock
+                                </button>
+                                <button type="button" class="btn btn-success-custom btn-sm flex-fill" data-bs-toggle="modal" th:data-bs-target="${'#modalVender-' + p.id}">
+                                    <i class="bi bi-cart"></i> Vender
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal: Reabastecer Stock -->
+                    <div class="modal fade" th:id="${'modalAbastecer-' + p.id}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form th:action="@{/inventario/reabastecer/{id}(id=${p.id})}" method="post">
+                                    <div class="modal-header bg-warning text-dark">
+                                        <h5 class="modal-title fw-bold">Agregar Stock de Reabastecimiento</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p th:text="${'Producto: ' + p.nombre}"></p>
+                                        <div class="mb-3">
+                                            <label class="form-label-custom">Cantidad a ingresar</label>
+                                            <input type="number" name="cantidad" class="form-control form-control-custom" min="1" required />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label-custom">Costo Unitario de Compra (Opcional, S/)</label>
+                                            <input type="number" step="0.01" name="precioCompra" class="form-control form-control-custom" th:value="${p.precioCompra}" />
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        <button type="submit" class="btn btn-primary-custom">Aceptar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal: Vender Directo -->
+                    <div class="modal fade" th:id="${'modalVender-' + p.id}" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form th:action="@{/inventario/vender-directo}" method="post">
+                                    <input type="hidden" name="productId" th:value="${p.id}" />
+                                    <div class="modal-header bg-success text-white">
+                                        <h5 class="modal-title fw-bold">Venta Directa de Producto</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p th:text="${'Producto: ' + p.nombre}"></p>
+                                        <div class="mb-3">
+                                            <label class="form-label-custom">Propietario / Cliente</label>
+                                            <select name="propietarioId" class="form-control form-control-custom" required>
+                                                <option value="">Seleccione cliente...</option>
+                                                <option th:each="prop : ${propietarios}" th:value="${prop.id}" th:text="${prop.nombre + ' ' + prop.apellido + ' (DNI: ' + prop.dni + ')'}"></option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label-custom">Cantidad a vender</label>
+                                            <input type="number" name="cantidad" class="form-control form-control-custom" min="1" th:max="${p.stock}" required />
+                                            <small class="text-muted" th:text="${'Stock máximo disponible: ' + p.stock}"></small>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        <button type="submit" class="btn btn-success-custom">Registrar Venta</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Empty state -->
+            <div th:if="${lista.isEmpty()}" class="empty-state">
+                <i class="bi bi-tag-fill d-block fs-3 text-muted mb-2"></i>
+                <h5>No hay productos en esta categoría</h5>
+                <p>Abra el formulario de registro para agregar el primer producto.</p>
+                <a th:href="@{/inventario/nuevo}" class="btn btn-primary-custom mt-3">
+                    <i class="bi bi-plus-circle me-1"></i> Registrar Producto
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

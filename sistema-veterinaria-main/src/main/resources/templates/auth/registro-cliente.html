@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cuenta - VET EXPERTS</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Custom Public CSS -->
+    <link th:href="@{/css/public.css}" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, rgba(82, 183, 136, 0.08) 0%, rgba(247, 176, 50, 0.04) 100%), #f4f7f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        .register-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 32px;
+            box-shadow: var(--shadow-lg);
+            padding: 3rem;
+            max-width: 650px;
+            width: 100%;
+        }
+        .form-control, .form-select {
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+        }
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.2);
+            border-color: var(--primary-light);
+        }
+        .btn-primary-custom {
+            background-color: var(--primary);
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem;
+            font-weight: 700;
+            color: white;
+            transition: var(--transition);
+            width: 100%;
+        }
+        .btn-primary-custom:hover:not(:disabled) {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(45, 106, 79, 0.3);
+        }
+        .btn-primary-custom:disabled {
+            background-color: #a3b899;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .requirement-item {
+            font-size: 0.8rem;
+            color: #dc3545;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .requirement-item.met {
+            color: #198754;
+        }
+        .requirement-item i {
+            font-size: 0.9rem;
+        }
+        .password-container {
+            position: relative;
+        }
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--text-muted);
+            z-index: 10;
+        }
+        .status-badge {
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="register-card">
+        <div class="text-center mb-4">
+            <a th:href="@{/}">
+                <img th:src="@{/img/logo.png}" alt="Logo" style="height: 50px;" class="mb-2">
+            </a>
+            <h3 class="fw-extrabold text-dark">Crear Cuenta</h3>
+            <p class="text-muted">Únete a Vet Experts y gestiona la salud de tus mascotas fácilmente</p>
+        </div>
+
+        <!-- Alertas de error generales -->
+        <div th:if="${mensajeError}" class="alert alert-danger alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <span th:text="${mensajeError}">Error</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <!-- Indicator of Steps -->
+        <div class="d-flex justify-content-between align-items-center mb-4 px-2">
+            <div class="text-center" style="width: 80px;">
+                <span class="badge rounded-circle bg-success p-2 px-3 fw-bold fs-6" id="badge-step1">1</span>
+                <div class="small fw-bold text-success mt-1" style="font-size: 0.75rem;">Datos</div>
+            </div>
+            <div class="flex-grow-1 border-top mx-2 mb-3 border-success-subtle" style="border-width: 2px !important;" id="line-step"></div>
+            <div class="text-center" style="width: 80px;">
+                <span class="badge rounded-circle bg-secondary p-2 px-3 fw-bold fs-6" id="badge-step2">2</span>
+                <div class="small fw-semibold text-muted mt-1" style="font-size: 0.75rem;" id="label-step2">Verificación</div>
+            </div>
+        </div>
+
+        <form th:action="@{/registro-cliente}" method="POST" id="registerForm">
+            <!-- STEP 1: DATOS PERSONALES -->
+            <div id="step-personal">
+                <div class="row">
+                    <!-- Nombres -->
+                    <div class="col-md-4 mb-3">
+                        <label for="nombre" class="form-label fw-semibold">Nombres</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" th:value="${nombre}" placeholder="Nombres" required>
+                        <div class="text-danger small mt-1" th:if="${errorNombre}" th:text="${errorNombre}"></div>
+                    </div>
+
+                    <!-- Apellido Paterno -->
+                    <div class="col-md-4 mb-3">
+                        <label for="apellidoPaterno" class="form-label fw-semibold">Apellido Paterno</label>
+                        <input type="text" class="form-control" id="apellidoPaterno" name="apellidoPaterno" th:value="${apellidoPaterno}" placeholder="Paterno" required>
+                        <div class="text-danger small mt-1" th:if="${errorApellidoPaterno}" th:text="${errorApellidoPaterno}"></div>
+                    </div>
+
+                    <!-- Apellido Materno -->
+                    <div class="col-md-4 mb-3">
+                        <label for="apellidoMaterno" class="form-label fw-semibold">Apellido Materno</label>
+                        <input type="text" class="form-control" id="apellidoMaterno" name="apellidoMaterno" th:value="${apellidoMaterno}" placeholder="Materno" required>
+                        <div class="text-danger small mt-1" th:if="${errorApellidoMaterno}" th:text="${errorApellidoMaterno}"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- DNI (Opcional) -->
+                    <div class="col-md-4 mb-3">
+                        <label for="dni" class="form-label fw-semibold">DNI <span class="text-muted fw-normal">(Opcional)</span></label>
+                        <input type="text" class="form-control" id="dni" name="dni" th:value="${dni}" maxlength="8" placeholder="8 dígitos">
+                        <div class="text-danger small mt-1" th:if="${errorDni}" th:text="${errorDni}"></div>
+                    </div>
+
+                    <!-- Dirección -->
+                    <div class="col-md-8 mb-3">
+                        <label for="direccion" class="form-label fw-semibold">Dirección / Domicilio <span class="text-muted fw-normal">(Opcional)</span></label>
+                        <input type="text" class="form-control" id="direccion" name="direccion" th:value="${direccion}" placeholder="Av. Principal #123">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Teléfono (Opcional) -->
+                    <div class="col-md-6 mb-3">
+                        <label for="telefono" class="form-label fw-semibold">Teléfono / WhatsApp <span class="text-muted fw-normal">(Opcional)</span></label>
+                        <input type="tel" class="form-control" id="telefono" name="telefono" th:value="${telefono}" maxlength="9" placeholder="9XXXXXXXX">
+                        <div class="text-danger small mt-1" id="phoneError" style="display: none;">El teléfono debe iniciar con 9 y tener exactamente 9 dígitos</div>
+                        <div class="text-danger small mt-1" th:if="${errorTelefono}" th:text="${errorTelefono}"></div>
+                    </div>
+
+                    <!-- Distrito Selector Junín -->
+                    <div class="col-md-6 mb-3">
+                        <label for="distritoSelect" class="form-label fw-semibold">Distrito (Junín)</label>
+                        <select class="form-select" id="distritoSelect" required>
+                            <option value="" disabled selected>Seleccione distrito...</option>
+                            <option value="Huancayo">Huancayo</option>
+                            <option value="Chilca">Chilca</option>
+                            <option value="El Tambo">El Tambo</option>
+                            <option value="Pilcomayo">Pilcomayo</option>
+                            <option value="Sapallanga">Sapallanga</option>
+                            <option value="Huancán">Huancán</option>
+                            <option value="San Agustín de Cajas">San Agustín de Cajas</option>
+                            <option value="Sicaya">Sicaya</option>
+                            <option value="Otros">Otros</option>
+                        </select>
+                        <input type="hidden" id="distrito" name="distrito" th:value="${distrito}">
+                        
+                        <div id="otroDistritoContainer" class="mt-2" style="display: none;">
+                            <label for="otroDistritoInput" class="form-label small fw-semibold text-muted">Especifique Distrito</label>
+                            <input type="text" class="form-control" id="otroDistritoInput" placeholder="Nombre de distrito">
+                        </div>
+                        <div class="text-danger small mt-1" th:if="${errorDistrito}" th:text="${errorDistrito}"></div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Contraseña -->
+                    <div class="col-md-6 mb-3">
+                        <label for="password" class="form-label fw-semibold">Contraseña</label>
+                        <div class="password-container">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Mínimo 8 caracteres" required style="padding-right: 2.5rem;">
+                            <i class="bi bi-eye password-toggle" id="togglePassword"></i>
+                        </div>
+                        <div class="text-danger small mt-1" th:if="${errorPassword}" th:text="${errorPassword}"></div>
+
+                        <!-- Barra de Fortaleza Dinámica -->
+                        <div class="d-flex justify-content-between align-items-center mt-2 mb-1">
+                            <span class="small text-muted fw-semibold">Fortaleza:</span>
+                            <span id="passwordStrengthLabel" class="small fw-bold text-danger">Débil</span>
+                        </div>
+                        <div class="progress mb-2" style="height: 6px; border-radius: 3px; background-color: rgba(0,0,0,0.05);">
+                            <div id="passwordStrengthBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+
+                        <!-- Contenedor de reglas de contraseña -->
+                        <div class="p-2 bg-light rounded-3" style="border: 1px dashed rgba(0,0,0,0.08);">
+                            <div class="requirement-item" id="req-length"><i class="bi bi-x-circle-fill"></i> Mínimo 8 caracteres</div>
+                            <div class="requirement-item" id="req-upper"><i class="bi bi-x-circle-fill"></i> Una letra mayúscula</div>
+                            <div class="requirement-item" id="req-number"><i class="bi bi-x-circle-fill"></i> Un número</div>
+                            <div class="requirement-item" id="req-special"><i class="bi bi-x-circle-fill"></i> Un carácter especial (@$!%*?&._-)</div>
+                        </div>
+                    </div>
+
+                    <!-- Confirmar contraseña -->
+                    <div class="col-md-6 mb-3">
+                        <label for="confirmPassword" class="form-label fw-semibold">Confirmar Contraseña</label>
+                        <div class="password-container">
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Repita contraseña" required style="padding-right: 2.5rem;">
+                            <i class="bi bi-eye password-toggle" id="toggleConfirmPassword"></i>
+                        </div>
+                        <div class="text-danger small mt-1" th:if="${errorConfirmPassword}" th:text="${errorConfirmPassword}"></div>
+                        <div class="text-danger small mt-1" id="confirmError" style="display: none;">Las contraseñas no coinciden</div>
+                        <div class="text-success small mt-1" id="confirmSuccess" style="display: none;"><i class="bi bi-check-circle-fill"></i> Las contraseñas coinciden</div>
+                    </div>
+                </div>
+
+                <!-- Checkbox Términos y Privacidad (CORRECCIÓN 2) -->
+                <div class="mb-4 form-check text-start">
+                    <input type="checkbox" class="form-check-input" id="aceptoTerminos" name="aceptoTerminos" th:checked="${aceptoTerminos}" required>
+                    <label class="form-check-label text-muted small fw-semibold" for="aceptoTerminos">
+                        He leído y acepto los <a th:href="@{/terminos-de-uso}" target="_blank" class="text-success fw-bold text-decoration-none">Términos de Uso</a> y la <a th:href="@{/politica-privacidad}" target="_blank" class="text-success fw-bold text-decoration-none">Política de Privacidad</a>
+                    </label>
+                    <div class="text-danger small mt-1" id="termsError" style="display: none;">Debe aceptar los términos y políticas para continuar.</div>
+                    <div class="text-danger small mt-1" th:if="${errorAceptoTerminos}" th:text="${errorAceptoTerminos}"></div>
+                </div>
+
+                <button type="button" class="btn btn-primary-custom ripple-btn mt-2" id="btnGoToStep2" disabled>Continuar a Verificación</button>
+            </div>
+
+            <!-- STEP 2: VERIFICACIÓN EMAIL -->
+            <div id="step-verification" style="display: none;">
+                <div class="text-start mb-4">
+                    <h5 class="fw-bold text-dark"><i class="bi bi-envelope-check-fill text-success me-2"></i>Verificación de Correo</h5>
+                    <p class="text-muted small">Por seguridad, requerimos validar que posees acceso al correo que estás registrando. Ingresa tu correo a continuación:</p>
+                </div>
+
+                <!-- Correo -->
+                <div class="mb-3">
+                    <label for="email" class="form-label fw-semibold">Correo Electrónico</label>
+                    <div class="input-group">
+                        <input type="email" class="form-control" id="email" name="email" th:value="${email}" placeholder="correo@ejemplo.com" required style="border-top-left-radius: 12px; border-bottom-left-radius: 12px;">
+                        <button class="btn btn-outline-success" type="button" id="btnSendEmailOtp" style="border-top-right-radius: 12px; border-bottom-right-radius: 12px; font-weight: 600;">Validar Correo</button>
+                    </div>
+                    <div class="text-danger small mt-1" id="emailFormatError" style="display: none;">Ingrese un correo electrónico válido</div>
+                    <div class="text-danger small mt-1" th:if="${errorEmail}" th:text="${errorEmail}"></div>
+                    
+                    <!-- Mensaje de Estado OTP (Siempre visible afuera) -->
+                    <div id="emailOtpStatusMessage" class="small mt-1 fw-semibold" style="display: none;"></div>
+
+                    <!-- Área OTP Correo -->
+                    <div id="emailOtpArea" class="mt-3 p-3 rounded-3" style="display: none; background-color: rgba(82, 183, 136, 0.05); border: 1px solid rgba(82, 183, 136, 0.15);">
+                        <div id="devModeBadge" class="alert alert-warning py-1 px-2 mb-2 small fw-bold text-center" style="display: none; border-radius: 8px; font-size: 0.8rem;"></div>
+                        <label class="form-label small fw-semibold text-success mb-1">Código de verificación enviado al correo</label>
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control" id="emailOtp" placeholder="6 dígitos" maxlength="6" style="border-top-left-radius: 8px; border-bottom-left-radius: 8px;">
+                            <button class="btn btn-success" type="button" id="btnVerifyEmailOtp" style="border-top-right-radius: 8px; border-bottom-right-radius: 8px; font-weight: 600;">Verificar</button>
+                        </div>
+                    </div>
+                    <div id="emailSuccessMessage" class="small mt-1 text-success fw-bold" style="display: none;"><i class="bi bi-patch-check-fill"></i> ✓ Correo verificado.</div>
+                </div>
+
+                <!-- Panel de Validaciones Visuales en Tiempo Real -->
+                <div class="mb-4 p-3 rounded-4 bg-light text-start" style="border: 1px solid rgba(0,0,0,0.05);">
+                    <div class="fw-bold text-dark mb-2" style="font-size: 0.9rem;"><i class="bi bi-shield-check me-1 text-success"></i> Requisitos de Registro</div>
+                    <div class="d-flex flex-column gap-2" style="font-size: 0.85rem;">
+                        <div id="val-email-valid" class="text-danger"><i class="bi bi-x-circle-fill"></i> Correo válido</div>
+                        <div id="val-email-verified" class="text-danger"><i class="bi bi-x-circle-fill"></i> Debe verificar su correo</div>
+                        <div id="val-password-secure" class="text-danger"><i class="bi bi-x-circle-fill"></i> Contraseña segura (Fuerte)</div>
+                        <div id="val-passwords-match" class="text-danger"><i class="bi bi-x-circle-fill"></i> Contraseñas coinciden</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary-custom ripple-btn w-100" id="submitBtn" disabled>Crear Cuenta</button>
+                <button type="button" class="btn btn-outline-secondary w-100 rounded-4 mt-2" id="btnBackToStep1" style="font-weight: 600; font-size: 0.9rem; padding: 0.6rem;"><i class="bi bi-arrow-left"></i> Volver a Datos Personales</button>
+            </div>
+        </form>
+
+        <div class="text-center mt-4">
+            <span class="text-muted small">¿Ya tienes cuenta? <a th:href="@{/login-cliente}" class="text-success fw-bold text-decoration-none">Iniciar Sesión</a></span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        // Estado de verificación
+        let emailVerified = /*[[${session.regEmailVerified != null ? session.regEmailVerified : false}]]*/ false;
+
+        const passwordInput = document.getElementById('password');
+        const confirmInput = document.getElementById('confirmPassword');
+        const confirmError = document.getElementById('confirmError');
+        const confirmSuccess = document.getElementById('confirmSuccess');
+        const form = document.getElementById('registerForm');
+
+        // Surnames and DNI
+        const pLastNameInput = document.getElementById('apellidoPaterno');
+        const mLastNameInput = document.getElementById('apellidoMaterno');
+        const dniInput = document.getElementById('dni');
+
+        // Requirement items
+        const reqLength = document.getElementById('req-length');
+        const reqUpper = document.getElementById('req-upper');
+        const reqNumber = document.getElementById('req-number');
+        const reqSpecial = document.getElementById('req-special');
+
+        // OTP inputs & buttons
+        const emailInput = document.getElementById('email');
+        const btnSendEmailOtp = document.getElementById('btnSendEmailOtp');
+        const emailOtpArea = document.getElementById('emailOtpArea');
+        const emailOtpInput = document.getElementById('emailOtp');
+        const btnVerifyEmailOtp = document.getElementById('btnVerifyEmailOtp');
+        const emailOtpStatusMessage = document.getElementById('emailOtpStatusMessage');
+        const emailSuccessMessage = document.getElementById('emailSuccessMessage');
+
+        const phoneInput = document.getElementById('telefono');
+        const phoneError = document.getElementById('phoneError');
+
+        // Distrito elements
+        const distritoSelect = document.getElementById('distritoSelect');
+        const distritoHidden = document.getElementById('distrito');
+        const otroDistritoContainer = document.getElementById('otroDistritoContainer');
+        const otroDistritoInput = document.getElementById('otroDistritoInput');
+
+        // Visual checklist elements
+        const valEmailValid = document.getElementById('val-email-valid');
+        const valEmailVerified = document.getElementById('val-email-verified');
+        const valPasswordSecure = document.getElementById('val-password-secure');
+        const valPasswordsMatch = document.getElementById('val-passwords-match');
+
+        // Wizard transition elements
+        const stepPersonal = document.getElementById('step-personal');
+        const stepVerification = document.getElementById('step-verification');
+        const btnGoToStep2 = document.getElementById('btnGoToStep2');
+        const btnBackToStep1 = document.getElementById('btnBackToStep1');
+        const aceptoTerminos = document.getElementById('aceptoTerminos');
+        const badgeStep1 = document.getElementById('badge-step1');
+        const badgeStep2 = document.getElementById('badge-step2');
+        const lineStep = document.getElementById('line-step');
+        const labelStep2 = document.getElementById('label-step2');
+
+        let countdownTimer;
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            const standardDistricts = ["Huancayo", "Chilca", "El Tambo", "Pilcomayo", "Sapallanga", "Huancán", "San Agustín de Cajas", "Sicaya"];
+            const initialDistrito = distritoHidden.value;
+            if (initialDistrito) {
+                if (standardDistricts.includes(initialDistrito)) {
+                    distritoSelect.value = initialDistrito;
+                } else {
+                    distritoSelect.value = "Otros";
+                    otroDistritoContainer.style.display = 'block';
+                    otroDistritoInput.value = initialDistrito;
+                    otroDistritoInput.required = true;
+                }
+            }
+
+            if (emailVerified) {
+                showEmailAsVerified();
+            }
+
+            updateSubmitButtonState();
+
+            // Transiciones del Wizard
+            btnGoToStep2.addEventListener('click', () => {
+                const isStep1Valid = validatePassword() && (confirmInput.value === passwordInput.value && confirmInput.value !== '') && distritoHidden.value.trim() !== '' && (document.getElementById('nombre').value.trim() !== '' && pLastNameInput.value.trim() !== '' && mLastNameInput.value.trim() !== '') && isPhoneValid() && aceptoTerminos.checked;
+                if (!isStep1Valid) {
+                    alert("Por favor rellene todos los campos obligatorios de la primera sección.");
+                    return;
+                }
+                
+                stepPersonal.style.display = 'none';
+                stepVerification.style.display = 'block';
+                
+                badgeStep2.classList.replace('bg-secondary', 'bg-success');
+                lineStep.classList.replace('border-success-subtle', 'border-success');
+                labelStep2.classList.replace('text-muted', 'text-success');
+                labelStep2.classList.replace('fw-semibold', 'fw-bold');
+            });
+
+            btnBackToStep1.addEventListener('click', () => {
+                stepPersonal.style.display = 'block';
+                stepVerification.style.display = 'none';
+                
+                badgeStep2.classList.replace('bg-success', 'bg-secondary');
+                lineStep.classList.replace('border-success', 'border-success-subtle');
+                labelStep2.classList.replace('text-success', 'text-muted');
+                labelStep2.classList.replace('fw-bold', 'fw-semibold');
+            });
+
+            aceptoTerminos.addEventListener('change', () => {
+                updateSubmitButtonState();
+            });
+        });
+
+        function showEmailAsVerified() {
+            emailSuccessMessage.style.display = 'block';
+            emailInput.readOnly = true;
+            emailInput.style.backgroundColor = '#e9ecef';
+            emailInput.style.pointerEvents = 'none';
+            btnSendEmailOtp.style.display = 'none';
+            emailOtpArea.style.display = 'none';
+            emailOtpStatusMessage.style.display = 'none';
+        }
+
+        function startCountdown(durationSeconds) {
+            let secondsLeft = durationSeconds;
+            btnSendEmailOtp.disabled = true;
+            btnSendEmailOtp.style.cursor = 'not-allowed';
+            
+            clearInterval(countdownTimer);
+            countdownTimer = setInterval(() => {
+                secondsLeft--;
+                if (secondsLeft > 0) {
+                    btnSendEmailOtp.innerText = `Reenviar en ${secondsLeft}s`;
+                } else {
+                    clearInterval(countdownTimer);
+                    btnSendEmailOtp.disabled = false;
+                    btnSendEmailOtp.innerText = 'Reenviar Código';
+                    btnSendEmailOtp.style.cursor = 'pointer';
+                }
+            }, 1000);
+        }
+
+        // Evento de Distrito
+        distritoSelect.addEventListener('change', function() {
+            if (this.value === "Otros") {
+                otroDistritoContainer.style.display = 'block';
+                otroDistritoInput.required = true;
+                distritoHidden.value = otroDistritoInput.value;
+            } else {
+                otroDistritoContainer.style.display = 'none';
+                otroDistritoInput.required = false;
+                distritoHidden.value = this.value;
+            }
+            updateSubmitButtonState();
+        });
+
+        otroDistritoInput.addEventListener('input', function() {
+            distritoHidden.value = this.value;
+            updateSubmitButtonState();
+        });
+
+        // Validar Correo formato en tiempo real
+        emailInput.addEventListener('input', () => {
+            updateSubmitButtonState();
+        });
+
+        // Envío de OTP Email
+        btnSendEmailOtp.addEventListener('click', () => {
+            const emailVal = emailInput.value.trim();
+            if (!emailVal || !emailVal.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/)) {
+                alert("Por favor, ingrese un correo electrónico válido antes de validar.");
+                return;
+            }
+
+            // Cambiar estado a carga
+            btnSendEmailOtp.disabled = true;
+            emailOtpStatusMessage.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Enviando código...';
+            emailOtpStatusMessage.className = 'small mt-1 fw-semibold text-muted';
+            emailOtpStatusMessage.style.display = 'block';
+
+            const params = new URLSearchParams();
+            params.append('email', emailVal);
+
+            fetch('/api/auth/send-email-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params
+            })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error("HTTP error " + res.status);
+                }
+                return res.json();
+            })
+            .then(data => {
+                const devModeBadge = document.getElementById('devModeBadge');
+                if (data.success) {
+                    emailOtpArea.style.display = 'block';
+                    emailOtpStatusMessage.className = 'small mt-1 fw-semibold text-success';
+                    emailOtpStatusMessage.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> ✓ Código enviado correctamente.';
+                    
+                    if (data.devMode) {
+                        devModeBadge.innerText = `⚠ Modo desarrollo activo. Código de prueba: ${data.otp}`;
+                        devModeBadge.style.display = 'block';
+                    } else {
+                        devModeBadge.style.display = 'none';
+                    }
+                    
+                    startCountdown(60);
+                } else {
+                    btnSendEmailOtp.disabled = false;
+                    emailOtpStatusMessage.className = 'small mt-1 fw-semibold text-danger';
+                    emailOtpStatusMessage.innerHTML = `<i class="bi bi-x-circle-fill me-1"></i> ✗ ${data.message}`;
+                    devModeBadge.style.display = 'none';
+                }
+            })
+            .catch(err => {
+                btnSendEmailOtp.disabled = false;
+                emailOtpStatusMessage.className = 'small mt-1 fw-semibold text-danger';
+                emailOtpStatusMessage.innerHTML = '<i class="bi bi-x-circle-fill me-1"></i> ✗ Error enviando correo. Verifique su configuración SMTP en application-local.properties.';
+                document.getElementById('devModeBadge').style.display = 'none';
+                console.error(err);
+            });
+        });
+
+        // Verificación de OTP Email
+        btnVerifyEmailOtp.addEventListener('click', () => {
+            const otpVal = emailOtpInput.value.trim();
+            if (!otpVal) {
+                alert("Ingrese el código recibido.");
+                return;
+            }
+
+            btnVerifyEmailOtp.disabled = true;
+            btnVerifyEmailOtp.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+            const params = new URLSearchParams();
+            params.append('otp', otpVal);
+
+            fetch('/api/auth/verify-email-otp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params
+            })
+            .then(res => res.json())
+            .then(data => {
+                btnVerifyEmailOtp.disabled = false;
+                btnVerifyEmailOtp.innerText = 'Verificar';
+                if (data.success) {
+                    emailVerified = true;
+                    showEmailAsVerified();
+                    updateSubmitButtonState();
+                    form.submit();
+                } else {
+                    emailOtpStatusMessage.className = 'small mt-1 fw-semibold text-danger';
+                    emailOtpStatusMessage.innerHTML = `<i class="bi bi-x-circle-fill me-1"></i> ✗ Código incorrecto.`;
+                    emailOtpStatusMessage.style.display = 'block';
+                }
+            })
+            .catch(err => {
+                btnVerifyEmailOtp.disabled = false;
+                btnVerifyEmailOtp.innerText = 'Verificar';
+                emailOtpStatusMessage.className = 'small mt-1 fw-semibold text-danger';
+                emailOtpStatusMessage.innerHTML = '<i class="bi bi-x-circle-fill me-1"></i> ✗ Error en la conexión al verificar el código.';
+                console.error(err);
+            });
+        });
+
+        // Validación de Teléfono en tiempo real
+        function isPhoneValid() {
+            const val = phoneInput.value.trim();
+            if (val === '') {
+                phoneError.style.display = 'none';
+                return true;
+            }
+            if (val.match(/^9[0-9]{8}$/)) {
+                phoneError.style.display = 'none';
+                return true;
+            } else {
+                phoneError.style.display = 'block';
+                return false;
+            }
+        }
+
+        phoneInput.addEventListener('input', () => {
+            phoneInput.value = phoneInput.value.replace(/[^0-9]/g, '');
+            isPhoneValid();
+            updateSubmitButtonState();
+        });
+
+        // Real-time password validation & strength bar (Con labels: Débil, Media, Fuerte)
+        function validatePassword() {
+            const val = passwordInput.value;
+            let score = 0;
+            
+            // 1. Length >= 8
+            const hasLength = val.length >= 8;
+            updateReqStatus(reqLength, hasLength);
+            if (hasLength) score++;
+
+            // 2. Upper case
+            const hasUpper = /[A-Z]/.test(val);
+            updateReqStatus(reqUpper, hasUpper);
+            if (hasUpper) score++;
+
+            // 3. Number
+            const hasNumber = /\d/.test(val);
+            updateReqStatus(reqNumber, hasNumber);
+            if (hasNumber) score++;
+
+            // 4. Special char
+            const hasSpecial = /[@$!%*?&._\-#/]/.test(val);
+            updateReqStatus(reqSpecial, hasSpecial);
+            if (hasSpecial) score++;
+
+            // Update Progress Bar & Label
+            const bar = document.getElementById('passwordStrengthBar');
+            const label = document.getElementById('passwordStrengthLabel');
+            const pct = (score / 4) * 100;
+            bar.style.width = pct + '%';
+            
+            bar.className = 'progress-bar progress-bar-striped progress-bar-animated';
+            if (score <= 1) {
+                bar.classList.add('bg-danger');
+                label.innerText = 'Débil';
+                label.className = 'small fw-bold text-danger';
+            } else if (score <= 3) {
+                bar.classList.add('bg-warning');
+                label.innerText = 'Media';
+                label.className = 'small fw-bold text-warning';
+            } else {
+                bar.classList.add('bg-success');
+                label.innerText = 'Fuerte';
+                label.className = 'small fw-bold text-success';
+            }
+
+            return score === 4;
+        }
+
+        function updateReqStatus(element, isMet) {
+            if (isMet) {
+                element.classList.add('met');
+                element.querySelector('i').className = 'bi bi-check-circle-fill';
+            } else {
+                element.classList.remove('met');
+                element.querySelector('i').className = 'bi bi-x-circle-fill';
+            }
+        }
+
+        passwordInput.addEventListener('input', () => {
+            validatePassword();
+            checkMatch();
+            updateSubmitButtonState();
+        });
+
+        // Confirm Password matcher
+        function checkMatch() {
+            if (confirmInput.value === '') {
+                confirmError.style.display = 'none';
+                confirmSuccess.style.display = 'none';
+                return false;
+            }
+            if (confirmInput.value === passwordInput.value) {
+                confirmError.style.display = 'none';
+                confirmSuccess.style.display = 'block';
+                return true;
+            } else {
+                confirmError.style.display = 'block';
+                confirmSuccess.style.display = 'none';
+                return false;
+            }
+        }
+
+        confirmInput.addEventListener('input', () => {
+            checkMatch();
+            updateSubmitButtonState();
+        });
+
+        // Helper para actualizar checklist visual
+        function updateVisualCheck(element, isValid, validText, invalidText) {
+            if (isValid) {
+                element.className = 'text-success fw-semibold';
+                element.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i> ${validText}`;
+            } else {
+                element.className = 'text-danger';
+                element.innerHTML = `<i class="bi bi-x-circle-fill me-1"></i> ${invalidText}`;
+            }
+        }
+
+        // Dynamic submit button state update and real-time validations checks
+        function updateSubmitButtonState() {
+            const emailVal = emailInput.value.trim();
+            const isEmailFormatValid = emailVal !== '' && emailVal.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/) !== null;
+            const isPasswordValid = validatePassword();
+            const isMatch = confirmInput.value === passwordInput.value && confirmInput.value !== '';
+            
+            updateVisualCheck(valEmailValid, isEmailFormatValid, "Correo válido", "Ingrese un correo válido");
+            updateVisualCheck(valEmailVerified, emailVerified, "Correo verificado por código", "Debe verificar su correo");
+            updateVisualCheck(valPasswordSecure, isPasswordValid, "Contraseña segura (Fuerte)", "Contraseña requiere más fortaleza");
+            updateVisualCheck(valPasswordsMatch, isMatch, "Contraseñas coinciden", "Contraseñas no coinciden");
+
+            const isDistritoSelected = distritoHidden.value.trim() !== '';
+            const nombreVal = document.getElementById('nombre').value.trim();
+            const pLastNameVal = pLastNameInput.value.trim();
+            const mLastNameVal = mLastNameInput.value.trim();
+            const areFieldsFilled = nombreVal !== '' && pLastNameVal !== '' && mLastNameVal !== '';
+            
+            const isPhoneOk = isPhoneValid();
+            
+            // DNI (Opcional)
+            let isDniOk = true;
+            const dniVal = dniInput.value.trim();
+            if (dniVal !== '') {
+                isDniOk = dniVal.match(/^[0-9]{8}$/) !== null;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            if (emailVerified && isEmailFormatValid && isPasswordValid && isMatch && isDistritoSelected && areFieldsFilled && isPhoneOk && isDniOk) {
+                submitBtn.removeAttribute('disabled');
+            } else {
+                submitBtn.setAttribute('disabled', 'true');
+            }
+
+            // Habilitar o deshabilitar botón de paso 1
+            const isStep1Valid = isPasswordValid && isMatch && isDistritoSelected && areFieldsFilled && isPhoneOk && isDniOk && aceptoTerminos.checked;
+            if (isStep1Valid) {
+                btnGoToStep2.removeAttribute('disabled');
+            } else {
+                btnGoToStep2.setAttribute('disabled', 'true');
+            }
+        }
+
+        // Add change/input listeners to Nombres and Surnames to toggle submit button
+        document.getElementById('nombre').addEventListener('input', () => {
+            document.getElementById('nombre').value = document.getElementById('nombre').value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, '');
+            updateSubmitButtonState();
+        });
+        
+        pLastNameInput.addEventListener('input', () => {
+            pLastNameInput.value = pLastNameInput.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, '');
+            updateSubmitButtonState();
+        });
+
+        mLastNameInput.addEventListener('input', () => {
+            mLastNameInput.value = mLastNameInput.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]/g, '');
+            updateSubmitButtonState();
+        });
+
+        dniInput.addEventListener('input', () => {
+            dniInput.value = dniInput.value.replace(/[^0-9]/g, '');
+            updateSubmitButtonState();
+        });
+
+        // Eye password visibility toggles
+        const togglePassword = document.getElementById('togglePassword');
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+
+        const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+        toggleConfirmPassword.addEventListener('click', function () {
+            const type = confirmInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmInput.setAttribute('type', type);
+            this.classList.toggle('bi-eye');
+            this.classList.toggle('bi-eye-slash');
+        });
+
+        // Prevenir envío si no cumple las condiciones
+        form.addEventListener('submit', function(e) {
+            const emailVal = emailInput.value.trim();
+            const isEmailFormatValid = emailVal !== '' && emailVal.match(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/) !== null;
+            const isPasswordValid = validatePassword();
+            const isMatch = checkMatch();
+            
+            let isDniOk = true;
+            const dniVal = dniInput.value.trim();
+            if (dniVal !== '') {
+                isDniOk = dniVal.match(/^[0-9]{8}$/) !== null;
+            }
+            
+            if (!emailVerified || !isEmailFormatValid || !isPasswordValid || !isMatch || distritoHidden.value.trim() === '' || !isPhoneValid() || !isDniOk) {
+                e.preventDefault();
+                alert("Por favor, asegúrese de completar todos los campos obligatorios, validar su correo con el código SMTP y cumplir con los requisitos mínimos.");
+            }
+        });
+    </script>
+</body>
+</html>

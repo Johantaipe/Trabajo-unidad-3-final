@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Configuración')}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-gear-fill me-2" style="color: var(--primary);"></i>
+                    Configuración del Sistema
+                </h1>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <div class="card-custom">
+                        <div class="card-header-custom">
+                            <i class="bi bi-sliders me-1"></i> Parámetros de la Veterinaria
+                        </div>
+                        <div class="card-body-custom">
+                            <form onsubmit="event.preventDefault(); alert('Configuraciones guardadas exitosamente (simulado)');">
+                                <div class="mb-3">
+                                    <label class="form-label-custom">Nombre Comercial</label>
+                                    <input type="text" class="form-control form-control-custom" value="VET EXPERTS S.A.C.">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-custom">RUC</label>
+                                    <input type="text" class="form-control form-control-custom" value="20601234567">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-custom">Dirección Fiscal</label>
+                                    <input type="text" class="form-control form-control-custom" value="Av. La Marina 1520, San Miguel, Lima">
+                                </div>
+                                <button type="submit" class="btn btn-primary-custom">
+                                    <i class="bi bi-save me-1"></i> Guardar Cambios
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card-custom">
+                        <div class="card-header-custom">
+                            <i class="bi bi-shield-lock-fill me-1"></i> Parámetros de Facturación (IGV)
+                        </div>
+                        <div class="card-body-custom">
+                            <form onsubmit="event.preventDefault(); alert('Configuraciones de impuestos guardadas');">
+                                <div class="mb-3">
+                                    <label class="form-label-custom">Tasa IGV (%)</label>
+                                    <input type="number" class="form-control form-control-custom" value="18" disabled>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label-custom">Moneda Principal</label>
+                                    <select class="form-control form-control-custom">
+                                        <option value="PEN">Soles (S/)</option>
+                                        <option value="USD">Dólares (US$)</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-secondary-custom">
+                                    <i class="bi bi-check-circle me-1"></i> Aplicar Impuestos
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

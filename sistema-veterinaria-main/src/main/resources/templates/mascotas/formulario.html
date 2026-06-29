@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Formulario Mascota')}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="bi bi-plus-circle me-2" style="color: var(--primary);" th:if="${mascota.id == null}"></i>
+                <i class="bi bi-pencil-square me-2" style="color: var(--primary);" th:if="${mascota.id != null}"></i>
+                <span th:text="${mascota.id == null} ? 'Nueva Mascota' : 'Editar Mascota'">Formulario</span>
+            </h1>
+            <a th:href="@{/mascotas}" class="btn btn-secondary-custom">
+                <i class="bi bi-arrow-left me-1"></i> Volver a la lista
+            </a>
+        </div>
+
+        <!-- Formulario centrado -->
+        <div class="form-card-wrapper">
+            <div class="form-card">
+
+                <!-- Header del formulario -->
+                <div class="form-header">
+                    <h4>
+                        <i class="bi bi-clipboard-data me-2"></i>
+                        <span th:text="${mascota.id == null} ? 'Registrar Nueva Mascota' : 'Actualizar Datos de la Mascota'">
+                            Formulario
+                        </span>
+                    </h4>
+                    <p>Complete todos los campos obligatorios (*)</p>
+                </div>
+
+                <!-- Body del formulario -->
+                <div class="form-body">
+
+                    <!-- Error Propietario o negocio general -->
+                    <div th:if="${errorPropietario}" class="alert alert-custom-danger mb-4 d-flex align-items-center">
+                        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+                        <span th:text="${errorPropietario}">Error general</span>
+                    </div>
+
+                    <!-- Formulario -->
+                    <form th:action="${mascota.id == null} ? @{/mascotas/guardar} : @{/mascotas/actualizar/{id}(id=${mascota.id})}"
+                          method="post"
+                          th:object="${mascota}"
+                          id="formMascota">
+
+                        <!-- Nombre -->
+                        <div class="mb-custom">
+                            <label for="nombre" class="form-label-custom">
+                                <i class="bi bi-alphabet me-1"></i> Nombre de la Mascota <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   id="nombre" 
+                                   th:field="*{nombre}"
+                                   class="form-control form-control-custom"
+                                   th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'"
+                                   placeholder="Ej. Firulais, Luna, Rocky">
+                            <div th:if="${#fields.hasErrors('nombre')}" class="invalid-feedback">
+                                <i class="bi bi-exclamation-circle me-1"></i>
+                                <span th:errors="*{nombre}">Error</span>
+                            </div>
+                            <small class="text-muted-custom">
+                                <i class="bi bi-info-circle me-1"></i> 2-50 caracteres, solo letras
+                            </small>
+                        </div>
+
+                        <div class="row">
+                            <!-- Especie -->
+                            <div class="col-md-6 mb-custom">
+                                <label for="especie" class="form-label-custom">
+                                    <i class="bi bi-paw me-1"></i> Especie <span class="text-danger">*</span>
+                                </label>
+                                <select id="especie" 
+                                        th:field="*{especie}"
+                                        class="form-control form-control-custom"
+                                        th:classappend="${#fields.hasErrors('especie')} ? 'is-invalid'">
+                                    <option value="" disabled selected>Seleccione la especie</option>
+                                    <option th:each="esp : ${especies}" 
+                                            th:value="${esp.name()}" 
+                                            th:text="${esp.name()}">ESPECIE</option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('especie')}" class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    <span th:errors="*{especie}">Error</span>
+                                </div>
+                            </div>
+
+                            <!-- Raza select/input combo -->
+                            <div class="col-md-6 mb-custom">
+                                <label for="razaSelect" class="form-label-custom">
+                                    <i class="bi bi-tags me-1"></i> Raza <span class="text-danger">*</span>
+                                </label>
+                                <select id="razaSelect" class="form-control form-control-custom"
+                                        th:classappend="${#fields.hasErrors('raza')} ? 'is-invalid'">
+                                    <option value="" disabled selected>Seleccione la especie primero</option>
+                                </select>
+                                <input type="hidden" id="raza" th:field="*{raza}" />
+                                <div th:if="${#fields.hasErrors('raza')}" class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    <span th:errors="*{raza}">Error</span>
+                                </div>
+                                <div id="razaOtroContainer" style="display: none;" class="mt-2">
+                                    <label for="razaOtro" class="form-label-custom text-info">
+                                        <i class="bi bi-pencil me-1"></i> Especifique la raza
+                                    </label>
+                                    <input type="text" id="razaOtro" class="form-control form-control-custom" placeholder="Ingrese el nombre de la raza">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Sexo -->
+                            <div class="col-md-6 mb-custom">
+                                <label for="sexo" class="form-label-custom">
+                                    <i class="bi bi-gender-ambiguous me-1"></i> Sexo <span class="text-danger">*</span>
+                                </label>
+                                <select id="sexo" 
+                                        th:field="*{sexo}"
+                                        class="form-control form-control-custom"
+                                        th:classappend="${#fields.hasErrors('sexo')} ? 'is-invalid'">
+                                    <option value="" disabled selected>Seleccione el sexo</option>
+                                    <option th:each="s : ${sexos}" 
+                                            th:value="${s.name()}" 
+                                            th:text="${s.name()}">SEXO</option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('sexo')}" class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    <span th:errors="*{sexo}">Error</span>
+                                </div>
+                            </div>
+
+                            <!-- Peso -->
+                            <div class="col-md-6 mb-custom">
+                                <label for="peso" class="form-label-custom">
+                                    <i class="bi bi-speedometer2 me-1"></i> Peso (kg) <span class="text-danger">*</span>
+                                </label>
+                                <input type="number" 
+                                       id="peso" 
+                                       step="0.01" 
+                                       th:field="*{peso}"
+                                       class="form-control form-control-custom"
+                                       th:classappend="${#fields.hasErrors('peso')} ? 'is-invalid'"
+                                       placeholder="Ej. 12.50">
+                                <div th:if="${#fields.hasErrors('peso')}" class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    <span th:errors="*{peso}">Error</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Fecha de Nacimiento -->
+                            <div class="col-md-6 mb-custom">
+                                <label for="fechaNacimiento" class="form-label-custom">
+                                    <i class="bi bi-calendar-date me-1"></i> Fecha de Nacimiento <span class="text-danger">*</span>
+                                </label>
+                                <input type="date" 
+                                       id="fechaNacimiento" 
+                                       th:field="*{fechaNacimiento}"
+                                       class="form-control form-control-custom"
+                                       th:classappend="${#fields.hasErrors('fechaNacimiento')} ? 'is-invalid'">
+                                <div th:if="${#fields.hasErrors('fechaNacimiento')}" class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    <span th:errors="*{fechaNacimiento}">Error</span>
+                                </div>
+                            </div>
+
+                            <!-- Color -->
+                            <div class="col-md-6 mb-custom">
+                                <label for="color" class="form-label-custom">
+                                    <i class="bi bi-palette me-1"></i> Color
+                                </label>
+                                <input type="text" 
+                                       id="color" 
+                                       th:field="*{color}"
+                                       class="form-control form-control-custom"
+                                       th:classappend="${#fields.hasErrors('color')} ? 'is-invalid'"
+                                       placeholder="Ej. Marrón, Blanco con manchas">
+                                <div th:if="${#fields.hasErrors('color')}" class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    <span th:errors="*{color}">Error</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Propietario -->
+                        <div class="mb-custom">
+                            <label for="propietarioId" class="form-label-custom">
+                                <i class="bi bi-person-bounding-box me-1"></i> Propietario <span class="text-danger">*</span>
+                            </label>
+                            <select id="propietarioId" 
+                                    th:field="*{propietarioId}"
+                                    class="form-control form-control-custom"
+                                    th:classappend="${#fields.hasErrors('propietarioId')} ? 'is-invalid'">
+                                <option value="" disabled selected>Seleccione el propietario responsable</option>
+                                <option th:each="prop : ${propietarios}" 
+                                        th:value="${prop.id}" 
+                                        th:text="${prop.nombre + ' ' + prop.apellido + ' (DNI: ' + prop.dni + ')'}">Propietario</option>
+                            </select>
+                            <div th:if="${#fields.hasErrors('propietarioId')}" class="invalid-feedback">
+                                    <i class="bi bi-exclamation-circle me-1"></i>
+                                    <span th:errors="*{propietarioId}">Error</span>
+                            </div>
+                        </div>
+
+                        <!-- Esterilizado Checkbox -->
+                        <div class="mb-custom form-check">
+                            <input type="checkbox" 
+                                   id="esterilizado" 
+                                   th:field="*{esterilizado}"
+                                   class="form-check-input"
+                                   style="cursor: pointer; width: 1.25em; height: 1.25em; border: 2px solid var(--borders);">
+                            <label for="esterilizado" class="form-check-label ms-2" style="font-weight: 600; cursor: pointer; color: var(--secondary);">
+                                ¿Está esterilizado / castrado?
+                            </label>
+                        </div>
+
+                        <!-- Foto URL -->
+                        <div class="mb-custom">
+                            <label for="fotoUrl" class="form-label-custom">
+                                <i class="bi bi-image me-1"></i> URL de la Foto de la Mascota
+                            </label>
+                            <input type="url" 
+                                   id="fotoUrl" 
+                                   th:field="*{fotoUrl}"
+                                   class="form-control form-control-custom"
+                                   placeholder="Ingrese la URL de la imagen (ej: https://ruta-imagen.com/foto.jpg)">
+                            <small class="text-muted-custom">
+                                <i class="bi bi-info-circle me-1"></i> Guarde una dirección web o ruta física de la imagen de la mascota
+                            </small>
+                        </div>
+
+                        <!-- Observaciones -->
+                        <div class="mb-custom">
+                            <label for="observaciones" class="form-label-custom">
+                                <i class="bi bi-journal-text me-1"></i> Observaciones o Notas Médicas Iniciales
+                            </label>
+                            <textarea id="observaciones" 
+                                      th:field="*{observaciones}"
+                                      class="form-control form-control-custom"
+                                      th:classappend="${#fields.hasErrors('observaciones')} ? 'is-invalid'"
+                                      rows="4" 
+                                      placeholder="Alergias, conductas especiales, tratamientos previos..."></textarea>
+                            <div th:if="${#fields.hasErrors('observaciones')}" class="invalid-feedback">
+                                <i class="bi bi-exclamation-circle me-1"></i>
+                                <span th:errors="*{observaciones}">Error</span>
+                            </div>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <!-- Botones -->
+                        <div class="d-flex gap-3 justify-content-end flex-wrap">
+                            <a th:href="@{/mascotas}" class="btn btn-secondary-custom">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary-custom">
+                                <i class="bi bi-check-circle me-1" th:if="${mascota.id == null}"></i>
+                                <i class="bi bi-arrow-repeat me-1" th:if="${mascota.id != null}"></i>
+                                <span th:text="${mascota.id == null} ? 'Registrar Mascota' : 'Actualizar Mascota'">
+                                    Guardar
+                                </span>
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const especieSelect = document.getElementById("especie");
+    const razaSelect = document.getElementById("razaSelect");
+    const razaHidden = document.getElementById("raza");
+    const otroContainer = document.getElementById("razaOtroContainer");
+    const otroInput = document.getElementById("razaOtro");
+
+    const razasPorEspecie = {
+        'PERRO': ['Labrador Retriever', 'Pastor Alemán', 'Golden Retriever', 'Bulldog Francés', 'Pug', 'Rottweiler', 'Beagle', 'Chihuahua', 'Shih Tzu', 'Siberian Husky', 'Otro'],
+        'GATO': ['Persa', 'Siamés', 'Maine Coon', 'Bengalí', 'Ragdoll', 'British Shorthair', 'Sphynx', 'Azul Ruso', 'Angora', 'Bosque de Noruega', 'Otro'],
+        'CONEJO': ['Neozelandés', 'Belier', 'Cabeza de León', 'Rex', 'Angora', 'Toy o Enano', 'California', 'Holandés Enano', 'Gigante de Flandes', 'Azul de Viena', 'Otro'],
+        'AVE': ['Canario', 'Periquito', 'Ninfa', 'Agapornis', 'Cacatúa', 'Loro Gris', 'Jilguero', 'Diamante Mandarín', 'Cotorra', 'Guacamayo', 'Otro'],
+        'HAMSTER': ['Sirio o Dorado', 'Ruso', 'Roborovski', 'Chino', 'Campbell', 'Otro'],
+        'OTRO': ['Otro']
+    };
+
+    function actualizarRazas() {
+        const especie = especieSelect.value;
+        if (!especie) {
+            razaSelect.innerHTML = '<option value="" disabled selected>Seleccione la especie primero</option>';
+            otroContainer.style.display = "none";
+            return;
+        }
+
+        const razas = razasPorEspecie[especie] || razasPorEspecie['OTRO'];
+        
+        razaSelect.innerHTML = '<option value="" disabled selected>Seleccione la raza</option>';
+        razas.forEach(r => {
+            const opt = document.createElement("option");
+            opt.value = r;
+            opt.textContent = r;
+            razaSelect.appendChild(opt);
+        });
+
+        const valorActual = razaHidden.value;
+        if (valorActual) {
+            if (razas.includes(valorActual)) {
+                razaSelect.value = valorActual;
+                otroContainer.style.display = "none";
+            } else {
+                razaSelect.value = "Otro";
+                otroContainer.style.display = "block";
+                otroInput.value = valorActual;
+            }
+        }
+    }
+
+    especieSelect.addEventListener("change", function() {
+        razaHidden.value = "";
+        otroInput.value = "";
+        actualizarRazas();
+    });
+
+    razaSelect.addEventListener("change", function() {
+        if (razaSelect.value === "Otro") {
+            otroContainer.style.display = "block";
+            razaHidden.value = otroInput.value;
+        } else {
+            otroContainer.style.display = "none";
+            razaHidden.value = razaSelect.value;
+        }
+    });
+
+    otroInput.addEventListener("input", function() {
+        razaHidden.value = otroInput.value;
+    });
+
+    // Cargar al inicializar (para el caso de edición)
+    if (especieSelect.value) {
+        actualizarRazas();
+    }
+});
+</script>
+
+</body>
+</html>

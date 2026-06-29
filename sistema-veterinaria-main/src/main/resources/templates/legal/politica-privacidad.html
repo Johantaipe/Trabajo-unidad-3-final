@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Política de Privacidad de VET EXPERTS. Conozca cómo tratamos sus datos personales, el uso de correo y WhatsApp, y sus derechos ARCO.">
+    <title>Política de Privacidad | VET EXPERTS</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link th:href="@{/css/public.css}" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f4f7f5;
+        }
+        .legal-header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            padding: 5rem 0 4rem 0;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 5px solid var(--secondary);
+        }
+        .legal-header h1 {
+            color: white;
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+        .legal-header p {
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+        .legal-header::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -10%;
+            width: 40%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(82, 183, 136, 0.15) 0%, rgba(0,0,0,0) 80%);
+            z-index: 1;
+        }
+        .legal-container {
+            margin-top: -2rem;
+            position: relative;
+            z-index: 10;
+        }
+        .legal-card {
+            background: var(--bg-white);
+            border-radius: 24px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid rgba(0,0,0,0.05);
+            padding: 3rem;
+        }
+        .sidebar-sticky {
+            position: sticky;
+            top: 100px;
+            background: var(--bg-white);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid rgba(0,0,0,0.05);
+            box-shadow: var(--shadow-sm);
+        }
+        .sidebar-sticky .nav-link {
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .sidebar-sticky .nav-link:hover {
+            color: var(--primary);
+            background-color: rgba(82, 183, 136, 0.08);
+            transform: translateX(3px);
+        }
+        .sidebar-sticky .nav-link.active {
+            color: white;
+            background-color: var(--primary);
+        }
+        .legal-section {
+            scroll-margin-top: 100px;
+            margin-bottom: 3.5rem;
+        }
+        .legal-section h3 {
+            font-size: 1.6rem;
+            color: var(--primary-dark);
+            border-bottom: 2px solid rgba(82, 183, 136, 0.15);
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .legal-section h3 i {
+            color: var(--primary-light);
+        }
+        .legal-section p, .legal-section li {
+            color: var(--text-dark);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        .legal-section ul {
+            padding-left: 1.5rem;
+        }
+        .legal-section li {
+            margin-bottom: 0.5rem;
+        }
+        .navbar-sticky .navbar-brand {
+            font-weight: 800;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-dark);
+        }
+        .btn-ingresar {
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 12px;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+        .btn-ingresar:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#legalSidebar" data-bs-offset="120">
+
+    <!-- ========== HEADER STICKY (Navbar) ========== -->
+    <nav class="navbar navbar-expand-lg navbar-sticky scrolled">
+        <div class="container">
+            <a class="navbar-brand text-decoration-none" th:href="@{/}">
+                <img th:src="@{/img/logo.png}" alt="VET EXPERTS" style="height: 38px;">
+                <span>VET<span style="color: var(--secondary);">Experts</span></span>
+            </a>
+            <a th:href="@{/}" class="btn btn-ingresar py-2 px-4">Volver al Inicio</a>
+        </div>
+    </nav>
+
+    <!-- ========== HERO BANNER ========== -->
+    <header class="legal-header">
+        <div class="container">
+            <h1 class="animate-fade-in">Política de Privacidad</h1>
+            <p class="animate-fade-in" style="animation-delay: 0.1s;">Última actualización: 23 de Junio de 2026</p>
+        </div>
+    </header>
+
+    <!-- ========== LEGAL CONTENT SECTION ========== -->
+    <main class="container legal-container pb-5">
+        <div class="row g-4">
+            <!-- Sidebar Table of Contents -->
+            <div class="col-lg-3 d-none d-lg-block">
+                <nav id="legalSidebar" class="sidebar-sticky">
+                    <h5 class="fw-bold text-dark mb-3">Secciones</h5>
+                    <div class="nav flex-column nav-pills gap-1">
+                        <a class="nav-link active" href="#tratamiento"><i class="bi bi-shield-check"></i> 1. Tratamiento de Datos</a>
+                        <a class="nav-link" href="#uso-correo"><i class="bi bi-envelope"></i> 2. Uso de Correo</a>
+                        <a class="nav-link" href="#uso-whatsapp"><i class="bi bi-whatsapp"></i> 3. Uso de WhatsApp</a>
+                        <a class="nav-link" href="#cookies"><i class="bi bi-cookie"></i> 4. Uso de Cookies</a>
+                        <a class="nav-link" href="#seguridad"><i class="bi bi-shield-lock"></i> 5. Seguridad de Datos</a>
+                        <a class="nav-link" href="#arco"><i class="bi bi-person-check"></i> 6. Derechos ARCO</a>
+                        <a class="nav-link" href="#conservacion"><i class="bi bi-hourglass-split"></i> 7. Conservación</a>
+                        <a class="nav-link" href="#contacto-legal"><i class="bi bi-geo-alt"></i> 8. Contacto Legal</a>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Content Area -->
+            <div class="col-lg-9">
+                <div class="legal-card">
+                    
+                    <!-- Section 1 -->
+                    <section id="tratamiento" class="legal-section">
+                        <h3><i class="bi bi-shield-check"></i> 1. Tratamiento de Datos Personales</h3>
+                        <p>De conformidad con la Ley N° 29733 (Ley de Protección de Datos Personales de la República del Perú) y su Reglamento aprobado por Decreto Supremo N° 003-2013-JUS, en <strong>VET EXPERTS</strong> nos comprometemos a garantizar la privacidad, confidencialidad e integridad de la información de nuestros clientes.</p>
+                        <p>Los datos que recopilamos (Nombres, Apellidos, DNI, Correo Electrónico, Teléfono, Dirección y Distrito) son tratados estrictamente para la gestión de su cuenta de cliente, la atención clínica de sus mascotas y el envío de notificaciones obligatorias sobre sus citas.</p>
+                    </section>
+
+                    <!-- Section 2 -->
+                    <section id="uso-correo" class="legal-section">
+                        <h3><i class="bi bi-envelope"></i> 2. Uso de Correo Electrónico</h3>
+                        <p>Su dirección de correo electrónico es capturada y verificada activamente en nuestro sistema mediante el envío de un código seguro OTP de un solo uso.</p>
+                        <p>Utilizaremos su correo para:</p>
+                        <ul>
+                            <li>Enviar el código de verificación OTP necesario para activar su cuenta.</li>
+                            <li>Remitir enlaces de recuperación de contraseñas de uso único.</li>
+                            <li>Enviar de forma automática sus comprobantes de venta y boletas en PDF tras completar atenciones en el establecimiento.</li>
+                            <li>Notificarle sobre la confirmación o reprogramación de citas veterinarias.</li>
+                        </ul>
+                    </section>
+
+                    <!-- Section 3 -->
+                    <section id="uso-whatsapp" class="legal-section">
+                        <h3><i class="bi bi-whatsapp"></i> 3. Uso de WhatsApp y Teléfono</h3>
+                        <p>El número de teléfono celular proporcionado durante el registro es opcional y de carácter puramente informativo para facilitar el contacto entre el veterinario a cargo y el propietario.</p>
+                        <p>VET EXPERTS podrá hacer uso de WhatsApp o llamadas telefónicas exclusivamente para:</p>
+                        <ul>
+                            <li>Coordinar detalles de salud urgentes referentes a una mascota hospitalizada.</li>
+                            <li>Informar sobre el estado de la mascota durante cirugías o procedimientos clínicos especiales.</li>
+                            <li>Absolver dudas sobre citas que el usuario haya reservado directamente en el portal.</li>
+                        </ul>
+                    </section>
+
+                    <!-- Section 4 -->
+                    <section id="cookies" class="legal-section">
+                        <h3><i class="bi bi-cookie"></i> 4. Uso de Cookies</h3>
+                        <p>Este sistema hace uso de cookies técnicas esenciales y variables de sesión (HttpSession) con la única finalidad de mantener activa su sesión de cliente mientras navega en el portal. Estas cookies no recopilan información personal oculta ni rastrean sus hábitos de navegación en otros sitios web externos.</p>
+                    </section>
+
+                    <!-- Section 5 -->
+                    <section id="seguridad" class="legal-section">
+                        <h3><i class="bi bi-shield-lock"></i> 5. Medidas de Seguridad de la Información</h3>
+                        <p>Implementamos estrictos controles de seguridad tecnológica para evitar la pérdida, mal uso, alteración o acceso no autorizado a los bancos de datos de nuestros clientes. Entre ellas destacan:</p>
+                        <ul>
+                            <li>Cifrado irreversible de todas las contraseñas de usuarios bajo el algoritmo seguro <strong>BCrypt</strong>.</li>
+                            <li>Verificación OTP segura basada en la base de datos con expiraciones estrictas de 10 minutos.</li>
+                            <li>Protocolos de comunicación web seguros con cifrado HTTPS (SSL/TLS).</li>
+                        </ul>
+                    </section>
+
+                    <!-- Section 6 -->
+                    <section id="arco" class="legal-section">
+                        <h3><i class="bi bi-person-check"></i> 6. Derechos ARCO (Acceso, Rectificación, Cancelación y Oposición)</h3>
+                        <p>Como titular de sus datos personales, usted tiene derecho a acceder a la información que poseemos en nuestros bancos de datos, rectificarla en caso de ser errónea, solicitar la cancelación del tratamiento o manifestar su oposición.</p>
+                        <p>Para ejercer sus Derechos ARCO, puede presentar una solicitud formal enviando un correo electrónico a nuestro contacto legal o acudiendo a nuestro establecimiento físico.</p>
+                    </section>
+
+                    <!-- Section 7 -->
+                    <section id="conservacion" class="legal-section">
+                        <h3><i class="bi bi-hourglass-split"></i> 7. Conservación de la Información</h3>
+                        <p>Los datos personales proporcionados se conservarán mientras se mantenga la relación comercial y médica con la veterinaria, o hasta que el cliente ejerza su derecho de cancelación o supresión de datos del sistema, salvo exigencia legal de conservación de historias clínicas.</p>
+                    </section>
+
+                    <!-- Section 8 -->
+                    <section id="contacto-legal" class="legal-section">
+                        <h3><i class="bi bi-geo-alt"></i> 8. Contacto Legal</h3>
+                        <p>Para cualquier consulta, reclamo o ejercicio de sus derechos sobre el tratamiento de datos personales, puede ponerse en contacto con nosotros en:</p>
+                        <address class="p-3 bg-light rounded-3" style="border-left: 4px solid var(--primary);">
+                            <strong>Veterinaria VET EXPERTS</strong><br>
+                            RUC: 10452368941<br>
+                            Dirección: Calle Alhelíes #100, El Tambo, Huancayo, Junín, Perú<br>
+                            Correo: legal@vetexperts.pe<br>
+                            WhatsApp: +51 987 551 480
+                        </address>
+                    </section>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer-public mt-auto">
+        <div class="container text-center py-4 border-top border-secondary border-opacity-25">
+            <div class="row pt-3 small">
+                <div class="col-md-6 text-white-50 text-md-start">
+                    &copy; 2026 <strong>VET EXPERTS</strong>. Todos los derechos reservados.
+                </div>
+                <div class="col-md-6 text-white-50 text-md-end mt-2 mt-md-0 text-uppercase fw-bold" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                    Huancayo, Junín, Perú
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

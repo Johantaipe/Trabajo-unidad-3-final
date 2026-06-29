@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Movimientos de Inventario')}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-clock-history me-2" style="color: var(--primary);"></i>
+                    Historial General de Movimientos
+                </h1>
+                <a th:href="@{/inventario}" class="btn btn-secondary-custom">
+                    <i class="bi bi-arrow-left"></i> Volver a Inventario
+                </a>
+            </div>
+
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <i class="bi bi-list-ul"></i> Auditoría de Entradas, Salidas y Ajustes
+                </div>
+                <div class="card-body-custom p-0">
+                    <div th:if="${!lista.isEmpty()}" class="table-responsive">
+                        <table class="table table-custom mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Concepto / Producto</th>
+                                    <th>Tipo Concepto</th>
+                                    <th>Movimiento</th>
+                                    <th>Cantidad</th>
+                                    <th>Usuario</th>
+                                    <th>Motivo / Observaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="m : ${lista}">
+                                    <td th:text="${#temporals.format(m.fechaRegistro, 'yyyy-MM-dd HH:mm')}">2026-06-15</td>
+                                    <td th:text="${m.productoNombre}">Amoxicilina</td>
+                                    <td>
+                                        <span class="badge bg-secondary" th:text="${m.productoTipo}">PRODUCTO</span>
+                                    </td>
+                                    <td>
+                                        <span th:if="${m.cantidad > 0}" class="badge bg-success">INGRESO</span>
+                                        <span th:if="${m.cantidad < 0}" class="badge bg-danger">SALIDA</span>
+                                    </td>
+                                    <td class="font-monospace fw-bold" th:text="${m.cantidad > 0 ? '+' + m.cantidad : m.cantidad}">+10</td>
+                                    <td th:text="${m.usuario}">admin</td>
+                                    <td th:text="${m.tipoMovimiento + ': ' + m.motivo}">Venta de dosis</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div th:if="${lista.isEmpty()}" class="empty-state">
+                        <i class="bi bi-info-circle d-block"></i>
+                        <h5>No hay movimientos registrados en la auditoría general</h5>
+                        <p>Los movimientos de stock de vacunas y productos se reflejarán en este panel.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

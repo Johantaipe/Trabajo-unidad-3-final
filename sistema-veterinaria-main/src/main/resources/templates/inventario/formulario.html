@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head(${producto.id == null ? 'Registrar Producto' : 'Editar Producto'})}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="form-card-wrapper">
+                <div class="form-card">
+                    <div class="form-header">
+                        <h4 th:text="${producto.id == null ? 'Registrar Producto' : 'Modificar Producto'}">Registrar Producto</h4>
+                        <p>Complete la ficha del producto en el catálogo e inventario general.</p>
+                    </div>
+
+                    <form th:action="${producto.id == null} ? @{/inventario/guardar} : @{/inventario/actualizar/{id}(id=${producto.id})}"
+                          th:object="${producto}" method="post" enctype="multipart/form-data" class="form-body">
+                        
+                        <input type="hidden" th:field="*{id}" />
+
+                        <div class="row g-3">
+                            <!-- Nombre -->
+                            <div class="col-md-12">
+                                <label for="nombre" class="form-label-custom">Nombre del Producto</label>
+                                <input type="text" id="nombre" th:field="*{nombre}" class="form-control form-control-custom" placeholder="Ej: Amoxicilina 250mg, Cat Chow 8kg..." th:classappend="${#fields.hasErrors('nombre')} ? 'is-invalid'" required />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                            </div>
+
+                            <!-- Categoría -->
+                            <div class="col-md-6">
+                                <label for="categoria" class="form-label-custom">Categoría</label>
+                                <select id="categoria" th:field="*{categoria}" class="form-control form-control-custom" th:classappend="${#fields.hasErrors('categoria')} ? 'is-invalid'" required>
+                                    <option value="">Seleccione categoría...</option>
+                                    <option value="MEDICAMENTO">💉 Medicamento</option>
+                                    <option value="ALIMENTO">🍖 Alimento</option>
+                                    <option value="ACCESORIO">🧸 Accesorio</option>
+                                    <option value="INSUMO_MEDICO">🩹 Insumo Médico</option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('categoria')}" th:errors="*{categoria}"></div>
+                            </div>
+
+                            <!-- Proveedor -->
+                            <div class="col-md-6">
+                                <label for="proveedor" class="form-label-custom">Proveedor Principal</label>
+                                <select id="proveedor" th:field="*{proveedor.id}" class="form-control form-control-custom">
+                                    <option value="">Seleccione proveedor...</option>
+                                    <option th:each="prov : ${proveedores}" th:value="${prov.id}" th:text="${prov.razonSocial}"></option>
+                                </select>
+                            </div>
+
+                            <!-- Precio Compra -->
+                            <div class="col-md-6">
+                                <label for="precioCompra" class="form-label-custom">Precio Compra (S/)</label>
+                                <input type="number" step="0.01" id="precioCompra" th:field="*{precioCompra}" class="form-control form-control-custom" th:classappend="${#fields.hasErrors('precioCompra')} ? 'is-invalid'" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('precioCompra')}" th:errors="*{precioCompra}"></div>
+                            </div>
+
+                            <!-- Precio Venta -->
+                            <div class="col-md-6">
+                                <label for="precioVenta" class="form-label-custom">Precio Venta (S/)</label>
+                                <input type="number" step="0.01" id="precioVenta" th:field="*{precioVenta}" class="form-control form-control-custom" th:classappend="${#fields.hasErrors('precioVenta')} ? 'is-invalid'" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('precioVenta')}" th:errors="*{precioVenta}"></div>
+                            </div>
+
+                            <!-- Stock Inicial -->
+                            <div class="col-md-6">
+                                <label for="stock" class="form-label-custom">Stock Inicial</label>
+                                <input type="number" id="stock" th:field="*{stock}" class="form-control form-control-custom" th:classappend="${#fields.hasErrors('stock')} ? 'is-invalid'" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('stock')}" th:errors="*{stock}"></div>
+                            </div>
+
+                            <!-- Stock Mínimo -->
+                            <div class="col-md-6">
+                                <label for="stockMinimo" class="form-label-custom">Stock Mínimo Alerta</label>
+                                <input type="number" id="stockMinimo" th:field="*{stockMinimo}" class="form-control form-control-custom" th:classappend="${#fields.hasErrors('stockMinimo')} ? 'is-invalid'" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('stockMinimo')}" th:errors="*{stockMinimo}"></div>
+                            </div>
+
+                            <!-- Lote -->
+                            <div class="col-md-6">
+                                <label for="lote" class="form-label-custom">Lote</label>
+                                <input type="text" id="lote" th:field="*{lote}" class="form-control form-control-custom" placeholder="Ej: LOT-X12" />
+                            </div>
+
+                            <!-- Fecha Vencimiento -->
+                            <div class="col-md-6">
+                                <label for="fechaVencimiento" class="form-label-custom">Fecha de Vencimiento</label>
+                                <input type="date" id="fechaVencimiento" th:field="*{fechaVencimiento}" class="form-control form-control-custom" />
+                            </div>
+
+                            <!-- Foto/Imagen -->
+                            <div class="col-md-12">
+                                <label for="imagenFile" class="form-label-custom">Imagen del Producto (Opcional)</label>
+                                <input type="file" id="imagenFile" name="imagenFile" class="form-control form-control-custom" accept="image/*" />
+                            </div>
+
+                            <!-- Descripción -->
+                            <div class="col-md-12">
+                                <label for="descripcion" class="form-label-custom">Descripción</label>
+                                <textarea id="descripcion" th:field="*{descripcion}" class="form-control form-control-custom" rows="2" placeholder="Detalles de presentación, dosis recomendada, etc..."></textarea>
+                            </div>
+
+                            <!-- Observaciones -->
+                            <div class="col-md-12">
+                                <label for="observaciones" class="form-label-custom">Observaciones de Control</label>
+                                <textarea id="observaciones" th:field="*{observaciones}" class="form-control form-control-custom" rows="2" placeholder="Cualquier información de cuidado interno..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-footer mt-4">
+                            <a th:href="@{/inventario}" class="btn btn-secondary-custom">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary-custom">
+                                <i class="bi bi-save me-1"></i> Guardar Producto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

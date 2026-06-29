@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Detalle de Cobro')}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <!-- Alert on Email Sent -->
+            <div th:if="${param.emailSent}" class="alert alert-success alert-dismissible fade show mb-4 d-print-none d-flex align-items-center" role="alert">
+                <i class="bi bi-envelope-check-fill me-2 fs-5"></i>
+                <div>
+                    <strong>¡Correo enviado!</strong> Se ha enviado el comprobante en formato de simulación PDF a la dirección del propietario.
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <div class="page-header d-print-none">
+                <h1 class="page-title">
+                    <i class="bi bi-receipt me-2" style="color: var(--primary);"></i>
+                    Detalle de Venta
+                </h1>
+                <div class="action-buttons">
+                    <a th:href="@{/caja}" class="btn btn-secondary-custom">
+                        <i class="bi bi-arrow-left"></i> Volver a Caja
+                    </a>
+                    
+                    <!-- Checkout Actions (Only if Paid) -->
+                    <th:block th:if="${venta.estadoPago == T(com.vetexpert.sistema_veterinaria.caja.model.EstadoPago).PAGADO}">
+                        <button class="btn btn-primary-custom" onclick="window.print();">
+                            <i class="bi bi-printer-fill me-1"></i> Imprimir
+                        </button>
+                        
+                        <a th:href="@{/caja/detalle/{id}/enviar-correo(id=${venta.id})}" class="btn btn-info text-white" th:if="${venta.propietario.correo != null && !venta.propietario.correo.empty}">
+                            <i class="bi bi-envelope-fill me-1"></i> Enviar Correo
+                        </a>
+                        
+                        <a th:href="${whatsappUrl}" target="_blank" class="btn btn-success" th:if="${venta.propietario.telefono != null && !venta.propietario.telefono.empty}">
+                            <i class="bi bi-whatsapp me-1"></i> Enviar WhatsApp
+                        </a>
+                    </th:block>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                
+                <!-- Ticket / Factura printable view -->
+                <div class="col-lg-7">
+                    <div class="card-custom bg-white border shadow-sm p-4">
+                        <div class="text-center border-bottom pb-3 mb-4">
+                            <h3 class="fw-bold mb-1">VET EXPERTS</h3>
+                            <p class="text-muted small mb-0">RUC: 20601234567 | Lo mejor para tu mascota</p>
+                            <p class="text-muted small mb-0">Av. La Marina 1520, Lima | Telf: 987654321</p>
+                        </div>
+
+                        <!-- Info Facturacion -->
+                        <div class="row mb-4">
+                            <div class="col-6">
+                                <span class="text-muted small d-block">CLIENTE:</span>
+                                <strong th:text="${venta.propietario.nombre + ' ' + venta.propietario.apellido}">Cliente</strong>
+                                <small class="text-muted d-block" th:text="${'DNI: ' + venta.propietario.dni}"></small>
+                                <small class="text-muted d-block" th:if="${venta.propietario.correo != null}" th:text="${'Email: ' + venta.propietario.correo}"></small>
+                            </div>
+                            <div class="col-6 text-end">
+                                <span class="text-muted small d-block">COMPROBANTE:</span>
+                                <strong th:text="${venta.codigoVenta}">VENT-000000</strong>
+                                <span class="badge bg-secondary d-block mt-1 float-end" th:text="${venta.tipoComprobante}">BOLETA</span>
+                                <div class="clearfix"></div>
+                                <small class="text-muted d-block mt-2" th:text="${#temporals.format(venta.fechaVenta, 'yyyy-MM-dd HH:mm')}"></small>
+                            </div>
+                        </div>
+
+                        <!-- Mascota details if exists -->
+                        <div class="mb-4 bg-light p-2 rounded" th:if="${venta.mascota != null}">
+                            <span class="text-muted small">PACIENTE MASCOTA:</span>
+                            <strong th:text="${venta.mascota.nombre + ' (' + venta.mascota.especie + ')'}">Mascota</strong>
+                        </div>
+
+                        <!-- Detalles Table -->
+                        <table class="table table-sm table-borderless">
+                            <thead class="border-bottom text-muted small">
+                                <tr>
+                                    <th>Concepto</th>
+                                    <th class="text-center">Cant.</th>
+                                    <th class="text-end">P. Unit</th>
+                                    <th class="text-end">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="det : ${venta.detalles}">
+                                    <td th:text="${det.concepto}">Concepto</td>
+                                    <td class="text-center" th:text="${det.cantidad}">1</td>
+                                    <td class="text-end" th:text="${'S/ ' + det.precioUnitario}">0.00</td>
+                                    <td class="text-end" th:text="${'S/ ' + det.subtotal}">0.00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="border-top pt-3 mt-4 text-end">
+                            <div class="row">
+                                <div class="col-8 text-muted">Subtotal (Exento):</div>
+                                <div class="col-4 font-monospace" th:text="${'S/ ' + #numbers.formatDecimal(venta.subtotal, 1, 2)}">0.00</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-8 text-muted">IGV (18%):</div>
+                                <div class="col-4 font-monospace" th:text="${'S/ ' + #numbers.formatDecimal(venta.igv, 1, 2)}">0.00</div>
+                            </div>
+                            <div class="row border-top pt-2 mt-2 fw-bold text-dark fs-5">
+                                <div class="col-8">TOTAL:</div>
+                                <div class="col-4 font-monospace" id="ventaTotalOriginal" th:text="${'S/ ' + #numbers.formatDecimal(venta.total, 1, 2)}">0.00</div>
+                            </div>
+                        </div>
+
+                        <div class="text-center border-top pt-3 mt-4 text-muted small">
+                            <p>¡Gracias por confiar la salud de tu mascota a VET EXPERTS!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Formulario de Cobro Lateral -->
+                <div class="col-lg-5 d-print-none" th:if="${venta.estadoPago == T(com.vetexpert.sistema_veterinaria.caja.model.EstadoPago).PENDIENTE}">
+                    <div class="card-custom">
+                        <div class="card-header-custom bg-warning text-dark">
+                            <i class="bi bi-credit-card-2-back me-1"></i> Procesar Cobro de Venta
+                        </div>
+                        <div class="card-body-custom">
+                            
+                            <!-- Alerta de error en cobro -->
+                            <div th:if="${param.error}" class="alert alert-danger mb-3" th:text="${param.error}">Error</div>
+
+                            <form th:action="@{/caja/cobrar/{id}(id=${venta.id})}" method="post" enctype="multipart/form-data">
+                                
+                                <div class="mb-3">
+                                    <label for="tipoComprobante" class="form-label-custom">Tipo de Comprobante</label>
+                                    <select id="tipoComprobante" name="tipoComprobante" class="form-control form-control-custom" required>
+                                        <option value="BOLETA">BOLETA</option>
+                                        <option value="FACTURA">FACTURA</option>
+                                        <option value="NOTA_VENTA">NOTA DE VENTA</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="metodoPago" class="form-label-custom">Método de Pago</label>
+                                    <select id="metodoPago" name="metodoPago" class="form-control form-control-custom" required>
+                                        <option value="EFECTIVO">Efectivo</option>
+                                        <option value="TARJETA">Tarjeta de Crédito/Débito</option>
+                                        <option value="TRANSFERENCIA">Transferencia Bancaria</option>
+                                        <option value="YAPE">Yape</option>
+                                        <option value="PLIN">Plin</option>
+                                    </select>
+                                </div>
+
+                                <!-- Dynamic Yape / Plin Flow Section -->
+                                <div id="walletFlowSection" class="p-3 bg-light border rounded mb-3 d-none">
+                                    <div class="text-center mb-3">
+                                        <span class="fw-bold text-dark d-block">Escanear código QR para pagar</span>
+                                        <img th:src="@{/img/qr_yape.png}" alt="QR Yape Plin" class="img-fluid border rounded my-2 shadow-sm" style="max-height: 180px;" />
+                                        <small class="text-muted d-block fw-semibold">Titular: VET EXPERTS S.A.C.</small>
+                                        <small class="text-primary d-block font-monospace fw-bold">Celular: 987 654 321</small>
+                                    </div>
+                                    
+                                    <div class="row g-2">
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label-custom small">Código de Operación</label>
+                                            <input type="text" id="codigoOperacion" name="codigoOperacion" class="form-control form-control-custom" placeholder="Ej: 129481" />
+                                        </div>
+                                        <div class="col-md-6 mb-2">
+                                            <label class="form-label-custom small">Monto Pagado (S/)</label>
+                                            <input type="number" step="0.01" id="montoPago" name="montoPago" th:value="${venta.total}" class="form-control form-control-custom font-monospace fw-bold" />
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label class="form-label-custom small">Subir Captura de Pantalla / Evidencia</label>
+                                            <input type="file" name="evidenciaFile" accept="image/*" class="form-control form-control-custom form-control-sm" />
+                                            <small class="text-muted small">Subir archivo JPG/PNG de la confirmación.</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dynamic Transferencia Section -->
+                                <div id="transferFlowSection" class="p-3 bg-light border rounded mb-3 d-none">
+                                    <div class="mb-3 small">
+                                        <span class="fw-bold text-dark d-block">Cuentas Recaudadoras:</span>
+                                        <span class="d-block text-muted">BCP Corriente: <strong>191-9876543-0-12</strong></span>
+                                        <span class="d-block text-muted">CCI: <strong>002-191-009876543012-54</strong></span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label-custom small">Nro. de Operación / Transferencia</label>
+                                        <input type="text" id="transferenciaOp" name="codigoOperacion" class="form-control form-control-custom" placeholder="Ej: TXN-98274" disabled />
+                                    </div>
+                                    <div class="mb-2">
+                                        <label class="form-label-custom small">Subir Comprobante de Transferencia</label>
+                                        <input type="file" name="evidenciaFile" accept="image/*,application/pdf" class="form-control form-control-custom form-control-sm" disabled />
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="observaciones" class="form-label-custom">Observaciones de Caja (Opcional)</label>
+                                    <textarea id="observaciones" name="observaciones" class="form-control form-control-custom" rows="3" placeholder="Detalle adicional..."></textarea>
+                                </div>
+
+                                <div class="d-grid mt-4">
+                                    <button type="submit" class="btn btn-success-custom w-100 py-3 fw-bold fs-5 shadow-sm">
+                                        <i class="bi bi-cash me-1"></i> Registrar Pago
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Información de Venta Pagada -->
+                <div class="col-lg-5 d-print-none" th:if="${venta.estadoPago == T(com.vetexpert.sistema_veterinaria.caja.model.EstadoPago).PAGADO}">
+                    <div class="card-custom bg-white shadow-sm border-top border-4 border-success">
+                        <div class="card-header-custom bg-success text-white">
+                            <i class="bi bi-check-circle-fill me-1"></i> Venta Pagada con Éxito
+                        </div>
+                        <div class="card-body-custom py-3 px-4">
+                            <p class="text-success fw-bold fs-5 mb-3">
+                                <i class="bi bi-patch-check-fill"></i> El cobro de esta venta se registró correctamente.
+                            </p>
+                            
+                            <div class="row g-3 mb-4">
+                                <div class="col-6 border-bottom pb-2">
+                                    <span class="text-muted small d-block">Tipo Comprobante:</span>
+                                    <strong class="text-dark" th:text="${venta.tipoComprobante}">BOLETA</strong>
+                                </div>
+                                <div class="col-6 border-bottom pb-2">
+                                    <span class="text-muted small d-block">Método de Pago:</span>
+                                    <strong class="text-dark" th:text="${venta.metodoPago != null ? venta.metodoPago : 'EFECTIVO'}">EFECTIVO</strong>
+                                </div>
+                                
+                                <div class="col-6 border-bottom pb-2" th:if="${venta.codigoOperacion != null && !venta.codigoOperacion.empty}">
+                                    <span class="text-muted small d-block">Código Operación:</span>
+                                    <strong class="text-dark font-monospace" th:text="${venta.codigoOperacion}">12345</strong>
+                                </div>
+                                <div class="col-6 border-bottom pb-2" th:if="${venta.montoPago != null}">
+                                    <span class="text-muted small d-block">Monto Cancelado:</span>
+                                    <strong class="text-dark font-monospace" th:text="${'S/ ' + #numbers.formatDecimal(venta.montoPago, 1, 2)}">S/ 0.00</strong>
+                                </div>
+                            </div>
+
+                            <div class="mb-3" th:if="${venta.observaciones != null && !venta.observaciones.empty}">
+                                <span class="text-muted small d-block">Observaciones:</span>
+                                <p class="bg-light p-2 rounded text-dark small" th:text="${venta.observaciones}"></p>
+                            </div>
+
+                            <!-- Payment Capture Evidence render block -->
+                            <div class="mb-3" th:if="${venta.evidenciaUrl != null}">
+                                <span class="text-muted small d-block mb-1">Evidencia / Captura de Pago:</span>
+                                <a th:href="${venta.evidenciaUrl}" target="_blank">
+                                    <img th:src="${venta.evidenciaUrl}" alt="Evidencia de Pago" class="img-thumbnail img-fluid d-block shadow-sm" style="max-height: 250px; object-fit: contain; cursor: pointer;" />
+                                </a>
+                                <small class="text-muted d-block mt-1"><i class="bi bi-info-circle"></i> Haga clic en la imagen para verla en pantalla completa.</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const metodoSelect = document.getElementById('metodoPago');
+            const walletSection = document.getElementById('walletFlowSection');
+            const transferSection = document.getElementById('transferFlowSection');
+
+            const codigoOpInput = document.getElementById('codigoOperacion');
+            const transferOpInput = document.getElementById('transferenciaOp');
+            const transferFiles = transferSection ? transferSection.querySelectorAll('input') : [];
+            const walletFiles = walletSection ? walletSection.querySelectorAll('input') : [];
+
+            if (metodoSelect) {
+                metodoSelect.addEventListener('change', function() {
+                    const val = metodoSelect.value;
+                    
+                    if (val === 'YAPE' || val === 'PLIN') {
+                        walletSection.classList.remove('d-none');
+                        transferSection.classList.add('d-none');
+                        
+                        // Enable inputs inside wallet
+                        if(codigoOpInput) {
+                            codigoOpInput.disabled = false;
+                            codigoOpInput.required = true;
+                        }
+                        walletSection.querySelectorAll('input').forEach(i => i.disabled = false);
+
+                        // Disable inputs inside transfer
+                        if(transferOpInput) {
+                            transferOpInput.disabled = true;
+                            transferOpInput.required = false;
+                        }
+                        transferSection.querySelectorAll('input').forEach(i => i.disabled = true);
+
+                    } else if (val === 'TRANSFERENCIA') {
+                        walletSection.classList.add('d-none');
+                        transferSection.classList.remove('d-none');
+
+                        // Enable inputs inside transfer
+                        if(transferOpInput) {
+                            transferOpInput.disabled = false;
+                            transferOpInput.required = true;
+                        }
+                        transferSection.querySelectorAll('input').forEach(i => i.disabled = false);
+
+                        // Disable inputs inside wallet
+                        if(codigoOpInput) {
+                            codigoOpInput.disabled = true;
+                            codigoOpInput.required = false;
+                        }
+                        walletSection.querySelectorAll('input').forEach(i => i.disabled = true);
+
+                    } else {
+                        walletSection.classList.add('d-none');
+                        transferSection.classList.add('d-none');
+
+                        // Disable both
+                        if(codigoOpInput) {
+                            codigoOpInput.disabled = true;
+                            codigoOpInput.required = false;
+                        }
+                        if(transferOpInput) {
+                            transferOpInput.disabled = true;
+                            transferOpInput.required = false;
+                        }
+                        walletSection.querySelectorAll('input').forEach(i => i.disabled = true);
+                        transferSection.querySelectorAll('input').forEach(i => i.disabled = true);
+                    }
+                });
+
+                // Trigger change to set default state on page load
+                metodoSelect.dispatchEvent(new Event('change'));
+            }
+        });
+    </script>
+</body>
+</html>

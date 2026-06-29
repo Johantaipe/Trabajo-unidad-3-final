@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Formulario de Usuario')}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+            
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-people-fill me-2" style="color: var(--primary);"></i>
+                    <span th:text="${usuario.id != null} ? 'Editar Usuario' : 'Nuevo Usuario'">Nuevo Usuario</span>
+                </h1>
+            </div>
+
+            <!-- Menú de opciones del Módulo de Usuarios -->
+            <div class="card-custom mb-4">
+                <div class="card-body-custom py-2 px-3 d-flex flex-wrap gap-2">
+                    <a th:href="@{/usuarios}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-list-ul me-1"></i> Lista de Usuarios</a>
+                    <a th:href="@{/usuarios/nuevo}" class="btn btn-sm" th:classappend="${usuario.id == null} ? 'btn-primary active' : 'btn-outline-secondary'"><i class="bi bi-person-plus-fill me-1"></i> Nuevo Usuario</a>
+                    <a th:href="@{/usuarios/roles}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-shield-lock-fill me-1"></i> Roles de Acceso</a>
+                </div>
+            </div>
+
+            <!-- Card del Formulario -->
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10">
+                    <div class="card-custom">
+                        <div class="card-header-custom">
+                            <i class="bi bi-person-fill-gear me-1"></i> Datos de la Cuenta
+                        </div>
+                        <div class="card-body-custom p-4">
+                            <form th:action="${usuario.id != null} ? @{/usuarios/editar/{id}(id=${usuario.id})} : @{/usuarios/nuevo}" 
+                                  method="POST" 
+                                  th:object="${usuario}">
+
+                                <div class="row">
+                                    <!-- Nombre -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="nombre" class="form-label fw-bold">Nombre <span class="text-danger">*</span></label>
+                                        <input type="text" 
+                                               id="nombre" 
+                                               name="nombre" 
+                                               th:field="*{nombre}" 
+                                               class="form-control" 
+                                               th:classappend="${errorNombre} ? 'is-invalid'"
+                                               placeholder="Ej. Juan" 
+                                               required>
+                                        <div class="invalid-feedback" th:if="${errorNombre}" th:text="${errorNombre}">Error</div>
+                                    </div>
+
+                                    <!-- Apellido -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="apellido" class="form-label fw-bold">Apellido <span class="text-danger">*</span></label>
+                                        <input type="text" 
+                                               id="apellido" 
+                                               name="apellido" 
+                                               th:field="*{apellido}" 
+                                               class="form-control" 
+                                               th:classappend="${errorApellido} ? 'is-invalid'"
+                                               placeholder="Ej. Pérez" 
+                                               required>
+                                        <div class="invalid-feedback" th:if="${errorApellido}" th:text="${errorApellido}">Error</div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <!-- Correo -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="correo" class="form-label fw-bold">Correo Electrónico <span class="text-danger">*</span></label>
+                                        <input type="email" 
+                                               id="correo" 
+                                               name="correo" 
+                                               th:field="*{correo}" 
+                                               class="form-control" 
+                                               th:classappend="${errorCorreo} ? 'is-invalid'"
+                                               placeholder="correo@vetexperts.com" 
+                                               required>
+                                        <div class="invalid-feedback" th:if="${errorCorreo}" th:text="${errorCorreo}">Error</div>
+                                    </div>
+
+                                    <!-- Usuario -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="username" class="form-label fw-bold">Nombre de Usuario <span class="text-danger">*</span></label>
+                                        <input type="text" 
+                                               id="username" 
+                                               name="username" 
+                                               th:field="*{username}" 
+                                               class="form-control" 
+                                               th:classappend="${errorUsername} ? 'is-invalid'"
+                                               placeholder="Ej. jperez" 
+                                               required>
+                                        <div class="invalid-feedback" th:if="${errorUsername}" th:text="${errorUsername}">Error</div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <!-- Rol -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="rol" class="form-label fw-bold">Rol de Acceso <span class="text-danger">*</span></label>
+                                        <select id="rol" name="rol" th:field="*{rol}" class="form-select" required>
+                                            <option value="ADMIN">Administrador</option>
+                                            <option value="SECRETARIA">Secretaria</option>
+                                            <option value="VETERINARIO">Veterinario</option>
+                                        </select>
+                                    </div>
+
+                                    <!-- Estado (sólo informativo en edición/creación, o toggle por lista) -->
+                                    <div class="col-md-6 mb-3 d-flex align-items-center mt-4">
+                                        <div class="form-check form-switch" th:if="${usuario.id != null}">
+                                            <input class="form-check-input" type="checkbox" id="enabledSwitch" th:field="*{enabled}" disabled>
+                                            <label class="form-check-label text-muted" for="enabledSwitch">Cuenta Activa (Modificar desde la lista)</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Contraseña (Solo para nuevos usuarios) -->
+                                <div class="row" th:if="${usuario.id == null}">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password" class="form-label fw-bold">Contraseña <span class="text-danger">*</span></label>
+                                        <input type="password" 
+                                               id="password" 
+                                               name="password" 
+                                               class="form-control" 
+                                               th:classappend="${errorPassword} ? 'is-invalid'"
+                                               placeholder="Mínimo 6 caracteres" 
+                                               required>
+                                        <div class="invalid-feedback" th:if="${errorPassword}" th:text="${errorPassword}">Error</div>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="confirmPassword" class="form-label fw-bold">Confirmar Contraseña <span class="text-danger">*</span></label>
+                                        <input type="password" 
+                                               id="confirmPassword" 
+                                               name="confirmPassword" 
+                                               class="form-control" 
+                                               th:classappend="${errorConfirmPassword} ? 'is-invalid'"
+                                               placeholder="Repite la contraseña" 
+                                               required>
+                                        <div class="invalid-feedback" th:if="${errorConfirmPassword}" th:text="${errorConfirmPassword}">Error</div>
+                                    </div>
+                                </div>
+
+                                <!-- Botones de acción -->
+                                <div class="d-flex justify-content-end gap-2 mt-4">
+                                    <a th:href="@{/usuarios}" class="btn btn-outline-secondary">Cancelar</a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="bi bi-save me-1"></i> Guardar Usuario
+                                    </button>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

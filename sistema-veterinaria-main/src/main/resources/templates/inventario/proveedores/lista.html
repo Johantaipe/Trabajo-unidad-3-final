@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Proveedores de Inventario')}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-people-fill me-2" style="color: var(--primary);"></i>
+                    Proveedores Registrados
+                </h1>
+                <div class="action-buttons">
+                    <a th:href="@{/inventario}" class="btn btn-secondary-custom">
+                        <i class="bi bi-arrow-left"></i> Volver a Inventario
+                    </a>
+                    <a th:href="@{/inventario/proveedores/nuevo}" class="btn btn-primary-custom">
+                        <i class="bi bi-plus-circle me-1"></i> Registrar Proveedor
+                    </a>
+                </div>
+            </div>
+
+            <!-- List table -->
+            <div class="card-custom">
+                <div class="card-header-custom">
+                    <i class="bi inline-list-ul"></i> Directorio de Proveedores y Distribuidores
+                </div>
+                <div class="card-body-custom p-0">
+                    <div th:if="${!lista.isEmpty()}" class="table-responsive">
+                        <table class="table table-custom mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Razón Social</th>
+                                    <th>RUC</th>
+                                    <th>Contacto</th>
+                                    <th>Teléfono</th>
+                                    <th>Correo</th>
+                                    <th>Dirección</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="p : ${lista}">
+                                    <td><strong th:text="${p.razonSocial}">Proveedor S.A.</strong></td>
+                                    <td class="font-monospace" th:text="${p.ruc}">20601234567</td>
+                                    <td th:text="${p.contacto}">Juan Pérez</td>
+                                    <td th:text="${p.telefono}">987654321</td>
+                                    <td th:text="${p.correo}">correo@distribuidora.com</td>
+                                    <td th:text="${p.direccion}">Av. Principal 123</td>
+                                    <td class="text-center">
+                                        <div class="action-buttons justify-content-center">
+                                            <a th:href="@{/inventario/proveedores/editar/{id}(id=${p.id})}" class="btn btn-warning-custom btn-sm">
+                                                <i class="bi bi-pencil-square"></i> Editar
+                                            </a>
+                                            <a th:href="@{/inventario/proveedores/eliminar/{id}(id=${p.id})}" class="btn btn-danger-custom btn-sm" onclick="return confirm('¿Está seguro de eliminar este proveedor?')">
+                                                <i class="bi bi-trash3"></i> Eliminar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div th:if="${lista.isEmpty()}" class="empty-state">
+                        <i class="bi bi-people d-block"></i>
+                        <h5>No hay proveedores registrados</h5>
+                        <p>Registre su primer proveedor de medicamentos y alimentos para habilitar compras.</p>
+                        <a th:href="@{/inventario/proveedores/nuevo}" class="btn btn-primary-custom mt-3">
+                            <i class="bi bi-plus-circle me-1"></i> Registrar Proveedor
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

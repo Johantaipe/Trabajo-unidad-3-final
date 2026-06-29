@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Hospitalización')}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-hospital me-2" style="color: var(--primary);"></i>
+                    Hospitalización Veterinaria
+                </h1>
+                <a th:href="@{/hospitalizacion/nuevo}" class="btn btn-primary-custom">
+                    <i class="bi bi-plus-circle me-1"></i> Hospitalizar Mascota
+                </a>
+            </div>
+
+            <div class="card-custom">
+                <div class="card-header-custom d-flex align-items-center">
+                    <i class="bi bi-list-ul me-2"></i> Registro Clínico de Mascotas Internadas
+                </div>
+                <div class="card-body-custom p-0">
+                    <div th:if="${!lista.isEmpty()}" class="table-responsive">
+                        <table class="table table-custom mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Mascota</th>
+                                    <th>Propietario</th>
+                                    <th>Fecha Ingreso</th>
+                                    <th>Fecha Alta</th>
+                                    <th>Estado</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="h : ${lista}">
+                                    <td><strong th:text="${h.codigoHospitalizacion}">HOSP-000001</strong></td>
+                                    <td>
+                                        <i class="bi bi-heart-pulse-fill me-1" style="color: var(--danger);"></i>
+                                        <span th:text="${h.mascota.nombre}">Fido</span>
+                                    </td>
+                                    <td th:text="${h.mascota.propietario.nombre + ' ' + h.mascota.propietario.apellido}">Propietario</td>
+                                    <td th:text="${h.fechaIngreso}">2026-06-14</td>
+                                    <td th:text="${h.fechaAlta != null ? h.fechaAlta : '-'}">-</td>
+                                    <td>
+                                        <span th:if="${h.estado == 'INGRESADO'}" class="badge bg-danger">INTERNADO</span>
+                                        <span th:if="${h.estado == 'ALTA'}" class="badge bg-success">DADO DE ALTA</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="action-buttons justify-content-center">
+                                            <a th:href="@{/hospitalizacion/detalle/{id}(id=${h.id})}" class="btn btn-secondary-custom btn-sm">
+                                                <i class="bi bi-eye"></i> Detalle
+                                            </a>
+                                            <a th:if="${h.estado == 'INGRESADO'}" th:href="@{/hospitalizacion/alta/{id}(id=${h.id})}" class="btn btn-success-custom btn-sm">
+                                                <i class="bi bi-check2-circle"></i> Dar Alta
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div th:if="${lista.isEmpty()}" class="empty-state">
+                        <i class="bi bi-inbox d-block"></i>
+                        <h5>No hay mascotas hospitalizadas en este momento</h5>
+                        <p>Registre el internamiento de una mascota para comenzar el control clínico.</p>
+                        <a th:href="@{/hospitalizacion/nuevo}" class="btn btn-primary-custom mt-3">
+                            <i class="bi bi-plus-circle me-1"></i> Hospitalizar Mascota
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

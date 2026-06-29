@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Propietarios')}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="bi bi-people me-2" style="color: var(--primary);"></i>
+                Propietarios
+            </h1>
+            <a th:href="@{/propietarios/nuevo}" class="btn btn-primary-custom">
+                <i class="bi bi-plus-circle me-1"></i> Nuevo Propietario
+            </a>
+        </div>
+
+        <!-- Mensajes Flash -->
+        <div th:if="${mensajeExito}" class="alert alert-custom-success mb-4 d-flex align-items-center" role="alert">
+            <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+            <span th:text="${mensajeExito}">Éxito</span>
+        </div>
+
+        <div th:if="${mensajeError}" class="alert alert-custom-danger mb-4 d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
+            <span th:text="${mensajeError}">Error</span>
+        </div>
+
+        <!-- Buscador Inteligente -->
+        <div class="card-custom mb-4">
+            <div class="card-body-custom py-3 px-4">
+                <div class="row align-items-end">
+                    <div class="col-md-9">
+                        <label for="buscarPropietario" class="form-label-custom">
+                            <i class="bi bi-search me-1"></i> Búsqueda Inteligente (DNI, Nombre, Apellido, Teléfono)
+                        </label>
+                        <input type="text" id="buscarPropietario" class="form-control form-control-custom"
+                               placeholder="Escriba DNI, Nombre, Apellido o Teléfono para buscar en tiempo real...">
+                    </div>
+                    <div class="col-md-3 mt-3 mt-md-0">
+                        <button type="button" id="btnLimpiarBuscar" class="btn btn-secondary-custom w-100 py-2">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Limpiar Filtro
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabla de Propietarios -->
+        <div class="card-custom">
+            <div class="card-header-custom d-flex align-items-center">
+                <i class="bi bi-list-ul me-2"></i>
+                Lista de Propietarios Registrados
+            </div>
+            <div class="card-body-custom p-0">
+
+                <!-- Tabla con datos -->
+                <div th:if="${!propietarios.isEmpty()}" class="table-responsive">
+                    <table class="table table-custom mb-0">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nombre</th>
+                                <th>Apellido</th>
+                                <th>DNI</th>
+                                <th>Teléfono</th>
+                                <th>Correo</th>
+                                <th class="text-center">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="prop, iterStat : ${propietarios}">
+                                <td>
+                                    <span class="badge-custom" style="background: var(--background-alt); color: var(--secondary);"
+                                          th:text="${iterStat.count}">1</span>
+                                </td>
+                                <td th:text="${prop.nombre}">Nombre</td>
+                                <td th:text="${prop.apellido}">Apellido</td>
+                                <td>
+                                    <span style="font-family: monospace; font-weight: 600;" th:text="${prop.dni}">12345678</span>
+                                </td>
+                                <td>
+                                    <i class="bi bi-telephone me-1" style="color: var(--primary);"></i>
+                                    <span th:text="${prop.telefono}">987654321</span>
+                                </td>
+                                <td>
+                                    <i class="bi bi-envelope me-1" style="color: var(--accent);"></i>
+                                    <span th:text="${prop.correo}">correo@email.com</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="action-buttons justify-content-center">
+                                        <a th:href="@{/propietarios/editar/{id}(id=${prop.id})}" 
+                                           class="btn btn-warning-custom btn-sm"
+                                           title="Editar">
+                                            <i class="bi bi-pencil-square"></i> Editar
+                                        </a>
+                                        <a th:href="@{/propietarios/eliminar/{id}(id=${prop.id})}" 
+                                           class="btn btn-danger-custom btn-sm"
+                                           title="Eliminar"
+                                           onclick="return confirm('¿Está seguro de eliminar este propietario?')">
+                                            <i class="bi bi-trash3"></i> Eliminar
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Estado vacío -->
+                <div th:if="${propietarios.isEmpty()}" class="empty-state">
+                    <i class="bi bi-inbox d-block"></i>
+                    <h5>No hay propietarios registrados</h5>
+                    <p>Comienza registrando un nuevo propietario</p>
+                    <a th:href="@{/propietarios/nuevo}" class="btn btn-primary-custom mt-3">
+                        <i class="bi bi-plus-circle me-1"></i> Registrar Propietario
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+
+<div th:replace="~{fragments/layout :: scripts}"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById("buscarPropietario");
+    const clearBtn = document.getElementById("btnLimpiarBuscar");
+    const tbody = document.querySelector(".table-custom tbody");
+
+    if (searchInput && tbody) {
+        searchInput.addEventListener("input", function() {
+            const query = searchInput.value.trim();
+            if (query.length === 0) {
+                window.location.reload();
+                return;
+            }
+
+            fetch("/api/propietarios/buscar?query=" + encodeURIComponent(query))
+                .then(response => response.json())
+                .then(data => {
+                    tbody.innerHTML = "";
+                    if (data.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan='7' class='text-center text-muted py-4'>
+                            <i class='bi bi-search d-block fs-3 mb-2'></i>No se encontraron propietarios.
+                        </td></tr>`;
+                        return;
+                    }
+                    data.forEach((p, idx) => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td><span class="badge-custom" style="background: var(--background-alt); color: var(--secondary);">${idx + 1}</span></td>
+                                <td>${p.nombre}</td>
+                                <td>${p.apellido}</td>
+                                <td><span style="font-family: monospace; font-weight: 600;">${p.dni}</span></td>
+                                <td><i class="bi bi-telephone me-1" style="color: var(--primary);"></i>${p.telefono}</td>
+                                <td><i class="bi bi-envelope me-1" style="color: var(--accent);"></i>${p.correo}</td>
+                                <td class="text-center">
+                                    <div class="action-buttons justify-content-center">
+                                        <a href="/propietarios/editar/${p.id}" class="btn btn-warning-custom btn-sm"><i class="bi bi-pencil-square"></i> Editar</a>
+                                        <a href="/propietarios/eliminar/${p.id}" class="btn btn-danger-custom btn-sm" onclick="return confirm('¿Está seguro de eliminar este propietario?')"><i class="bi bi-trash3"></i> Eliminar</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                })
+                .catch(err => console.error("Error al buscar propietarios:", err));
+        });
+
+        clearBtn.addEventListener("click", function() {
+            searchInput.value = "";
+            window.location.reload();
+        });
+    }
+});
+</script>
+
+</body>
+</html>

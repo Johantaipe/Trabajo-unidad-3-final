@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head th:replace="~{fragments/layout :: head('Detalle de Consulta')}">
+    <!-- Estilos específicos para impresión -->
+    <style>
+        @media print {
+
+            .navbar-custom,
+            .btn-secondary-custom,
+            .btn-warning-custom,
+            .footer-custom,
+            button {
+                display: none !important;
+            }
+
+            body {
+                background: white !important;
+                color: black !important;
+                padding: 1.5cm;
+            }
+
+            .card-custom {
+                border: none !important;
+                box-shadow: none !important;
+            }
+
+            .card-header-custom {
+                background: #f8f9fa !important;
+                color: black !important;
+                border-bottom: 2px solid #333 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <!-- Page Header (Ocultado en impresión) -->
+            <div class="page-header d-print-none">
+                <h1 class="page-title">
+                    <i class="bi bi-file-earmark-medical-fill me-2" style="color: var(--primary);"></i>
+                    Detalle de Consulta
+                </h1>
+                <div class="d-flex gap-2">
+                    <button onclick="window.print()" class="btn btn-outline-custom">
+                        <i class="bi bi-printer me-1"></i> Imprimir Reporte
+                    </button>
+                    <a th:href="@{/historias/editar/{id}(id=${consulta.id})}" class="btn btn-warning-custom">
+                        <i class="bi bi-pencil-square me-1"></i> Editar Consulta
+                    </a>
+                    <a th:href="@{/historias}" class="btn btn-secondary-custom">
+                        <i class="bi bi-arrow-left me-1"></i> Volver
+                    </a>
+                </div>
+            </div>
+
+            <!-- Ficha Médica de Impresión -->
+            <div class="card-custom mb-4">
+                <!-- Encabezado de Ficha -->
+                <div class="card-header-custom d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <div>
+                        <i class="bi bi-heart-pulse-fill me-2"></i>
+                        Consulta Médica: <strong th:text="${consulta.codigoConsulta}">CONS-000001</strong>
+                    </div>
+                    <span class="fs-6 badge"
+                        th:classappend="${consulta.estadoConsulta.name() == 'PENDIENTE' ? 'bg-warning text-dark' : 
+                                      (consulta.estadoConsulta.name() == 'ATENDIDA' ? 'bg-success text-white' : 
+                                      (consulta.estadoConsulta.name() == 'OBSERVACION' ? 'bg-info text-dark' : 
+                                      (consulta.estadoConsulta.name() == 'HOSPITALIZADA' ? 'bg-danger text-white' : 'bg-secondary text-white')))}"
+                        th:text="${consulta.estadoConsulta}">ATENDIDA</span>
+                </div>
+
+                <!-- Cuerpo de Ficha -->
+                <div class="card-body-custom">
+                    <!-- CABECERA CLÍNICA: DATOS BÁSICOS -->
+                    <div class="row g-4 mb-4">
+                        <!-- Datos Mascota -->
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-lg"
+                                style="background: var(--background-alt); border-left: 4px solid var(--primary);">
+                                <h5 class="fw-bold mb-3"><i class="bi bi-paw-fill me-2"
+                                        style="color: var(--primary);"></i> Ficha del Paciente</h5>
+                                <table class="table table-borderless table-sm mb-0">
+                                    <tr>
+                                        <td width="35%"><strong>Nombre:</strong></td>
+                                        <td><span class="fw-bold" th:text="${consulta.mascota.nombre}">Nombre</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Especie/Raza:</strong></td>
+                                        <td><span
+                                                th:text="${consulta.mascota.especie.name() + ' / ' + consulta.mascota.raza}">Perro</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sexo/Color:</strong></td>
+                                        <td><span
+                                                th:text="${consulta.mascota.sexo.name() + ' / ' + (consulta.mascota.color != null ? consulta.mascota.color : 'Sin especificar')}">Macho</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Código:</strong></td>
+                                        <td style="font-family: monospace; font-weight: 600;"
+                                            th:text="${consulta.mascota.codigoMascota}">PET-00001</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Datos Propietario -->
+                        <div class="col-md-6">
+                            <div class="p-3 rounded-lg"
+                                style="background: var(--background-alt); border-left: 4px solid var(--accent);">
+                                <h5 class="fw-bold mb-3"><i class="bi bi-person-circle me-2"
+                                        style="color: var(--accent);"></i> Propietario Responsable</h5>
+                                <table class="table table-borderless table-sm mb-0">
+                                    <tr>
+                                        <td width="35%"><strong>Nombre:</strong></td>
+                                        <td><span
+                                                th:text="${consulta.mascota.propietario.nombre + ' ' + consulta.mascota.propietario.apellido}">Juan
+                                                Perez</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>DNI:</strong></td>
+                                        <td style="font-family: monospace;"
+                                            th:text="${consulta.mascota.propietario.dni}">12345678</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Teléfono:</strong></td>
+                                        <td><span th:text="${consulta.mascota.propietario.telefono}">987654321</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Correo:</strong></td>
+                                        <td><span
+                                                th:text="${consulta.mascota.propietario.correo}">correo@correo.com</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- DATOS DE LA CONSULTA -->
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <p class="mb-1 text-muted-custom small">Fecha de la Consulta</p>
+                            <p class="fs-5 fw-bold"><i class="bi bi-calendar-check me-1"
+                                    style="color: var(--primary);"></i> <span
+                                    th:text="${consulta.fechaConsulta}">2026-06-14</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-1 text-muted-custom small">Veterinario Tratante</p>
+                            <p class="fs-5 fw-bold"><i class="bi bi-person-fill-gear me-1"
+                                    style="color: var(--accent);"></i> <span th:text="${consulta.veterinario}">Dr.
+                                    Veterinario</span></p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <h6 class="form-label-custom"><i class="bi bi-chat-left-quote me-1"></i> Motivo de la Consulta
+                        </h6>
+                        <p class="p-3 bg-light rounded border-start border-3 border-primary text-secondary-emphasis"
+                            th:text="${consulta.motivoConsulta}">Motivo</p>
+                    </div>
+
+                    <div th:if="${consulta.anamnesis != null && !consulta.anamnesis.isEmpty()}" class="mt-3">
+                        <h6 class="form-label-custom"><i class="bi bi-file-earmark-medical me-1"></i> Anamnesis /
+                            Antecedentes</h6>
+                        <p class="p-3 bg-light rounded text-muted-custom" style="white-space: pre-line;"
+                            th:text="${consulta.anamnesis}">Anamnesis</p>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- SIGNOS VITALES -->
+                    <h5 class="mb-3" style="color: var(--secondary); font-weight: 700;">
+                        <i class="bi bi-heart-pulse me-2" style="color: var(--primary);"></i> Constantes Fisiológicas y
+                        Signos Vitales
+                    </h5>
+                    <div class="row text-center g-3 mb-4">
+                        <!-- Temperatura -->
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 border rounded bg-light">
+                                <i class="bi bi-thermometer-half text-warning fs-3 mb-1"></i>
+                                <p class="mb-0 text-muted-custom small">Temperatura</p>
+                                <h4 class="fw-bold mb-0"
+                                    th:text="${consulta.temperatura != null} ? ${consulta.temperatura + ' &deg;C'} : 'N/A'">
+                                    38.5 &deg;C</h4>
+                            </div>
+                        </div>
+                        <!-- Peso Actual -->
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 border rounded bg-light">
+                                <i class="bi bi-speedometer2 text-success fs-3 mb-1"></i>
+                                <p class="mb-0 text-muted-custom small">Peso Actual</p>
+                                <h4 class="fw-bold mb-0" th:text="${consulta.pesoActual + ' kg'}">12.5 kg</h4>
+                            </div>
+                        </div>
+                        <!-- Frecuencia Cardiaca -->
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 border rounded bg-light">
+                                <i class="bi bi-heart-fill text-danger fs-3 mb-1"></i>
+                                <p class="mb-0 text-muted-custom small">Frec. Cardíaca</p>
+                                <h4 class="fw-bold mb-0"
+                                    th:text="${consulta.frecuenciaCardiaca != null} ? ${consulta.frecuenciaCardiaca + ' lpm'} : 'N/A'">
+                                    90 lpm</h4>
+                            </div>
+                        </div>
+                        <!-- Frecuencia Respiratoria -->
+                        <div class="col-md-3 col-6">
+                            <div class="p-3 border rounded bg-light">
+                                <i class="bi bi-wind text-info fs-3 mb-1"></i>
+                                <p class="mb-0 text-muted-custom small">Frec. Respiratoria</p>
+                                <h4 class="fw-bold mb-0"
+                                    th:text="${consulta.frecuenciaRespiratoria != null} ? ${consulta.frecuenciaRespiratoria + ' rpm'} : 'N/A'">
+                                    24 rpm</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <!-- EVALUACIÓN CLÍNICA -->
+                    <h5 class="mb-3" style="color: var(--secondary); font-weight: 700;">
+                        <i class="bi bi-prescription me-2" style="color: var(--accent);"></i> Evaluación Médica y
+                        Tratamiento
+                    </h5>
+
+                    <div class="mb-3">
+                        <h6 class="form-label-custom">Diagnóstico</h6>
+                        <p class="p-3 bg-light rounded text-dark border-start border-3 border-danger"
+                            th:text="${consulta.diagnostico}">Diagnóstico</p>
+                    </div>
+
+                    <div th:if="${consulta.tratamiento != null && !consulta.tratamiento.isEmpty()}" class="mb-3">
+                        <h6 class="form-label-custom">Tratamiento Clínico Aplicado</h6>
+                        <p class="p-3 bg-light rounded text-muted-custom" th:text="${consulta.tratamiento}">Tratamiento
+                        </p>
+                    </div>
+
+                    <div th:if="${consulta.medicamentos != null && !consulta.medicamentos.isEmpty()}" class="mb-3">
+                        <h6 class="form-label-custom"><i class="bi bi-capsule me-1 text-accent"></i> Medicamentos
+                            Recetados</h6>
+                        <p class="p-3 bg-warning-subtle text-warning-emphasis rounded border border-warning"
+                            style="white-space: pre-line;" th:text="${consulta.medicamentos}">Receta</p>
+                    </div>
+
+                    <div class="row g-3">
+                        <!-- Recomendaciones -->
+                        <div class="col-md-8"
+                            th:if="${consulta.recomendaciones != null && !consulta.recomendaciones.isEmpty()}">
+                            <h6 class="form-label-custom">Recomendaciones para el Propietario</h6>
+                            <p class="p-3 bg-light rounded text-muted-custom" th:text="${consulta.recomendaciones}">
+                                Recomendaciones</p>
+                        </div>
+
+                        <!-- Próxima Visita -->
+                        <div class="col-md-4 text-center d-flex align-items-center justify-content-center"
+                            th:if="${consulta.proximaVisita != null}">
+                            <div
+                                class="p-3 border border-success rounded bg-success-subtle text-success-emphasis w-100">
+                                <i class="bi bi-calendar-event fs-3 mb-1"></i>
+                                <p class="mb-0 small fw-bold">Fecha de Control / Retorno</p>
+                                <h5 class="fw-bold mb-0" th:text="${consulta.proximaVisita}">2026-06-20</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Firmas (Visibles únicamente en impresión) -->
+                    <div class="d-none d-print-block mt-5 pt-5">
+                        <div class="row text-center pt-5">
+                            <div class="col-6">
+                                <div class="mx-auto" style="width: 200px; border-top: 1px solid #000;"></div>
+                                <p class="small text-muted mb-0">Firma Médico Veterinario</p>
+                                <p class="fw-bold" th:text="${consulta.veterinario}">Veterinario</p>
+                            </div>
+                            <div class="col-6">
+                                <div class="mx-auto" style="width: 200px; border-top: 1px solid #000;"></div>
+                                <p class="small text-muted mb-0">Firma Propietario Responsable</p>
+                                <p class="fw-bold"
+                                    th:text="${consulta.mascota.propietario.nombre + ' ' + consulta.mascota.propietario.apellido}">
+                                    Propietario</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+</body>
+
+</html>

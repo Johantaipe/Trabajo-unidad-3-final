@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Portal - VET EXPERTS</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    
+    <!-- Custom Style Sheet -->
+    <style>
+        :root {
+            --primary: #2d6a4f;
+            --primary-light: #52b788;
+            --primary-dark: #1b4332;
+            --secondary: #f7b032;
+            --secondary-light: #fcd581;
+            --text-dark: #1d2d24;
+            --text-muted: #62756a;
+            --bg-light: #f4f7f5;
+            --shadow-sm: 0 2px 4px rgba(45, 106, 79, 0.04);
+            --shadow-md: 0 4px 12px rgba(45, 106, 79, 0.08);
+            --shadow-lg: 0 10px 30px rgba(45, 106, 79, 0.12);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- Collapsible Sidebar --- */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 280px;
+            background: linear-gradient(180deg, var(--primary-dark) 0%, #111e16 100%);
+            color: white;
+            z-index: 1000;
+            transition: var(--transition);
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+            padding: 1.5rem 1rem;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem 1rem 1.5rem 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-brand img {
+            height: 40px;
+        }
+
+        .sidebar-brand span {
+            font-weight: 800;
+            font-size: 1.25rem;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-brand span .highlight {
+            color: var(--secondary);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0.8rem 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-link.active {
+            background-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(82, 183, 136, 0.25);
+        }
+
+        .sidebar-link i {
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .sidebar-link.active i {
+            color: var(--secondary);
+        }
+
+        /* --- Main Content Layout --- */
+        .main-wrapper {
+            margin-left: 280px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        /* --- Topbar --- */
+        .topbar {
+            background-color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .toggle-sidebar-btn {
+            background: none;
+            border: none;
+            color: var(--text-dark);
+            font-size: 1.5rem;
+            display: none;
+            cursor: pointer;
+        }
+
+        .user-profile-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-light);
+        }
+
+        .content-area {
+            flex-grow: 1;
+            padding: 2rem;
+        }
+
+        /* --- Responsive adjust --- */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            .main-wrapper {
+                margin-left: 0;
+            }
+            .toggle-sidebar-btn {
+                display: block;
+            }
+        }
+
+        /* --- Card Styles --- */
+        .card-custom {
+            background: white;
+            border-radius: 24px;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .metric-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .bg-light-green {
+            background-color: rgba(82, 183, 136, 0.1);
+            color: var(--primary);
+        }
+
+        .bg-light-orange {
+            background-color: rgba(247, 176, 50, 0.1);
+            color: var(--secondary);
+        }
+
+        .bg-light-red {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+
+        .bg-light-blue {
+            background-color: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+        }
+
+        /* --- Pet Cards --- */
+        .pet-card {
+            border-radius: 24px;
+            overflow: hidden;
+            background: white;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            transition: var(--transition);
+        }
+
+        .pet-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .pet-img-wrapper {
+            height: 200px;
+            width: 100%;
+            position: relative;
+            background-color: #eee;
+        }
+
+        .pet-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pet-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: rgba(255, 255, 255, 0.95);
+            color: var(--primary-dark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* --- Booking Wizard --- */
+        .wizard-step {
+            display: none;
+        }
+
+        .wizard-step.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .wizard-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            margin-bottom: 2.5rem;
+        }
+
+        .wizard-progress::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: #e9ecef;
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .wizard-progress-bar {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            height: 4px;
+            background-color: var(--primary-light);
+            z-index: 2;
+            transform: translateY(-50%);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .wizard-node {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            border: 4px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            z-index: 3;
+            transition: var(--transition);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .wizard-node.active {
+            border-color: var(--primary-light);
+            color: var(--primary);
+            box-shadow: 0 0 0 5px rgba(82, 183, 136, 0.15);
+        }
+
+        .wizard-node.completed {
+            border-color: var(--primary);
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .slot-btn {
+            background-color: white;
+            border: 2px solid rgba(82, 183, 136, 0.2);
+            border-radius: 12px;
+            padding: 0.8rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            transition: var(--transition);
+            width: 100%;
+            text-align: center;
+        }
+
+        .slot-btn:hover:not(:disabled) {
+            border-color: var(--primary-light);
+            background-color: rgba(82, 183, 136, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .slot-btn.selected {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(45, 106, 79, 0.2);
+        }
+
+        /* --- Tabs Sections toggles --- */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* --- Notification List --- */
+        .notif-item {
+            display: flex;
+            gap: 15px;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            transition: var(--transition);
+            border-radius: 12px;
+        }
+
+        .notif-item:hover {
+            background-color: rgba(82, 183, 136, 0.03);
+        }
+
+        .notif-icon {
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+        }
+
+        /* --- Custom Buttons --- */
+        .btn-primary-custom {
+            background-color: var(--primary);
+            border: none;
+            color: white;
+            border-radius: 12px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .btn-primary-custom:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary-custom {
+            background-color: white;
+            border: 1px solid rgba(0,0,0,0.1);
+            color: var(--text-dark);
+            border-radius: 12px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        .btn-secondary-custom:hover {
+            background-color: var(--bg-light);
+        }
+        
+        .badge-pill-custom {
+            padding: 0.35em 0.65em;
+            font-size: .75em;
+            font-weight: 700;
+            border-radius: 50rem;
+        }
+
+        /* Password Rules inside Edit Profile */
+        .requirement-item {
+            font-size: 0.8rem;
+            color: #dc3545;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-bottom: 2px;
+        }
+        .requirement-item.met {
+            color: #198754;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <a th:href="@{/}" class="text-decoration-none text-white d-flex align-items-center gap-2">
+                <img th:src="@{/img/logo.png}" alt="Logo">
+                <span>VET<span class="highlight">Experts</span></span>
+            </a>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li>
+                <a class="sidebar-link active" data-target="sec-dashboard">
+                    <i class="bi bi-grid-1x2-fill"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a class="sidebar-link" data-target="sec-mascotas">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                    <span>Mis Mascotas</span>
+                </a>
+            </li>
+            <li>
+                <a class="sidebar-link" data-target="sec-reservar" id="linkReservar">
+                    <i class="bi bi-calendar-plus-fill"></i>
+                    <span>Reservar Cita</span>
+                </a>
+            </li>
+            <li>
+                <a class="sidebar-link" data-target="sec-citas">
+                    <i class="bi bi-calendar-event-fill"></i>
+                    <span>Mis Citas</span>
+                </a>
+            </li>
+            <li>
+                <a class="sidebar-link" data-target="sec-historial">
+                    <i class="bi bi-journal-medical"></i>
+                    <span>Historial Médico</span>
+                </a>
+            </li>
+            <li>
+                <a class="sidebar-link" data-target="sec-vacunas">
+                    <i class="bi bi-virus2"></i>
+                    <span>Vacunas</span>
+                </a>
+            </li>
+            <li>
+                <a class="sidebar-link" data-target="sec-pagos">
+                    <i class="bi bi-credit-card-2-back-fill"></i>
+                    <span>Pagos</span>
+                </a>
+            </li>
+            <li>
+                <a class="sidebar-link" data-target="sec-comprobantes">
+                    <i class="bi bi-file-earmark-text-fill"></i>
+                    <span>Comprobantes</span>
+                </a>
+            </li>
+            <li>
+                <a class="sidebar-link" data-target="sec-perfil">
+                    <i class="bi bi-person-fill-gear"></i>
+                    <span>Mi Perfil</span>
+                </a>
+            </li>
+            <li>
+                <a class="sidebar-link" data-target="sec-soporte">
+                    <i class="bi bi-headset"></i>
+                    <span>Soporte</span>
+                </a>
+            </li>
+            <li class="mt-4 pt-4 border-top border-secondary border-opacity-10">
+                <a th:href="@{/logout-cliente}" class="sidebar-link text-danger">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Cerrar Sesión</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    <!-- ========== MAIN WRAPPER ========== -->
+    <div class="main-wrapper">
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <button class="toggle-sidebar-btn" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+            <div class="d-none d-md-block">
+                <h5 class="fw-bold mb-0" th:text="'Hola, ' + ${propietario.nombre}">Hola, Cliente</h5>
+                <small class="text-muted">Bienvenido nuevamente a tu portal Vet Experts.</small>
+            </div>
+            
+            <div class="user-profile-menu">
+                <!-- Notifications Bell -->
+                <div class="dropdown">
+                    <button class="btn btn-light position-relative rounded-circle p-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width:40px; height:40px;">
+                        <i class="bi bi-bell-fill text-muted"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" th:text="${notificaciones.size()}" th:if="${notificaciones.size() > 0}">
+                            3
+                        </span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end p-3 shadow-lg border-0 rounded-4" style="width: 320px; max-height: 400px; overflow-y: auto;">
+                        <li class="fw-bold mb-2 pb-2 border-bottom text-dark">Centro de Notificaciones</li>
+                        <th:block th:each="n : ${notificaciones}">
+                            <li class="d-flex align-items-start gap-2 mb-2 p-2 rounded-3 hover-bg">
+                                <i th:class="${n.icono}"></i>
+                                <div>
+                                    <p class="small mb-0 text-dark" th:text="${n.mensaje}">Mensaje</p>
+                                    <small class="text-muted" style="font-size:0.75rem;" th:text="${n.fecha}">Fecha</small>
+                                </div>
+                            </li>
+                        </th:block>
+                        <li th:if="${notificaciones.size() == 0}" class="text-center text-muted py-3">No tienes notificaciones pendientes.</li>
+                    </ul>
+                </div>
+
+                <!-- Profile avatar -->
+                <a class="d-flex align-items-center gap-2 text-decoration-none" onclick="document.querySelector('[data-target=sec-perfil]').click();" style="cursor: pointer;">
+                    <img th:src="${usuario.fotoUrl != null ? usuario.fotoUrl : '/img/default-pet.jpg'}" alt="Avatar" class="user-avatar">
+                </a>
+            </div>
+        </header>
+
+        <!-- CONTENT AREA -->
+        <main class="content-area">
+            <!-- Alert Messages from flash attributes -->
+            <div th:if="${mensajeExito}" class="alert alert-success alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span th:text="${mensajeExito}">Éxito</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <div th:if="${mensajeError}" class="alert alert-danger alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${mensajeError}">Error</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+            <!-- ==================== SECTION 1: DASHBOARD ==================== -->
+            <section id="sec-dashboard" class="content-section active">
+                <div class="row g-4 mb-4">
+                    <!-- Metric 1: Mascotas Registradas -->
+                    <div class="col-md-4 col-lg-3">
+                        <div class="card-custom">
+                            <div class="metric-icon bg-light-green">
+                                <i class="bi bi-heart-pulse-fill"></i>
+                            </div>
+                            <h6 class="text-muted fw-bold mb-1">Mascotas Registradas</h6>
+                            <h2 class="fw-extrabold mb-3" th:text="${countMascotas}">2</h2>
+                            <button type="button" class="btn btn-sm btn-outline-success border-0 fw-bold px-0 text-success" onclick="document.querySelector('[data-target=sec-mascotas]').click();">Ver mascotas <i class="bi bi-arrow-right"></i></button>
+                        </div>
+                    </div>
+                    <!-- Metric 2: Próxima Cita -->
+                    <div class="col-md-8 col-lg-5">
+                        <div class="card-custom">
+                            <div class="metric-icon bg-light-orange">
+                                <i class="bi bi-calendar2-event-fill"></i>
+                            </div>
+                            <h6 class="text-muted fw-bold mb-1">Próxima Cita</h6>
+                            <th:block th:if="${proximaCita != null}">
+                                <h5 class="fw-bold mb-1 text-dark" th:text="${proximaCita.mascota.nombre} + ' - ' + ${proximaCita.tipoCita.name()}">Lucas - CONSULTA_GENERAL</h5>
+                                <p class="text-muted small mb-2" th:text="${proximaCita.fecha} + ' | ' + ${proximaCita.hora} + ' con ' + ${proximaCita.veterinario}"></p>
+                                <button type="button" class="btn btn-sm btn-outline-warning border-0 fw-bold px-0 text-warning" onclick="document.querySelector('[data-target=sec-citas]').click();">Ver detalles de cita <i class="bi bi-arrow-right"></i></button>
+                            </th:block>
+                            <th:block th:if="${proximaCita == null}">
+                                <h5 class="fw-bold mb-1 text-muted">Sin citas programadas</h5>
+                                <p class="text-muted small mb-2">Mantén la salud al día.</p>
+                                <button type="button" class="btn btn-sm btn-outline-success border-0 fw-bold px-0 text-success" onclick="document.getElementById('linkReservar').click();">Agendar una cita <i class="bi bi-arrow-right"></i></button>
+                            </th:block>
+                        </div>
+                    </div>
+                    <!-- Metric 3: Próxima Vacuna -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card-custom">
+                            <div class="metric-icon bg-light-blue">
+                                <i class="bi bi-virus"></i>
+                            </div>
+                            <h6 class="text-muted fw-bold mb-1">Próxima Vacuna</h6>
+                            <th:block th:if="${proximaVacuna != null}">
+                                <h5 class="fw-bold mb-1 text-dark" th:text="${proximaVacuna.mascota.nombre} + ' - ' + ${proximaVacuna.vacuna.nombre}">Lucas - Rabia</h5>
+                                <p class="text-muted small mb-2" th:text="'Vence en ' + ${diasVacunaRestantes} + ' días (' + ${proximaVacuna.fechaProximaDosis} + ')'"></p>
+                            </th:block>
+                            <th:block th:if="${proximaVacuna == null}">
+                                <h5 class="fw-bold mb-1 text-muted">Sin vacunas programadas</h5>
+                                <p class="text-muted small mb-2">Tus dosis están al día.</p>
+                            </th:block>
+                        </div>
+                    </div>
+                    <!-- Metric 4: Pagos Pendientes -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card-custom">
+                            <div class="metric-icon bg-light-red">
+                                <i class="bi bi-credit-card-2-back-fill"></i>
+                            </div>
+                            <h6 class="text-muted fw-bold mb-1">Pagos Pendientes</h6>
+                            <h2 class="fw-extrabold mb-1" th:text="'S/ ' + ${#numbers.formatDecimal(totalPagosPendientes,1,2)}">S/ 0.00</h2>
+                            <p class="text-muted small mb-0" th:text="${countPagosPendientes} + ' cuentas pendientes de pago'"></p>
+                        </div>
+                    </div>
+                    <!-- Metric 5: Comprobantes Emitidos -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card-custom">
+                            <div class="metric-icon bg-light-green">
+                                <i class="bi bi-file-earmark-text-fill"></i>
+                            </div>
+                            <h6 class="text-muted fw-bold mb-1">Comprobantes Emitidos</h6>
+                            <h2 class="fw-extrabold mb-1" th:text="${countComprobantes}">3</h2>
+                            <p class="text-muted small mb-0">Boletas y facturas descargables.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activities Section -->
+                <div class="row g-4 mt-2">
+                    <div class="col-lg-6">
+                        <div class="card-custom bg-white">
+                            <h5 class="fw-bold mb-4 text-dark"><i class="bi bi-calendar2-heart text-success me-2"></i>Citas Programadas</h5>
+                            <div class="table-responsive">
+                                <table class="table table-borderless align-middle mb-0">
+                                    <thead>
+                                        <tr class="text-muted small">
+                                            <th>Mascota</th>
+                                            <th>Servicio</th>
+                                            <th>Fecha/Hora</th>
+                                            <th>Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="c, iter : ${citas}" th:if="${iter.index < 4}">
+                                            <td>
+                                                <strong th:text="${c.mascota.nombre}">Mascota</strong>
+                                            </td>
+                                            <td th:text="${c.tipoCita}">Consulta</td>
+                                            <td th:text="${c.fecha} + ' ' + ${c.hora}">Fecha</td>
+                                            <td>
+                                                <span th:class="'badge-pill-custom badge ' + (${c.estado.name() == 'CONFIRMADA' || c.estado.name() == 'ATENDIDA' || c.estado.name() == 'FINALIZADA'} ? 'bg-success' : (${c.estado.name() == 'CANCELADA' || c.estado.name() == 'NO_ASISTIO'} ? 'bg-danger' : 'bg-warning'))" th:text="${c.estado}">PROGRAMADA</span>
+                                            </td>
+                                        </tr>
+                                        <tr th:if="${citas.isEmpty()}">
+                                            <td colspan="4" class="text-center text-muted py-3">No tienes citas programadas.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right panel: Quick notification preview -->
+                    <div class="col-lg-6">
+                        <div class="card-custom bg-white">
+                            <h5 class="fw-bold mb-4 text-dark"><i class="bi bi-bell-fill text-warning me-2"></i>Avisos y Alertas</h5>
+                            <div class="d-flex flex-column gap-3">
+                                <th:block th:each="n, iter : ${notificaciones}" th:if="${iter.index < 4}">
+                                    <div class="notif-item">
+                                        <div class="notif-icon">
+                                            <i th:class="${n.icono}"></i>
+                                        </div>
+                                        <div>
+                                            <p class="small text-dark mb-0 fw-semibold" th:text="${n.mensaje}">Aviso</p>
+                                            <small class="text-muted" th:text="${n.fecha}">Fecha</small>
+                                        </div>
+                                    </div>
+                                </th:block>
+                                <div th:if="${notificaciones.isEmpty()}" class="text-center text-muted py-3">No tienes alertas recientes.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SECTION 2: MIS MASCOTAS ==================== -->
+            <section id="sec-mascotas" class="content-section">
+                <h4 class="fw-bold mb-4 text-dark"><i class="bi bi-heart-pulse-fill text-success me-2"></i>Mis Mascotas</h4>
+                
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-4" th:each="m : ${mascotas}">
+                        <div class="pet-card">
+                            <div class="pet-img-wrapper">
+                                <img th:src="${m.fotoUrl != null ? m.fotoUrl : '/img/default-pet.jpg'}" alt="Foto Mascota" class="pet-img" onerror="this.src='/img/default-pet.jpg'">
+                                <span class="pet-badge" th:text="${m.especie}">Especie</span>
+                            </div>
+                            <div class="p-4">
+                                <h4 class="fw-bold text-dark mb-1" th:text="${m.nombre}">Nombre</h4>
+                                <p class="text-muted small mb-3" th:text="${m.raza} + ' | ' + ${m.sexo}"></p>
+                                
+                                <div class="row g-2 text-start mb-4">
+                                    <div class="col-6">
+                                        <span class="text-muted small d-block">Edad</span>
+                                        <strong class="text-dark small" th:id="'edad-' + ${m.id}" th:attr="data-nacimiento=${m.fechaNacimiento}">Calcular...</strong>
+                                    </div>
+                                    <div class="col-6">
+                                        <span class="text-muted small d-block">Peso</span>
+                                        <strong class="text-dark small" th:text="${m.peso} + ' kg'">0 kg</strong>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary-custom w-100" onclick="verHistorialMascota(this)" th:data-mascota-id="${m.id}" th:data-mascota-nombre="${m.nombre}">Ver historial clínico</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div th:if="${mascotas.isEmpty()}" class="col-12 text-center py-5">
+                        <i class="bi bi-heartbreak-fill text-muted fs-1 mb-3"></i>
+                        <h5 class="text-muted">No tienes mascotas registradas.</h5>
+                        <p class="text-muted">Por favor, acércate a la recepción de Vet Experts para registrar tus mascotas.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SECTION 3: RESERVAR CITA ==================== -->
+            <section id="sec-reservar" class="content-section">
+                <h4 class="fw-bold mb-4 text-dark"><i class="bi bi-calendar-plus-fill text-success me-2"></i>Reservar Cita</h4>
+                
+                <div class="card-custom bg-white p-4 p-md-5">
+                    <!-- Progress Nodes -->
+                    <div class="wizard-progress">
+                        <div class="wizard-progress-bar" id="wizardBar"></div>
+                        <div class="wizard-node active" id="node1">1</div>
+                        <div class="wizard-node" id="node2">2</div>
+                        <div class="wizard-node" id="node3">3</div>
+                        <div class="wizard-node" id="node4">4</div>
+                        <div class="wizard-node" id="node5">5</div>
+                    </div>
+
+                    <form th:action="@{/portal-cliente/reservar}" method="POST" id="bookingForm">
+                        
+                        <!-- Step 1: Mascotas -->
+                        <div class="wizard-step active" id="step1">
+                            <h5 class="fw-bold mb-3 text-dark">Paso 1: Selecciona la mascota paciente</h5>
+                            <div class="mb-4">
+                                <label for="bMascota" class="form-label fw-semibold text-muted">Mascota</label>
+                                <select name="mascotaId" id="bMascota" class="form-select form-control" required>
+                                    <option value="" disabled selected>Selecciona tu mascota...</option>
+                                    <option th:each="m : ${mascotas}" th:value="${m.id}" th:text="${m.nombre} + ' (' + ${m.especie} + ')'"></option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-primary-custom" onclick="goToStep(2)" id="btnStep1Next" disabled>Siguiente Paso</button>
+                        </div>
+
+                        <!-- Step 2: Servicios -->
+                        <div class="wizard-step" id="step2">
+                            <h5 class="fw-bold mb-3 text-dark">Paso 2: Selecciona el servicio</h5>
+                            <div class="mb-4">
+                                <label for="bServicio" class="form-label fw-semibold text-muted">Servicio</label>
+                                <select name="tipoCita" id="bServicio" class="form-select form-control" required>
+                                    <option value="" disabled selected>Selecciona un servicio...</option>
+                                    <option value="CONSULTA_GENERAL">Consulta General</option>
+                                    <option value="VACUNACION">Vacunación</option>
+                                    <option value="DESPARASITACION">Desparasitación</option>
+                                    <option value="CONTROL">Control de Rutina</option>
+                                    <option value="BAÑO">Baño Higiénico</option>
+                                    <option value="PELUQUERIA">Peluquería Canina/Felina</option>
+                                    <option value="HIGIENE_DENTAL">Higiene Dental Especializada</option>
+                                    <option value="OTRO">Otro Motivo</option>
+                                </select>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-secondary-custom" onclick="goToStep(1)">Atrás</button>
+                                <button type="button" class="btn btn-primary-custom" onclick="goToStep(3)" id="btnStep2Next" disabled>Siguiente Paso</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Fecha (Calendario) -->
+                        <div class="wizard-step" id="step3">
+                            <h5 class="fw-bold mb-3 text-dark">Paso 3: Selecciona la fecha</h5>
+                            <div class="mb-4">
+                                <label for="bFecha" class="form-label fw-semibold text-muted">Fecha de Cita</label>
+                                <input type="date" name="fecha" id="bFecha" class="form-control" required>
+                                <small class="text-muted">Las reservas deben hacerse a partir de hoy.</small>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-secondary-custom" onclick="goToStep(2)">Atrás</button>
+                                <button type="button" class="btn btn-primary-custom" onclick="goToStep(4)" id="btnStep3Next" disabled>Siguiente Paso</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Veterinario y Hora -->
+                        <div class="wizard-step" id="step4">
+                            <h5 class="fw-bold mb-3 text-dark">Paso 4: Selecciona el Veterinario y Horario Disponible</h5>
+                            
+                            <div class="mb-4">
+                                <label for="bVeterinario" class="form-label fw-semibold text-muted">Veterinario Responsable</label>
+                                <select name="veterinario" id="bVeterinario" class="form-select form-control" required>
+                                    <option value="" disabled selected>Selecciona un médico...</option>
+                                    <option th:each="v : ${veterinarios}" th:value="${v}" th:text="${v}"></option>
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-semibold text-muted d-block">Horarios Disponibles</label>
+                                <div id="slotsLoader" class="text-center py-3 d-none">
+                                    <div class="spinner-border text-success" role="status"></div>
+                                    <p class="small text-muted mt-2">Consultando disponibilidad en agenda...</p>
+                                </div>
+                                <div id="noSlotsMessage" class="alert alert-warning text-center py-2 d-none">
+                                    El veterinario seleccionado no cuenta con horarios disponibles para esta fecha. Intente con otro profesional o fecha.
+                                </div>
+                                <div id="slotsGrid" class="row g-2">
+                                    <!-- Slots buttons will load here via AJAX -->
+                                    <div class="col-12 text-center text-muted small py-2">
+                                        Selecciona un veterinario y una fecha para ver horas disponibles.
+                                    </div>
+                                </div>
+                                <input type="hidden" name="hora" id="bHora" required>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-secondary-custom" onclick="goToStep(3)">Atrás</button>
+                                <button type="button" class="btn btn-primary-custom" onclick="goToStep(5)" id="btnStep4Next" disabled>Siguiente Paso</button>
+                            </div>
+                        </div>
+
+                        <!-- Step 5: Confirmar -->
+                        <div class="wizard-step" id="step5">
+                            <h5 class="fw-bold mb-4 text-dark">Paso 5: Confirma los detalles de tu Cita</h5>
+                            
+                            <div class="bg-light p-4 rounded-4 mb-4" style="border: 1px solid rgba(0,0,0,0.05);">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <span class="text-muted small d-block">Mascota Paciente:</span>
+                                        <strong id="summaryMascota" class="text-dark">-</strong>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <span class="text-muted small d-block">Servicio Solicitado:</span>
+                                        <strong id="summaryServicio" class="text-dark">-</strong>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <span class="text-muted small d-block">Fecha y Hora:</span>
+                                        <strong id="summaryFechaHora" class="text-success">-</strong>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <span class="text-muted small d-block">Veterinario Responsable:</span>
+                                        <strong id="summaryVeterinario" class="text-dark">-</strong>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="bMotivo" class="form-label fw-semibold text-muted">Detalla el Motivo de Consulta</label>
+                                <input type="text" name="motivoConsulta" id="bMotivo" class="form-control" placeholder="Ej: Presenta decaimiento, control regular, baño completo..." required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="bObs" class="form-label fw-semibold text-muted">Observaciones Adicionales <span class="text-muted fw-normal">(Opcional)</span></label>
+                                <textarea name="observaciones" id="bObs" class="form-control" rows="3" placeholder="Ingresa cualquier detalle relevante para la cita..."></textarea>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="button" class="btn btn-secondary-custom" onclick="goToStep(4)">Atrás</button>
+                                <button type="submit" class="btn btn-success border-0 px-4 text-white" style="background-color: var(--primary);">Confirmar Cita</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </section>
+
+            <!-- ==================== SECTION 4: MIS CITAS ==================== -->
+            <section id="sec-citas" class="content-section">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-bold mb-0 text-dark"><i class="bi bi-calendar-event-fill text-success me-2"></i>Mis Citas</h4>
+                    <button class="btn btn-primary-custom" onclick="document.getElementById('linkReservar').click();"><i class="bi bi-plus-circle me-1"></i> Reservar Nueva</button>
+                </div>
+
+                <div class="card-custom bg-white">
+                    <!-- Filters -->
+                    <div class="d-flex flex-wrap gap-2 mb-4" id="citasFilters">
+                        <button class="btn btn-sm btn-outline-success active" data-filter="all">Todas</button>
+                        <button class="btn btn-sm btn-outline-success" data-filter="PROGRAMADA">Pendientes</button>
+                        <button class="btn btn-sm btn-outline-success" data-filter="CONFIRMADA">Confirmadas</button>
+                        <button class="btn btn-sm btn-outline-success" data-filter="ATENDIDA">Atendidas</button>
+                        <button class="btn btn-sm btn-outline-success" data-filter="CANCELADA">Canceladas</button>
+                        <button class="btn btn-sm btn-outline-success" data-filter="REPROGRAMADA">Reprogramadas</button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table align-middle" id="citasTable">
+                            <thead>
+                                <tr class="text-muted small">
+                                    <th>Código</th>
+                                    <th>Mascota</th>
+                                    <th>Servicio</th>
+                                    <th>Fecha</th>
+                                    <th>Hora</th>
+                                    <th>Veterinario</th>
+                                    <th>Estado</th>
+                                    <th>Motivo / Obs</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="c : ${citas}" th:data-state="${c.estado}">
+                                    <td><strong th:text="${c.codigoCita}">CITA-01</strong></td>
+                                    <td th:text="${c.mascota.nombre}">Lucas</td>
+                                    <td th:text="${c.tipoCita}">Consulta</td>
+                                    <td th:text="${c.fecha}">Fecha</td>
+                                    <td th:text="${c.hora}">Hora</td>
+                                    <td th:text="${c.veterinario}">Veterinario</td>
+                                    <td>
+                                        <span th:class="'badge-pill-custom badge ' + (${c.estado.name() == 'CONFIRMADA' || c.estado.name() == 'ATENDIDA' || c.estado.name() == 'FINALIZADA'} ? 'bg-success' : (${c.estado.name() == 'CANCELADA' || c.estado.name() == 'NO_ASISTIO'} ? 'bg-danger' : 'bg-warning'))" th:text="${c.estado}">PROGRAMADA</span>
+                                    </td>
+                                    <td>
+                                        <span th:text="${c.motivoConsulta}" class="d-block small">Motivo</span>
+                                        <small class="text-muted" th:text="${c.observaciones != null ? c.observaciones : ''}"></small>
+                                    </td>
+                                </tr>
+                                <tr th:if="${citas.isEmpty()}" class="no-data-row">
+                                    <td colspan="8" class="text-center text-muted py-4">No tienes citas registradas.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SECTION 5: HISTORIAL MÉDICO ==================== -->
+            <section id="sec-historial" class="content-section">
+                <h4 class="fw-bold mb-4 text-dark"><i class="bi bi-journal-medical text-success me-2"></i>Historial Médico</h4>
+                
+                <div class="card-custom bg-white">
+                    <!-- Pet Filters -->
+                    <div class="mb-4">
+                        <label for="hMascotaFilter" class="form-label fw-semibold text-muted">Filtrar por Paciente</label>
+                        <select id="hMascotaFilter" class="form-select form-control" style="max-width:300px;">
+                            <option value="all">Ver todas las mascotas...</option>
+                            <option th:each="m : ${mascotas}" th:value="${m.id}" th:text="${m.nombre}"></option>
+                        </select>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table align-middle" id="historialTable">
+                            <thead>
+                                <tr class="text-muted small">
+                                    <th>Fecha</th>
+                                    <th>Mascota</th>
+                                    <th>Código Consulta</th>
+                                    <th>Veterinario</th>
+                                    <th>Diagnóstico</th>
+                                    <th>Tratamiento</th>
+                                    <th>Medicamentos / Recetas</th>
+                                    <th>Observaciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="h : ${historias}" th:data-mascota-id="${h.mascota.id}">
+                                    <td th:text="${h.fechaConsulta}">Fecha</td>
+                                    <td><strong th:text="${h.mascota.nombre}">Nombre</strong></td>
+                                    <td th:text="${h.codigoConsulta}">COD</td>
+                                    <td th:text="${h.veterinario}">Veterinario</td>
+                                    <td th:text="${h.diagnostico}">Diagnóstico</td>
+                                    <td th:text="${h.tratamiento}">Tratamiento</td>
+                                    <td th:text="${h.medicamentos}">Medicamentos</td>
+                                    <td th:text="${h.recomendaciones}">Observaciones</td>
+                                </tr>
+                                <tr th:if="${historias.isEmpty()}" class="no-data-row">
+                                    <td colspan="8" class="text-center text-muted py-4">No se registran atenciones clínicas aún.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SECTION 6: VACUNAS ==================== -->
+            <section id="sec-vacunas" class="content-section">
+                <h4 class="fw-bold mb-4 text-dark"><i class="bi bi-virus2 text-success me-2"></i>Dosis de Vacunación</h4>
+                
+                <div class="card-custom bg-white">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr class="text-muted small">
+                                    <th>Mascota</th>
+                                    <th>Vacuna</th>
+                                    <th>Fecha Aplicada</th>
+                                    <th>Fecha Próxima</th>
+                                    <th>Veterinario</th>
+                                    <th>Lote</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="v : ${vacunas}">
+                                    <td><strong th:text="${v.mascota.nombre}">Mascota</strong></td>
+                                    <td th:text="${v.vacuna.nombre}">Nombre</td>
+                                    <td th:text="${v.fechaAplicacion}">Fecha</td>
+                                    <td th:text="${v.fechaProximaDosis}">Fecha</td>
+                                    <td th:text="${v.veterinario}">Veterinario</td>
+                                    <td th:text="${v.lote != null ? v.lote : '-'}">Lote</td>
+                                    <td>
+                                        <span th:if="${v.estado.name() == 'APLICADA'}" class="badge-pill-custom badge bg-success">🟢 Vigente</span>
+                                        <span th:if="${v.estado.name() == 'PROXIMA_A_VENCER'}" class="badge-pill-custom badge bg-warning">🟡 Próxima a vencer</span>
+                                        <span th:if="${v.estado.name() == 'VENCIDA'}" class="badge-pill-custom badge bg-danger">🔴 Vencida</span>
+                                        <span th:if="${v.estado.name() == 'PROGRAMADA'}" class="badge-pill-custom badge bg-secondary">🔵 Programada</span>
+                                    </td>
+                                </tr>
+                                <tr th:if="${vacunas.isEmpty()}">
+                                    <td colspan="7" class="text-center text-muted py-4">No se registran vacunas para tus mascotas.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SECTION 7: PAGOS ==================== -->
+            <section id="sec-pagos" class="content-section">
+                <h4 class="fw-bold mb-4 text-dark"><i class="bi bi-credit-card-2-back-fill text-success me-2"></i>Estado de Cuentas y Pagos</h4>
+                
+                <div class="card-custom bg-white">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr class="text-muted small">
+                                    <th>Comprobante</th>
+                                    <th>Fecha Emisión</th>
+                                    <th>Mascota</th>
+                                    <th>Método de Pago</th>
+                                    <th>Estado</th>
+                                    <th>Total Cobrado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="p : ${pagos}">
+                                    <td><strong th:text="${p.codigoVenta}">VENT-01</strong></td>
+                                    <td th:text="${p.fechaVenta}">Fecha</td>
+                                    <td th:text="${p.mascota != null ? p.mascota.nombre : 'General'}">Lucas</td>
+                                    <td th:text="${p.metodoPago != null ? p.metodoPago : '-'}">Metodo</td>
+                                    <td>
+                                        <span th:class="'badge-pill-custom badge ' + (${p.estadoPago.name() == 'PAGADO'} ? 'bg-success' : (${p.estadoPago.name() == 'ANULADO'} ? 'bg-secondary' : 'bg-danger'))" th:text="${p.estadoPago}">PENDIENTE</span>
+                                    </td>
+                                    <td><strong th:text="'S/ ' + ${#numbers.formatDecimal(p.total,1,2)}">S/ 0.00</strong></td>
+                                </tr>
+                                <tr th:if="${pagos.isEmpty()}">
+                                    <td colspan="6" class="text-center text-muted py-4">No registras transacciones en caja.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SECTION 8: COMPROBANTES ==================== -->
+            <section id="sec-comprobantes" class="content-section">
+                <h4 class="fw-bold mb-4 text-dark"><i class="bi bi-file-earmark-text-fill text-success me-2"></i>Comprobantes Electrónicos</h4>
+                
+                <div class="card-custom bg-white">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr class="text-muted small">
+                                    <th>Nro Comprobante</th>
+                                    <th>Fecha</th>
+                                    <th>Concepto</th>
+                                    <th>Tipo</th>
+                                    <th>Monto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="c : ${comprobantes}" th:if="${c.estadoPago.name() == 'PAGADO'}">
+                                    <td><strong th:text="${c.codigoVenta}">VENT-01</strong></td>
+                                    <td th:text="${c.fechaVenta.toLocalDate()}">Fecha</td>
+                                    <td>
+                                        <span th:each="d : ${c.detalles}" th:text="${d.concepto} + ' '" class="small">Concepto</span>
+                                    </td>
+                                    <td th:text="${c.tipoComprobante}">BOLETA</td>
+                                    <td><strong th:text="'S/ ' + ${#numbers.formatDecimal(c.total,1,2)}">S/ 0.00</strong></td>
+                                    <td>
+                                        <div class="d-flex gap-2">
+                                            <!-- Ver / Descargar Simulated PDF -->
+                                            <a th:href="@{'/uploads/comprobantes/comprobante_' + ${c.codigoVenta} + '.pdf'}" target="_blank" class="btn btn-sm btn-outline-success rounded-3"><i class="bi bi-eye"></i> Ver PDF</a>
+                                            
+                                            <a th:href="@{'/uploads/comprobantes/comprobante_' + ${c.codigoVenta} + '.pdf'}" th:download="'comprobante_' + ${c.codigoVenta} + '.pdf'" class="btn btn-sm btn-outline-primary rounded-3"><i class="bi bi-download"></i> Descargar</a>
+                                            
+                                            <!-- Enviar Correo -->
+                                            <button type="button" class="btn btn-sm btn-light rounded-3" th:onclick="'enviarCorreoAjax(' + ${c.id} + ')'"><i class="bi bi-envelope"></i> Correo</button>
+                                            
+                                            <!-- Enviar WhatsApp -->
+                                            <button type="button" class="btn btn-sm btn-success border-0 rounded-3 text-white" th:onclick="'enviarWhatsAppJS(' + ${c.id} + ',\'' + ${c.codigoVenta} + '\',' + ${c.total} + ',\'' + ${propietario.telefono} + '\',\'' + ${propietario.nombre} + '\')'"><i class="bi bi-whatsapp"></i> WhatsApp</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${comprobantes.isEmpty()}">
+                                    <td colspan="6" class="text-center text-muted py-4">No se registran comprobantes cobrados aún.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SECTION 9: MI PERFIL ==================== -->
+            <section id="sec-perfil" class="content-section">
+                <h4 class="fw-bold mb-4 text-dark"><i class="bi bi-person-fill-gear text-success me-2"></i>Configuración de Perfil</h4>
+                
+                <div class="row g-4">
+                    <!-- Formulario Perfil -->
+                    <div class="col-lg-8">
+                        <div class="card-custom bg-white p-4">
+                            <form th:action="@{/portal-cliente/perfil/actualizar}" method="POST" enctype="multipart/form-data" id="profileForm">
+                                <div class="row g-3">
+                                    <!-- Nombres -->
+                                    <div class="col-md-6">
+                                        <label for="pNombre" class="form-label fw-semibold text-muted">Nombres</label>
+                                        <input type="text" name="nombre" id="pNombre" th:value="${usuario.nombre}" class="form-control" required>
+                                    </div>
+                                    
+                                    <!-- Apellidos -->
+                                    <div class="col-md-6">
+                                        <label for="pApellido" class="form-label fw-semibold text-muted">Apellidos</label>
+                                        <input type="text" name="apellido" id="pApellido" th:value="${usuario.apellido}" class="form-control" required>
+                                    </div>
+
+                                    <!-- Correo (Readonly) -->
+                                    <div class="col-md-6">
+                                        <label for="pCorreo" class="form-label fw-semibold text-muted">Correo Electrónico (No editable)</label>
+                                        <input type="email" id="pCorreo" th:value="${usuario.username}" class="form-control bg-light text-muted" readonly>
+                                    </div>
+
+                                    <!-- Celular -->
+                                    <div class="col-md-6">
+                                        <label for="pTelefono" class="form-label fw-semibold text-muted">Teléfono / WhatsApp</label>
+                                        <input type="tel" name="telefono" id="pTelefono" th:value="${usuario.telefono}" class="form-control" maxlength="9" placeholder="9XXXXXXXX" required>
+                                        <div class="text-danger small mt-1" id="profilePhoneError" style="display: none;">El teléfono debe iniciar con 9 y tener exactamente 9 dígitos</div>
+                                    </div>
+
+                                    <!-- Nueva Contraseña -->
+                                    <div class="col-md-6">
+                                        <label for="pPassword" class="form-label fw-semibold text-muted">Cambiar Contraseña <span class="text-muted fw-normal">(Opcional)</span></label>
+                                        <input type="password" name="password" id="pPassword" class="form-control" placeholder="Dejar en blanco para no modificar">
+                                        
+                                        <!-- Barra de Fortaleza -->
+                                        <div class="d-flex justify-content-between align-items-center mt-2 mb-1">
+                                            <span class="small text-muted fw-semibold">Fortaleza:</span>
+                                            <span id="profilePassLabel" class="small fw-bold text-muted">-</span>
+                                        </div>
+                                        <div class="progress mb-2" style="height: 6px; border-radius: 3px; background-color: rgba(0,0,0,0.05);">
+                                            <div id="profilePassBar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%;"></div>
+                                        </div>
+
+                                        <div class="p-2 bg-light rounded-3 small" style="border: 1px dashed rgba(0,0,0,0.08);">
+                                            <div class="requirement-item" id="prof-req-length"><i class="bi bi-x-circle-fill"></i> Mínimo 8 caracteres</div>
+                                            <div class="requirement-item" id="prof-req-upper"><i class="bi bi-x-circle-fill"></i> Una letra mayúscula</div>
+                                            <div class="requirement-item" id="prof-req-number"><i class="bi bi-x-circle-fill"></i> Un número</div>
+                                            <div class="requirement-item" id="prof-req-special"><i class="bi bi-x-circle-fill"></i> Un carácter especial</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Subir Foto -->
+                                    <div class="col-md-6">
+                                        <label for="pFoto" class="form-label fw-semibold text-muted">Foto de Perfil</label>
+                                        <input type="file" name="fotoFile" id="pFoto" class="form-control" accept="image/*">
+                                        <small class="text-muted">Formatos aceptados: JPG, PNG. Máx 2MB.</small>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary-custom mt-4" id="btnUpdateProfile">Guardar Cambios</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Lateral Avatar Preview -->
+                    <div class="col-lg-4">
+                        <div class="card-custom bg-white text-center p-4">
+                            <h5 class="fw-bold mb-4 text-dark">Vista Previa</h5>
+                            <div class="mb-3">
+                                <img th:src="${usuario.fotoUrl != null ? usuario.fotoUrl : '/img/default-pet.jpg'}" alt="Foto Perfil" class="rounded-circle border" style="width: 150px; height: 150px; object-fit: cover;" id="profilePreview" onerror="this.src='/img/default-pet.jpg'">
+                            </div>
+                            <h5 class="fw-bold text-dark mb-1" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Cliente</h5>
+                            <p class="text-muted small" th:text="${usuario.username}">correo@ejemplo.com</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SECTION 10: SOPORTE ==================== -->
+            <section id="sec-soporte" class="content-section">
+                <h4 class="fw-bold mb-4 text-dark"><i class="bi bi-headset text-success me-2"></i>Centro de Soporte al Cliente</h4>
+                
+                <div class="row g-4">
+                    <!-- Contact Information -->
+                    <div class="col-lg-5">
+                        <div class="card-custom bg-white p-4">
+                            <h5 class="fw-bold text-dark mb-4">Información de Contacto</h5>
+                            
+                            <div class="d-flex gap-3 mb-3">
+                                <i class="bi bi-telephone-fill text-success fs-4"></i>
+                                <div>
+                                    <strong class="text-dark d-block">Llámanos / WhatsApp</strong>
+                                    <span class="text-muted">+51 987 654 321</span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3 mb-3">
+                                <i class="bi bi-envelope-fill text-success fs-4"></i>
+                                <div>
+                                    <strong class="text-dark d-block">Correo de Atención</strong>
+                                    <span class="text-muted">soporte@vetexperts.com</span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3 mb-3">
+                                <i class="bi bi-geo-alt-fill text-success fs-4"></i>
+                                <div>
+                                    <strong class="text-dark d-block">Dirección Clínica</strong>
+                                    <span class="text-muted">Av. Giráldez 456, Huancayo, Junín, Perú</span>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3 mb-3">
+                                <i class="bi bi-clock-fill text-success fs-4"></i>
+                                <div>
+                                    <strong class="text-dark d-block">Horarios de Atención</strong>
+                                    <span class="text-muted">Lunes a Sábado: 8:00 AM - 8:00 PM<br>Domingos y Feriados (Emergencias): 9:00 AM - 1:00 PM</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Map/FAQ -->
+                    <div class="col-lg-7">
+                        <div class="card-custom bg-white p-4">
+                            <h5 class="fw-bold text-dark mb-4">Preguntas Frecuentes</h5>
+                            
+                            <div class="accordion accordion-flush" id="supportAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne">
+                                            ¿Cómo cancelo o reprogramo una cita?
+                                        </button>
+                                    </h2>
+                                    <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#supportAccordion">
+                                        <div class="accordion-body text-muted small">
+                                            Para cancelar o reprogramar una cita con anticipación, por favor comunícate directamente a nuestra central telefónica o WhatsApp al +51 987 654 321. Próximamente habilitaremos la autogestión de citas desde este portal.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo">
+                                            ¿Cuándo se actualizan las vacunas y el historial médico?
+                                        </button>
+                                    </h2>
+                                    <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#supportAccordion">
+                                        <div class="accordion-body text-muted small">
+                                            Los registros se sincronizan de manera inmediata y automática tan pronto como el médico veterinario a cargo finaliza la atención clínica y registra la dosis aplicada en el sistema administrativo central.
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed fw-bold text-dark" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree">
+                                            ¿Cómo realizo el pago de mis cuentas pendientes?
+                                        </button>
+                                    </h2>
+                                    <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#supportAccordion">
+                                        <div class="accordion-body text-muted small">
+                                            Puedes realizar transferencias bancarias o pagos vía Yape/Plin utilizando la información mostrada en nuestra central física. Una vez hecho, reporta tu código de transacción a nuestro equipo para actualizar tu estado de pago a PAGADO.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Page interactivity and Wizard controllers -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Tab navigation controller ---
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            const sections = document.querySelectorAll('.content-section');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarToggleBtn = document.getElementById('sidebarToggle');
+
+            // Sidebar toggler for mobile
+            if (sidebarToggleBtn) {
+                sidebarToggleBtn.addEventListener('click', () => {
+                    sidebar.classList.toggle('show');
+                });
+            }
+
+            // Bind sidebar link clicks
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    const targetId = link.getAttribute('data-target');
+                    if (!targetId) return;
+
+                    // Remove active classes
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    sections.forEach(s => s.classList.remove('active'));
+
+                    // Add active classes to target
+                    link.classList.add('active');
+                    document.getElementById(targetId).classList.add('active');
+
+                    // Close sidebar on mobile
+                    sidebar.classList.remove('show');
+                    
+                    // Update URL Hash
+                    window.location.hash = targetId;
+                });
+            });
+
+            // Handle URL Hash direct navigation on load
+            const currentHash = window.location.hash.substring(1);
+            if (currentHash) {
+                const targetLink = document.querySelector(`.sidebar-link[data-target="${currentHash}"]`);
+                if (targetLink) {
+                    targetLink.click();
+                }
+            }
+
+            // --- Mis Mascotas: age calculation helper ---
+            const edadLabels = document.querySelectorAll('[id^="edad-"]');
+            edadLabels.forEach(label => {
+                const nacimientoStr = label.getAttribute('data-nacimiento');
+                if (nacimientoStr) {
+                    label.textContent = calcularEdad(nacimientoStr);
+                }
+            });
+
+            function calcularEdad(nacimientoStr) {
+                const nacimiento = new Date(nacimientoStr);
+                const hoy = new Date();
+                let edadAnos = hoy.getFullYear() - nacimiento.getFullYear();
+                let edadMeses = hoy.getMonth() - nacimiento.getMonth();
+                if (edadMeses < 0 || (edadMeses === 0 && hoy.getDate() < nacimiento.getDate())) {
+                    edadAnos--;
+                    edadMeses += 12;
+                }
+                if (edadAnos > 0) {
+                    return `${edadAnos} año(s) y ${edadMeses} mes(es)`;
+                } else {
+                    return `${edadMeses} mes(es)`;
+                }
+            }
+
+            // --- History Medical: Patient Filter ---
+            const hMascotaFilter = document.getElementById('hMascotaFilter');
+            const hRows = document.querySelectorAll('#historialTable tbody tr:not(.no-data-row)');
+            if (hMascotaFilter) {
+                hMascotaFilter.addEventListener('change', () => {
+                    const val = hMascotaFilter.value;
+                    let visibleRows = 0;
+                    hRows.forEach(row => {
+                        if (val === 'all' || row.getAttribute('data-mascota-id') === val) {
+                            row.style.display = '';
+                            visibleRows++;
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+
+                    // Manage empty text
+                    const emptyRow = document.querySelector('#historialTable tbody tr.no-data-row');
+                    if (visibleRows === 0) {
+                        if (emptyRow) emptyRow.style.display = '';
+                    } else {
+                        if (emptyRow) emptyRow.style.display = 'none';
+                    }
+                });
+            }
+
+            // --- Mis Citas: State Filter ---
+            const filterButtons = document.querySelectorAll('#citasFilters button');
+            const cRows = document.querySelectorAll('#citasTable tbody tr:not(.no-data-row)');
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const filterVal = btn.getAttribute('data-filter');
+                    let visibleCitas = 0;
+                    cRows.forEach(row => {
+                        if (filterVal === 'all' || row.getAttribute('data-state') === filterVal) {
+                            row.style.display = '';
+                            visibleCitas++;
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+
+                    const emptyRow = document.querySelector('#citasTable tbody tr.no-data-row');
+                    if (visibleCitas === 0) {
+                        if (emptyRow) emptyRow.style.display = '';
+                    } else {
+                        if (emptyRow) emptyRow.style.display = 'none';
+                    }
+                });
+            });
+
+            // --- Profile: Password Strength Indicator ---
+            const pPassword = document.getElementById('pPassword');
+            const pBar = document.getElementById('profilePassBar');
+            const pLabel = document.getElementById('profilePassLabel');
+
+            const reqLen = document.getElementById('prof-req-length');
+            const reqUpp = document.getElementById('prof-req-upper');
+            const reqNum = document.getElementById('prof-req-number');
+            const reqSpe = document.getElementById('prof-req-special');
+
+            if (pPassword) {
+                pPassword.addEventListener('input', () => {
+                    const val = pPassword.value;
+                    if (val === '') {
+                        pBar.style.width = '0%';
+                        pLabel.innerText = '-';
+                        pLabel.className = 'small fw-bold text-muted';
+                        updateReq(reqLen, false);
+                        updateReq(reqUpp, false);
+                        updateReq(reqNum, false);
+                        updateReq(reqSpe, false);
+                        return;
+                    }
+
+                    let score = 0;
+                    const hasLen = val.length >= 8;
+                    updateReq(reqLen, hasLen);
+                    if (hasLen) score++;
+
+                    const hasUpp = /[A-Z]/.test(val);
+                    updateReq(reqUpp, hasUpp);
+                    if (hasUpp) score++;
+
+                    const hasNum = /\d/.test(val);
+                    updateReq(reqNum, hasNum);
+                    if (hasNum) score++;
+
+                    const hasSpe = /[@$!%*?&._\-#/]/.test(val);
+                    updateReq(reqSpe, hasSpe);
+                    if (hasSpe) score++;
+
+                    const pct = (score / 4) * 100;
+                    pBar.style.width = pct + '%';
+                    
+                    pBar.className = 'progress-bar progress-bar-striped progress-bar-animated';
+                    if (score <= 1) {
+                        pBar.classList.add('bg-danger');
+                        pLabel.innerText = 'Débil';
+                        pLabel.className = 'small fw-bold text-danger';
+                    } else if (score <= 3) {
+                        pBar.classList.add('bg-warning');
+                        pLabel.innerText = 'Media';
+                        pLabel.className = 'small fw-bold text-warning';
+                    } else {
+                        pBar.classList.add('bg-success');
+                        pLabel.innerText = 'Fuerte';
+                        pLabel.className = 'small fw-bold text-success';
+                    }
+                });
+            }
+
+            function updateReq(el, met) {
+                if (met) {
+                    el.classList.add('met');
+                    el.querySelector('i').className = 'bi bi-check-circle-fill';
+                } else {
+                    el.classList.remove('met');
+                    el.querySelector('i').className = 'bi bi-x-circle-fill';
+                }
+            }
+
+            // Real-time cellphone validations on profile
+            const profilePhone = document.getElementById('pTelefono');
+            const profilePhoneError = document.getElementById('profilePhoneError');
+            if (profilePhone) {
+                profilePhone.addEventListener('input', () => {
+                    profilePhone.value = profilePhone.value.replace(/[^0-9]/g, '');
+                    const val = profilePhone.value.trim();
+                    if (val === '' || val.match(/^9[0-9]{8}$/)) {
+                        profilePhoneError.style.display = 'none';
+                    } else {
+                        profilePhoneError.style.display = 'block';
+                    }
+                });
+            }
+
+            // Preview profile upload picture
+            const pFoto = document.getElementById('pFoto');
+            const preview = document.getElementById('profilePreview');
+            if (pFoto && preview) {
+                pFoto.addEventListener('change', () => {
+                    const [file] = pFoto.files;
+                    if (file) {
+                        preview.src = URL.createObjectURL(file);
+                    }
+                });
+            }
+
+            // --- Booking Wizard Controller ---
+            const bMascota = document.getElementById('bMascota');
+            const bServicio = document.getElementById('bServicio');
+            const bFecha = document.getElementById('bFecha');
+            const bVet = document.getElementById('bVeterinario');
+            const bHoraInput = document.getElementById('bHora');
+
+            const btnS1 = document.getElementById('btnStep1Next');
+            const btnS2 = document.getElementById('btnStep2Next');
+            const btnS3 = document.getElementById('btnStep3Next');
+            const btnS4 = document.getElementById('btnStep4Next');
+
+            // Limit date calendar to today onwards
+            if (bFecha) {
+                const hoy = new Date();
+                const yyyy = hoy.getFullYear();
+                const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+                const dd = String(hoy.getDate()).padStart(2, '0');
+                bFecha.min = `${yyyy}-${mm}-${dd}`;
+            }
+
+            // Validate step transitions availability
+            bMascota.addEventListener('change', () => { btnS1.disabled = !bMascota.value; });
+            bServicio.addEventListener('change', () => { btnS2.disabled = !bServicio.value; });
+            bFecha.addEventListener('change', () => {
+                btnS3.disabled = !bFecha.value;
+                if (bFecha.value && bVet.value) queryHoursAvailable();
+            });
+            bVet.addEventListener('change', () => {
+                if (bFecha.value && bVet.value) queryHoursAvailable();
+            });
+
+            // AJAX call to get available hours
+            function queryHoursAvailable() {
+                const fecha = bFecha.value;
+                const vet = bVet.value;
+                const grid = document.getElementById('slotsGrid');
+                const loader = document.getElementById('slotsLoader');
+                const noSlots = document.getElementById('noSlotsMessage');
+
+                loader.classList.remove('d-none');
+                grid.innerHTML = '';
+                noSlots.classList.add('d-none');
+                btnS4.disabled = true;
+                bHoraInput.value = '';
+
+                fetch(`/api/agenda/horarios-disponibles?fecha=${fecha}&veterinario=${encodeURIComponent(vet)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        loader.classList.add('d-none');
+                        if (data && data.length > 0) {
+                            data.forEach(time => {
+                                const col = document.createElement('div');
+                                col.className = 'col-6 col-sm-4 col-md-3';
+                                col.innerHTML = `<button type="button" class="slot-btn" data-time="${time}">${time}</button>`;
+                                grid.appendChild(col);
+                            });
+
+                            // Bind clicks
+                            document.querySelectorAll('.slot-btn').forEach(btn => {
+                                btn.addEventListener('click', () => {
+                                    document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('selected'));
+                                    btn.classList.add('selected');
+                                    bHoraInput.value = btn.getAttribute('data-time');
+                                    btnS4.disabled = false;
+                                });
+                            });
+                        } else {
+                            noSlots.classList.remove('d-none');
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Error loading slots:", err);
+                        loader.classList.add('d-none');
+                        grid.innerHTML = '<div class="col-12 text-center text-danger small py-2">Error al consultar horarios.</div>';
+                    });
+            }
+        });
+
+        // Wizard steps transitions helper
+        function goToStep(stepNum) {
+            const bar = document.getElementById('wizardBar');
+            
+            // Hide all steps
+            document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+            document.getElementById(`step${stepNum}`).classList.add('active');
+
+            // Nodes status update
+            for (let i = 1; i <= 5; i++) {
+                const node = document.getElementById(`node${i}`);
+                if (i < stepNum) {
+                    node.className = 'wizard-node completed';
+                } else if (i === stepNum) {
+                    node.className = 'wizard-node active';
+                } else {
+                    node.className = 'wizard-node';
+                }
+            }
+
+            // Progress bar length
+            const pct = ((stepNum - 1) / 4) * 100;
+            bar.style.width = pct + '%';
+
+            // Populate step 5 summary info
+            if (stepNum === 5) {
+                const mSelect = document.getElementById('bMascota');
+                const sSelect = document.getElementById('bServicio');
+                const fInput = document.getElementById('bFecha');
+                const hInput = document.getElementById('bHora');
+                const vSelect = document.getElementById('bVeterinario');
+
+                document.getElementById('summaryMascota').innerText = mSelect.options[mSelect.selectedIndex].text;
+                document.getElementById('summaryServicio').innerText = sSelect.options[sSelect.selectedIndex].text;
+                document.getElementById('summaryFechaHora').innerText = `${fInput.value} a las ${hInput.value}`;
+                document.getElementById('summaryVeterinario').innerText = vSelect.value;
+            }
+        }
+
+        // Trigger pet history filter directly from pet card click
+        function verHistorialMascota(btn) {
+            const id = btn.getAttribute('data-mascota-id');
+            const hFilter = document.getElementById('hMascotaFilter');
+            if (hFilter) {
+                hFilter.value = id;
+                hFilter.dispatchEvent(new Event('change'));
+            }
+            
+            // Switch active sidebar link to Medical History
+            document.querySelector('[data-target=sec-historial]').click();
+        }
+
+        // Send comprobante by email Ajax
+        function enviarCorreoAjax(id) {
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+
+            fetch(`/portal-cliente/comprobantes/enviar-correo/${id}`, { method: 'POST' })
+                .then(res => res.json())
+                .then(data => {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                    alert(data.message);
+                })
+                .catch(err => {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                    console.error("Error mailing invoice:", err);
+                    alert("Error en la conexión al enviar el comprobante.");
+                });
+        }
+
+        // Send comprobante by WhatsApp JS formatting
+        function enviarWhatsAppJS(id, codigo, total, telefono, nombre) {
+            const downloadUrl = window.location.origin + '/uploads/comprobantes/comprobante_' + codigo + '.pdf';
+            const message = `Hola ${nombre}, te saludamos de *VET EXPERTS*.\n\nAdjuntamos el resumen de tu comprobante:\n• *Nro:* ${codigo}\n• *Monto:* S/ ${total.toFixed(2)}\n\nDescarga el PDF del comprobante aquí:\n${downloadUrl}\n\n¡Gracias por tu preferencia!`;
+            const encodedMessage = encodeURIComponent(message);
+            
+            let phone = telefono ? telefono.replace(/\D/g, '') : '';
+            if (phone.length === 9 && !phone.startsWith('51')) {
+                phone = '51' + phone;
+            }
+            
+            const url = `https://wa.me/${phone}?text=${encodedMessage}`;
+            window.open(url, '_blank');
+        }
+    </script>
+</body>
+</html>

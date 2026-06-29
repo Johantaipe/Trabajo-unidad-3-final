@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Vencimiento de Productos')}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-calendar-x-fill me-2" style="color: var(--primary);"></i>
+                    Control de Vencimientos
+                </h1>
+                <a th:href="@{/inventario}" class="btn btn-secondary-custom">
+                    <i class="bi bi-arrow-left"></i> Volver a Inventario
+                </a>
+            </div>
+
+            <!-- Expiration Panels -->
+            <div class="row g-4">
+                
+                <!-- Panel: Vencidos (0 días o menos) -->
+                <div class="col-lg-6">
+                    <div class="card-custom bg-white shadow-sm border-start border-4 border-danger mb-4">
+                        <div class="card-header-custom bg-danger">
+                            <i class="bi bi-exclamation-octagon-fill me-1"></i> Productos Vencidos (Retirar de Stock)
+                        </div>
+                        <div class="card-body-custom p-0">
+                            <div th:if="${!vencidos.isEmpty()}" class="table-responsive">
+                                <table class="table table-custom mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Lote</th>
+                                            <th>Fecha Vence</th>
+                                            <th>Stock</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="p : ${vencidos}">
+                                            <td th:text="${p.nombre}">Medicamento</td>
+                                            <td class="font-monospace" th:text="${p.lote}">LOT-X</td>
+                                            <td class="text-danger fw-bold" th:text="${p.fechaVencimiento}">2026-06-14</td>
+                                            <td th:text="${p.stock}">0</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div th:if="${vencidos.isEmpty()}" class="empty-state">
+                                <i class="bi bi-check-circle-fill text-success fs-3 d-block mb-2"></i>
+                                <h5>Sin productos vencidos</h5>
+                                <p>Todos los productos vigentes están en correcto estado.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel: Proximos a vencer (<= 90 dias) -->
+                <div class="col-lg-6">
+                    <div class="card-custom bg-white shadow-sm border-start border-4 border-warning mb-4">
+                        <div class="card-header-custom bg-warning text-dark">
+                            <i class="bi bi-calendar-event me-1"></i> Productos Próximos a Vencer (<= 90 Días)
+                        </div>
+                        <div class="card-body-custom p-0">
+                            <div th:if="${!porVencer.isEmpty()}" class="table-responsive">
+                                <table class="table table-custom mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Lote</th>
+                                            <th>Fecha Vence</th>
+                                            <th>Stock</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="p : ${porVencer}">
+                                            <td th:text="${p.nombre}">Medicamento</td>
+                                            <td class="font-monospace" th:text="${p.lote}">LOT-X</td>
+                                            <td class="text-warning fw-bold" th:text="${p.fechaVencimiento}">2026-09-15</td>
+                                            <td th:text="${p.stock}">10</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div th:if="${porVencer.isEmpty()}" class="empty-state">
+                                <i class="bi bi-info-circle-fill text-info fs-3 d-block mb-2"></i>
+                                <h5>Sin alertas preventivas</h5>
+                                <p>No hay productos próximos a vencer en los siguientes 90 días.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>

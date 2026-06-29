@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head(${desparasitacion.id == null ? 'Registrar Desparasitación' : 'Editar Desparasitación'})}">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="form-card-wrapper">
+                <div class="form-card">
+                    
+                    <div class="form-header">
+                        <h4 th:text="${desparasitacion.id == null ? 'Registrar Desparasitación' : 'Modificar Desparasitación'}">Registrar Desparasitación</h4>
+                        <p>Complete la información detallada de la desparasitación interna, externa o mixta.</p>
+                    </div>
+
+                    <form th:action="${desparasitacion.id == null} ? @{/desparasitaciones/guardar} : @{/desparasitaciones/actualizar/{id}(id=${desparasitacion.id})}"
+                          th:object="${desparasitacion}" method="post" class="form-body">
+                          
+                        <!-- Errores de Negocio Generales -->
+                        <div th:if="${errorNegocio}" class="alert alert-custom-danger mb-4 d-flex align-items-center" role="alert">
+                            <i class="bi bi-exclamation-octagon-fill me-2 fs-5"></i>
+                            <span th:text="${errorNegocio}">Error de negocio</span>
+                        </div>
+
+                        <input type="hidden" th:field="*{id}" />
+
+                        <div class="row g-3">
+                            <!-- Mascota -->
+                            <div class="col-md-6">
+                                <label for="mascotaId" class="form-label-custom">
+                                    <i class="bi bi-heart-pulse-fill me-1"></i> Mascota
+                                </label>
+                                <select id="mascotaId" th:field="*{mascotaId}" class="form-control form-control-custom"
+                                        th:disabled="${desparasitacion.id != null}" th:classappend="${#fields.hasErrors('mascotaId')} ? 'is-invalid'">
+                                    <option value="">Seleccione una mascota...</option>
+                                    <option th:each="m : ${mascotas}" 
+                                            th:value="${m.id}" 
+                                            th:text="${m.nombre} + ' (' + ${m.especie} + ' - Propietario: ' + ${m.propietario.nombre} + ' ' + ${m.propietario.apellido} + ')'"
+                                            th:selected="${m.id == desparasitacion.mascotaId}">Mascota</option>
+                                </select>
+                                <input type="hidden" th:if="${desparasitacion.id != null}" th:field="*{mascotaId}" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('mascotaId')}" th:errors="*{mascotaId}"></div>
+                            </div>
+
+                            <!-- Estado Inicial -->
+                            <div class="col-md-6">
+                                <label for="estado" class="form-label-custom">
+                                    <i class="bi bi-check-circle-fill me-1"></i> Estado Inicial
+                                </label>
+                                <select id="estado" th:field="*{estado}" class="form-control form-control-custom">
+                                    <option th:value="${T(com.vetexpert.sistema_veterinaria.vacunacion.model.EstadoVacuna).APLICADA}">Aplicada (Hoy o Pasado)</option>
+                                    <option th:value="${T(com.vetexpert.sistema_veterinaria.vacunacion.model.EstadoVacuna).PROGRAMADA}">Programada (Dosis Pendiente)</option>
+                                </select>
+                            </div>
+
+                            <!-- Tipo de Desparasitación -->
+                            <div class="col-md-6">
+                                <label for="tipo" class="form-label-custom">
+                                    <i class="bi bi-shield-check me-1"></i> Tipo de Desparasitación
+                                </label>
+                                <select id="tipo" th:field="*{tipo}" class="form-control form-control-custom"
+                                        th:classappend="${#fields.hasErrors('tipo')} ? 'is-invalid'">
+                                    <option value="">Seleccione tipo...</option>
+                                    <option th:each="t : ${tipos}" th:value="${t.name()}" th:text="${t.name()}">INTERNA</option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}"></div>
+                            </div>
+
+                            <!-- Producto -->
+                            <div class="col-md-6">
+                                <label for="producto" class="form-label-custom">
+                                    <i class="bi bi-capsule me-1"></i> Producto / Fármaco
+                                </label>
+                                <input type="text" id="producto" th:field="*{producto}" class="form-control form-control-custom"
+                                       placeholder="Ej: Frontline, Nexgard, Drontal..."
+                                       th:classappend="${#fields.hasErrors('producto')} ? 'is-invalid'" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('producto')}" th:errors="*{producto}"></div>
+                            </div>
+
+                            <!-- Precio -->
+                            <div class="col-md-6">
+                                <label for="precio" class="form-label-custom">
+                                    <i class="bi bi-currency-dollar me-1"></i> Precio Cobrado (S/)
+                                </label>
+                                <input type="number" step="0.01" id="precio" th:field="*{precio}" class="form-control form-control-custom"
+                                       placeholder="Ej: 35.00"
+                                       th:classappend="${#fields.hasErrors('precio')} ? 'is-invalid'" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('precio')}" th:errors="*{precio}"></div>
+                            </div>
+
+                            <!-- Fecha Aplicación -->
+                            <div class="col-md-6">
+                                <label for="fechaAplicacion" class="form-label-custom">
+                                    <i class="bi bi-calendar-check me-1"></i> Fecha de Aplicación
+                                </label>
+                                <input type="date" id="fechaAplicacion" th:field="*{fechaAplicacion}" 
+                                       class="form-control form-control-custom" 
+                                       th:classappend="${#fields.hasErrors('fechaAplicacion')} ? 'is-invalid'" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('fechaAplicacion')}" th:errors="*{fechaAplicacion}"></div>
+                            </div>
+
+                            <!-- Fecha Próxima Aplicación -->
+                            <div class="col-md-6">
+                                <label for="fechaProximaAplicacion" class="form-label-custom">
+                                    <i class="bi bi-calendar-event-fill me-1"></i> Próxima Aplicación (Autocompletado +90 Días)
+                                </label>
+                                <input type="date" id="fechaProximaAplicacion" th:field="*{fechaProximaAplicacion}" 
+                                       class="form-control form-control-custom" 
+                                       th:classappend="${#fields.hasErrors('fechaProximaAplicacion')} ? 'is-invalid'" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('fechaProximaAplicacion')}" th:errors="*{fechaProximaAplicacion}"></div>
+                            </div>
+
+                            <!-- Veterinario -->
+                            <div class="col-md-12">
+                                <label for="veterinario" class="form-label-custom">
+                                    <i class="bi bi-person-badge-fill me-1"></i> Veterinario Responsable
+                                </label>
+                                <input type="text" id="veterinario" th:field="*{veterinario}" class="form-control form-control-custom" 
+                                       placeholder="Nombre y Apellido del Veterinario" 
+                                       th:classappend="${#fields.hasErrors('veterinario')} ? 'is-invalid'" />
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('veterinario')}" th:errors="*{veterinario}"></div>
+                            </div>
+
+                            <!-- Observaciones -->
+                            <div class="col-md-12">
+                                <label for="observaciones" class="form-label-custom">
+                                    <i class="bi bi-chat-left-text me-1"></i> Observaciones (Máx 500 caracteres)
+                                </label>
+                                <textarea id="observaciones" th:field="*{observaciones}" class="form-control form-control-custom" 
+                                          rows="3" placeholder="Información clínica adicional, peso en el control, etc..."
+                                          th:classappend="${#fields.hasErrors('observaciones')} ? 'is-invalid'"></textarea>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('observaciones')}" th:errors="*{observaciones}"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-footer mt-4">
+                            <a th:href="@{/desparasitaciones}" class="btn btn-secondary-custom">
+                                <i class="bi bi-x-circle me-1"></i> Cancelar
+                            </a>
+                            <button type="submit" class="btn btn-primary-custom" id="btnGuardar">
+                                <i class="bi bi-save me-1"></i> Guardar Registro
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+
+    <!-- JS de Lógica de Autocompletado (+90 Días) -->
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const fechaAplicacionInput = document.getElementById('fechaAplicacion');
+            const fechaProximaAplicacionInput = document.getElementById('fechaProximaAplicacion');
+
+            // Establecer fecha de aplicación por defecto al registrar
+            if (!fechaAplicacionInput.value && !/*[[${desparasitacion.id}]]*/ null) {
+                const hoy = new Date();
+                const yyyy = hoy.getFullYear();
+                const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+                const dd = String(hoy.getDate()).padStart(2, '0');
+                fechaAplicacionInput.value = `${yyyy}-${mm}-${dd}`;
+            }
+
+            function autocompletarFechaProxima() {
+                const fechaAplicacionVal = fechaAplicacionInput.value;
+                if (!fechaAplicacionVal) return;
+
+                const date = new Date(fechaAplicacionVal + 'T00:00:00');
+                // Autocompletar con 90 días por defecto
+                date.setDate(date.getDate() + 90);
+
+                const yyyy = date.getFullYear();
+                const mm = String(date.getMonth() + 1).padStart(2, '0');
+                const dd = String(date.getDate()).padStart(2, '0');
+                fechaProximaAplicacionInput.value = `${yyyy}-${mm}-${dd}`;
+            }
+
+            // Listeners
+            fechaAplicacionInput.addEventListener('change', autocompletarFechaProxima);
+
+            // Ejecutar al inicio si hay fecha de aplicación y no hay próxima fecha
+            if (fechaAplicacionInput.value && !fechaProximaAplicacionInput.value) {
+                autocompletarFechaProxima();
+            }
+        });
+    </script>
+</body>
+</html>

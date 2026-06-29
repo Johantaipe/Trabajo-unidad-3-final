@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head th:replace="~{fragments/layout :: head('Reportes Financieros')}">
+</head>
+<body>
+
+    <!-- Fixed Left Sidebar & Mobile topbar -->
+    <nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container">
+
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-bar-chart-line-fill me-2" style="color: var(--primary);"></i>
+                    Reportes y Estadísticas Comerciales
+                </h1>
+            </div>
+
+            <!-- Revenue Summary Grid (Day, Week, Month, Historical) -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-warning shadow-sm text-center">
+                        <span class="text-muted small text-uppercase fw-bold d-block mb-1">Recaudación de Hoy</span>
+                        <strong class="fs-3 text-dark font-monospace" th:text="${'S/ ' + #numbers.formatDecimal(recaudadoDia, 1, 2)}">S/ 0.00</strong>
+                        <i class="bi bi-graph-up-arrow fs-2 text-warning d-block mt-2 opacity-75"></i>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-info shadow-sm text-center">
+                        <span class="text-muted small text-uppercase fw-bold d-block mb-1">Recaudación Semanal</span>
+                        <strong class="fs-3 text-dark font-monospace" th:text="${'S/ ' + #numbers.formatDecimal(recaudadoSemana, 1, 2)}">S/ 0.00</strong>
+                        <i class="bi bi-calendar-range fs-2 text-info d-block mt-2 opacity-75"></i>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-success shadow-sm text-center">
+                        <span class="text-muted small text-uppercase fw-bold d-block mb-1">Recaudación del Mes</span>
+                        <strong class="fs-3 text-dark font-monospace" th:text="${'S/ ' + #numbers.formatDecimal(recaudadoMes, 1, 2)}">S/ 0.00</strong>
+                        <i class="bi bi-calendar-check fs-2 text-success d-block mt-2 opacity-75"></i>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-custom bg-white p-3 border-start border-4 border-primary shadow-sm text-center">
+                        <span class="text-muted small text-uppercase fw-bold d-block mb-1">Facturación Histórica</span>
+                        <strong class="fs-3 text-dark font-monospace" th:text="${'S/ ' + #numbers.formatDecimal(totalRecaudado, 1, 2)}">S/ 0.00</strong>
+                        <i class="bi bi-cash-stack fs-2 text-primary d-block mt-2 opacity-75"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue by Payment Method Section -->
+            <div class="card-custom bg-white shadow-sm p-4 mb-4">
+                <h5 class="fw-bold text-secondary mb-3"><i class="bi bi-wallet2 me-2 text-primary"></i> Ventas por Método de Pago</h5>
+                <div class="row g-3">
+                    <div class="col-md-2 col-6">
+                        <div class="border rounded p-3 text-center bg-light">
+                            <span class="text-muted small d-block mb-1">💵 Efectivo</span>
+                            <strong class="fs-5 text-dark font-monospace" th:text="${'S/ ' + #numbers.formatDecimal(totalEfectivo, 1, 2)}">S/ 0.00</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-6">
+                        <div class="border rounded p-3 text-center bg-light">
+                            <span class="text-muted small d-block mb-1">💳 Tarjeta</span>
+                            <strong class="fs-5 text-dark font-monospace" th:text="${'S/ ' + #numbers.formatDecimal(totalTarjeta, 1, 2)}">S/ 0.00</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-6">
+                        <div class="border rounded p-3 text-center bg-light">
+                            <span class="text-muted small d-block mb-1">🏦 Transferencia</span>
+                            <strong class="fs-5 text-dark font-monospace" th:text="${'S/ ' + #numbers.formatDecimal(totalTransferencia, 1, 2)}">S/ 0.00</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-6">
+                        <div class="border rounded p-3 text-center bg-light">
+                            <span class="text-muted small d-block mb-1">📱 Yape</span>
+                            <strong class="fs-5 text-dark font-monospace" th:text="${'S/ ' + #numbers.formatDecimal(totalYape, 1, 2)}">S/ 0.00</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-6">
+                        <div class="border rounded p-3 text-center bg-light">
+                            <span class="text-muted small d-block mb-1">🌀 Plin</span>
+                            <strong class="fs-5 text-dark font-monospace" th:text="${'S/ ' + #numbers.formatDecimal(totalPlin, 1, 2)}">S/ 0.00</strong>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-12">
+                        <div class="border rounded p-3 text-center bg-primary text-white">
+                            <span class="text-white-50 small d-block mb-1">📊 Total Cobrado</span>
+                            <strong class="fs-5 text-white font-monospace" th:text="${'S/ ' + #numbers.formatDecimal(totalRecaudado, 1, 2)}">S/ 0.00</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Best Sellers Grid -->
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="card-custom bg-white shadow-sm">
+                        <div class="card-header-custom">
+                            <i class="bi bi-trophy-fill me-1"></i> Top 10 Conceptos Más Vendidos
+                        </div>
+                        <div class="card-body-custom p-0">
+                            <div th:if="${!bestSellers.isEmpty()}" class="table-responsive">
+                                <table class="table table-custom mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Concepto (Categoría)</th>
+                                            <th class="text-center">Cantidad Vendida</th>
+                                            <th>Porcentaje Relativo</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="entry, iterStat : ${bestSellers}">
+                                            <td>
+                                                <span class="badge bg-light text-dark me-2" th:text="${iterStat.count}">1</span>
+                                                <strong th:text="${entry.key}">Concepto</strong>
+                                            </td>
+                                            <td class="text-center font-monospace" th:text="${entry.value}">0</td>
+                                            <td>
+                                                <div class="progress" style="height: 10px;">
+                                                    <div class="progress-bar bg-primary" role="progressbar" th:style="${'width: ' + (entry.value * 10) + '%'}" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div th:if="${bestSellers.isEmpty()}" class="empty-state">
+                                <i class="bi bi-search d-block"></i>
+                                <h5>No hay suficientes datos de ventas para generar reportes</h5>
+                                <p>Las ventas cobradas aparecerán tabuladas en esta sección.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card-custom bg-white shadow-sm p-4 text-center">
+                        <h5 class="fw-bold text-secondary mb-3">Métricas Generales</h5>
+                        <div class="border rounded p-3 mb-3">
+                            <span class="text-muted small d-block">Transacciones Procesadas</span>
+                            <h3 class="fw-bold mb-0 text-dark" th:text="${totalVentas}">0</h3>
+                        </div>
+                        <div class="border rounded p-3 mb-3">
+                            <span class="text-muted small d-block">Promedio de Venta</span>
+                            <h3 class="fw-bold mb-0 text-dark" th:text="${totalVentas > 0 ? 'S/ ' + #numbers.formatDecimal((totalRecaudado / totalVentas), 1, 2) : 'S/ 0.00'}">S/ 0.00</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/layout :: footer}"></footer>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+</html>
