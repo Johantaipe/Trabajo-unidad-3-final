@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.inventario.service;
 
-import com.vetexpert.sistema_veterinaria.inventario.model.Producto;
+import com.vetexpert.sistema_veterinaria.inventario.entity.Producto;
 import java.util.List;
 import java.util.Optional;
 

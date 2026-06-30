@@ -151,7 +151,7 @@
 <body data-bs-spy="scroll" data-bs-target="#legalSidebar" data-bs-offset="120">
 
     <!-- ========== HEADER STICKY (Navbar) ========== -->
-    <nav class="navbar navbar-expand-lg navbar-sticky scrolled">
+    <nav class="navbar navbar-expand-lg navbar-sticky scrolled" th:if="${param.embed == null}">
         <div class="container">
             <a class="navbar-brand text-decoration-none" th:href="@{/}">
                 <img th:src="@{/img/logo.png}" alt="VET EXPERTS" style="height: 38px;">
@@ -162,7 +162,7 @@
     </nav>
 
     <!-- ========== HERO BANNER ========== -->
-    <header class="legal-header">
+    <header class="legal-header" th:if="${param.embed == null}">
         <div class="container">
             <h1 class="animate-fade-in">Términos de Uso</h1>
             <p class="animate-fade-in" style="animation-delay: 0.1s;">Última actualización: 23 de Junio de 2026</p>
@@ -170,7 +170,7 @@
     </header>
 
     <!-- ========== LEGAL CONTENT SECTION ========== -->
-    <main class="container legal-container pb-5">
+    <main class="container legal-container pb-5" th:style="${param.embed != null} ? 'margin-top: 2rem;' : ''">
         <div class="row g-4">
             <!-- Sidebar Table of Contents -->
             <div class="col-lg-3 d-none d-lg-block">
@@ -263,7 +263,7 @@
     </main>
 
     <!-- ========== FOOTER ========== -->
-    <footer class="footer-public mt-auto">
+    <footer class="footer-public mt-auto" th:if="${param.embed == null}">
         <div class="container text-center py-4 border-top border-secondary border-opacity-25">
             <div class="row pt-3 small">
                 <div class="col-md-6 text-white-50 text-md-start">

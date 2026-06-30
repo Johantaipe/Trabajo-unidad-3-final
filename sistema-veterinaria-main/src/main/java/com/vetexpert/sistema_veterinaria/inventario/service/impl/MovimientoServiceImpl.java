@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.inventario.service.impl;
 
-import com.vetexpert.sistema_veterinaria.inventario.model.Movimiento;
+import com.vetexpert.sistema_veterinaria.inventario.entity.Movimiento;
 import com.vetexpert.sistema_veterinaria.inventario.repository.MovimientoRepository;
 import com.vetexpert.sistema_veterinaria.inventario.service.MovimientoService;
 import org.springframework.stereotype.Service;

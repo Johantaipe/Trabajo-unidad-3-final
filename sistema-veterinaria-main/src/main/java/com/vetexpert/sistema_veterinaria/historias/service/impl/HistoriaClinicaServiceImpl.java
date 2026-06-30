@@ -1,11 +1,11 @@
 package com.vetexpert.sistema_veterinaria.historias.service.impl;
 
 import com.vetexpert.sistema_veterinaria.historias.dto.HistoriaClinicaDTO;
-import com.vetexpert.sistema_veterinaria.historias.model.EstadoConsulta;
-import com.vetexpert.sistema_veterinaria.historias.model.HistoriaClinica;
+import com.vetexpert.sistema_veterinaria.historias.entity.EstadoConsulta;
+import com.vetexpert.sistema_veterinaria.historias.entity.HistoriaClinica;
 import com.vetexpert.sistema_veterinaria.historias.repository.HistoriaClinicaRepository;
 import com.vetexpert.sistema_veterinaria.historias.service.HistoriaClinicaService;
-import com.vetexpert.sistema_veterinaria.mascotas.model.Mascota;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Mascota;
 import com.vetexpert.sistema_veterinaria.mascotas.service.MascotaService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,10 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import com.vetexpert.sistema_veterinaria.caja.service.VentaService;
-import com.vetexpert.sistema_veterinaria.servicios.service.ServicioService;
-import com.vetexpert.sistema_veterinaria.servicios.model.Servicio;
+import com.vetexpert.sistema_veterinaria.shared.servicios.service.ServicioService;
+import com.vetexpert.sistema_veterinaria.shared.servicios.entity.Servicio;
 import com.vetexpert.sistema_veterinaria.inventario.service.ProductoService;
-import com.vetexpert.sistema_veterinaria.inventario.model.Producto;
+import com.vetexpert.sistema_veterinaria.inventario.entity.Producto;
 
 /**
  * Implementación transaccional del servicio de Historia Clínica.

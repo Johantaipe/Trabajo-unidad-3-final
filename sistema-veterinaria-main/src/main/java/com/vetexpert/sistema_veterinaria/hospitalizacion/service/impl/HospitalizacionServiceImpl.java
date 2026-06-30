@@ -1,12 +1,12 @@
 package com.vetexpert.sistema_veterinaria.hospitalizacion.service.impl;
 
-import com.vetexpert.sistema_veterinaria.hospitalizacion.model.Hospitalizacion;
+import com.vetexpert.sistema_veterinaria.hospitalizacion.entity.Hospitalizacion;
 import com.vetexpert.sistema_veterinaria.hospitalizacion.repository.HospitalizacionRepository;
 import com.vetexpert.sistema_veterinaria.hospitalizacion.service.HospitalizacionService;
 import com.vetexpert.sistema_veterinaria.caja.service.VentaService;
 import com.vetexpert.sistema_veterinaria.inventario.service.ProductoService;
-import com.vetexpert.sistema_veterinaria.inventario.model.Producto;
-import com.vetexpert.sistema_veterinaria.mascotas.model.Mascota;
+import com.vetexpert.sistema_veterinaria.inventario.entity.Producto;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Mascota;
 import com.vetexpert.sistema_veterinaria.mascotas.repository.MascotaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

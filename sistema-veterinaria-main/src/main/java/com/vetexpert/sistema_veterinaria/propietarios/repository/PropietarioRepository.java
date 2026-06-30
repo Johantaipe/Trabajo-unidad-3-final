@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.propietarios.repository;
 
-import com.vetexpert.sistema_veterinaria.propietarios.model.Propietario;
+import com.vetexpert.sistema_veterinaria.propietarios.entity.Propietario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

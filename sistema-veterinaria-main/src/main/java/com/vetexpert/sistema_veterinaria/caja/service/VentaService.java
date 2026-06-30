@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.caja.service;
 
-import com.vetexpert.sistema_veterinaria.caja.model.Venta;
+import com.vetexpert.sistema_veterinaria.caja.entity.Venta;
 import java.util.List;
 import java.util.Optional;
 

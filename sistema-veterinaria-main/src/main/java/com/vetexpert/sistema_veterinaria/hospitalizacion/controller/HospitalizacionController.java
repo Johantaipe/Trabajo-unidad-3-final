@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.hospitalizacion.controller;
 
-import com.vetexpert.sistema_veterinaria.hospitalizacion.model.Hospitalizacion;
+import com.vetexpert.sistema_veterinaria.hospitalizacion.entity.Hospitalizacion;
 import com.vetexpert.sistema_veterinaria.hospitalizacion.service.HospitalizacionService;
 import com.vetexpert.sistema_veterinaria.mascotas.service.MascotaService;
 import org.springframework.stereotype.Controller;

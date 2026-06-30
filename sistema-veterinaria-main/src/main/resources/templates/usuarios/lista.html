@@ -37,11 +37,57 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
 
+            <!-- Búsqueda y Filtros -->
+            <div class="card-custom mb-4">
+                <div class="card-header-custom">
+                    <i class="bi bi-funnel-fill me-1"></i> Buscar y Filtrar Usuarios
+                </div>
+                <div class="card-body-custom p-3">
+                    <form th:action="@{/usuarios}" method="GET" class="row g-3 align-items-end">
+                        <!-- Buscar -->
+                        <div class="col-md-5">
+                            <label for="search" class="form-label small fw-semibold text-muted">Nombre, Correo o Teléfono</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light text-muted border-end-0"><i class="bi bi-search"></i></span>
+                                <input type="text" id="search" name="search" th:value="${search}" class="form-control bg-light border-start-0" placeholder="Ej. Juan Pérez o 999999999">
+                            </div>
+                        </div>
+
+                        <!-- Filtro Rol -->
+                        <div class="col-md-3">
+                            <label for="rolFilter" class="form-label small fw-semibold text-muted">Rol de Acceso</label>
+                            <select id="rolFilter" name="rol" class="form-select bg-light">
+                                <option value="TODOS" th:selected="${rol == null || rol == 'TODOS'}">Todos los Roles</option>
+                                <option value="ADMIN" th:selected="${rol == 'ADMIN'}">Administrador</option>
+                                <option value="SECRETARIA" th:selected="${rol == 'SECRETARIA'}">Secretaria</option>
+                                <option value="VETERINARIO" th:selected="${rol == 'VETERINARIO'}">Veterinario</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtro Estado -->
+                        <div class="col-md-2">
+                            <label for="estadoFilter" class="form-label small fw-semibold text-muted">Estado</label>
+                            <select id="estadoFilter" name="estado" class="form-select bg-light">
+                                <option value="" th:selected="${estado == null}">Todos</option>
+                                <option value="true" th:selected="${estado == true}">Activo</option>
+                                <option value="false" th:selected="${estado == false}">Inactivo</option>
+                            </select>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="col-md-2 d-flex gap-2">
+                            <button type="submit" class="btn btn-primary w-100"><i class="bi bi-filter"></i> Filtrar</button>
+                            <a th:href="@{/usuarios}" class="btn btn-outline-secondary" title="Limpiar Filtros"><i class="bi bi-arrow-counterclockwise"></i></a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <!-- Tabla de Usuarios -->
             <div class="card-custom">
                 <div class="card-header-custom d-flex justify-content-between align-items-center">
                     <div>
-                        <i class="bi bi-person-lines-fill me-1"></i> Cuentas del Personal Interno y Clientes
+                        <i class="bi bi-person-lines-fill me-1"></i> Cuentas del Personal Interno
                     </div>
                 </div>
                 <div class="card-body-custom p-0">
@@ -49,47 +95,71 @@
                         <table class="table table-custom mb-0">
                             <thead>
                                 <tr>
-                                    <th>Nombre Completo</th>
+                                    <th style="width: 60px;" class="text-center">Foto</th>
+                                    <th>Nombre</th>
                                     <th>Correo</th>
-                                    <th>Usuario</th>
+                                    <th>Teléfono</th>
                                     <th>Rol</th>
                                     <th>Estado</th>
+                                    <th>Fecha Creación</th>
+                                    <th>Último Acceso</th>
                                     <th class="text-end">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr th:each="user : ${usuarios}">
-                                    <td>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <i class="bi bi-person-circle fs-5 text-secondary"></i>
-                                            <div>
-                                                <strong th:text="${user.nombre + ' ' + user.apellido}">Juan Perez</strong>
-                                            </div>
+                                    <td class="text-center">
+                                        <div class="d-flex align-items-center justify-content-center">
+                                            <img th:if="${user.fotoUrl != null && !user.fotoUrl.empty}" th:src="${user.fotoUrl}" class="rounded-circle border" style="width: 32px; height: 32px; object-fit: cover;" alt="Avatar">
+                                            <i th:if="${user.fotoUrl == null || user.fotoUrl.empty}" class="bi bi-person-circle fs-5 text-secondary"></i>
                                         </div>
                                     </td>
+                                    <td>
+                                        <strong th:text="${user.nombre + ' ' + user.apellido}">Juan Perez</strong>
+                                    </td>
                                     <td th:text="${user.correo != null ? user.correo : '—'}">correo@vetexperts.com</td>
-                                    <td th:text="${user.username}">usuario123</td>
+                                    <td th:text="${user.telefono != null ? user.telefono : '—'}">999999999</td>
                                     <td>
                                         <span th:if="${user.rol == 'ADMIN'}" class="badge bg-danger text-white rounded-3 py-1 px-2.5">ADMINISTRADOR</span>
                                         <span th:if="${user.rol == 'SECRETARIA'}" class="badge bg-primary text-white rounded-3 py-1 px-2.5">SECRETARIA</span>
                                         <span th:if="${user.rol == 'VETERINARIO'}" class="badge bg-info text-dark rounded-3 py-1 px-2.5">VETERINARIO</span>
-                                        <span th:if="${user.rol == 'CLIENTE'}" class="badge bg-success text-white rounded-3 py-1 px-2.5">CLIENTE</span>
                                     </td>
                                     <td>
                                         <span th:if="${user.enabled}" class="badge bg-success py-1 px-2">ACTIVO</span>
                                         <span th:if="${!user.enabled}" class="badge bg-secondary py-1 px-2">INACTIVO</span>
                                     </td>
+                                    <td th:text="${user.fechaCreacion != null ? #temporals.format(user.fechaCreacion, 'dd/MM/yyyy HH:mm') : '—'}">—</td>
+                                    <td th:text="${user.ultimoAcceso != null ? #temporals.format(user.ultimoAcceso, 'dd/MM/yyyy HH:mm') : '—'}">—</td>
                                     <td class="text-end">
-                                        <div class="d-inline-flex gap-1">
+                                        <div class="d-inline-flex gap-1 align-items-center">
+                                            <!-- Ver Detalle -->
+                                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" th:data-bs-target="'#detalleModal-' + ${user.id}" title="Ver detalle">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </button>
+                                            
                                             <!-- Editar -->
                                             <a th:href="@{/usuarios/editar/{id}(id=${user.id})}" class="btn btn-sm btn-outline-warning" title="Editar">
                                                 <i class="bi bi-pencil-fill"></i>
                                             </a>
-                                            <!-- Restablecer Contraseña -->
-                                            <a th:href="@{/usuarios/restablecer-password/{id}(id=${user.id})}" class="btn btn-sm btn-outline-info" title="Restablecer Contraseña">
+                                            
+                                            <!-- Cambiar Rol Dropdown -->
+                                            <div class="dropdown d-inline-block">
+                                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Cambiar Rol">
+                                                    <i class="bi bi-person-badge-fill"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-end">
+                                                    <li><a class="dropdown-item" th:href="@{/usuarios/cambiar-rol/{id}(id=${user.id}, nuevoRol='ADMIN')}"><span class="badge bg-danger">Administrador</span></a></li>
+                                                    <li><a class="dropdown-item" th:href="@{/usuarios/cambiar-rol/{id}(id=${user.id}, nuevoRol='VETERINARIO')}"><span class="badge bg-info text-dark">Veterinario</span></a></li>
+                                                    <li><a class="dropdown-item" th:href="@{/usuarios/cambiar-rol/{id}(id=${user.id}, nuevoRol='SECRETARIA')}"><span class="badge bg-primary">Secretaria</span></a></li>
+                                                </ul>
+                                            </div>
+
+                                            <!-- Reset Contraseña -->
+                                            <a th:href="@{/usuarios/reset-password/{id}(id=${user.id})}" class="btn btn-sm btn-outline-info" title="Reset Contraseña" onclick="return confirm('¿Está seguro de restablecer la contraseña temporal de este usuario?');">
                                                 <i class="bi bi-key-fill"></i>
                                             </a>
-                                            <!-- Desactivar / Reactivar -->
+                                            
+                                            <!-- Activar / Desactivar -->
                                             <a th:href="@{/usuarios/toggle/{id}(id=${user.id})}" 
                                                th:class="${user.enabled} ? 'btn btn-sm btn-outline-danger' : 'btn btn-sm btn-outline-success'"
                                                th:title="${user.enabled} ? 'Desactivar' : 'Activar'">
@@ -103,6 +173,64 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Modales de detalle -->
+            <th:block th:each="user : ${usuarios}">
+                <div class="modal fade" th:id="'detalleModal-' + ${user.id}" tabindex="-1" aria-hidden="true" style="text-align: left;">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow rounded-4">
+                            <div class="modal-header bg-primary text-white border-0 py-3">
+                                <h5 class="modal-title fw-bold">
+                                    <i class="bi bi-person-vcard-fill me-2"></i> Detalle de Usuario
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body p-4">
+                                <div class="text-center mb-4">
+                                    <img th:if="${user.fotoUrl != null && !user.fotoUrl.empty}" th:src="${user.fotoUrl}" class="rounded-circle border shadow-sm" style="width: 90px; height: 90px; object-fit: cover;" alt="Avatar">
+                                    <i th:if="${user.fotoUrl == null || user.fotoUrl.empty}" class="bi bi-person-circle text-secondary" style="font-size: 5.5rem;"></i>
+                                    <h4 class="fw-bold mt-3 mb-1" th:text="${user.nombre + ' ' + user.apellido}">Nombre Completo</h4>
+                                    <span class="badge bg-light text-dark border px-3 py-2 rounded-pill fw-semibold" th:text="${user.rol == 'ADMIN' ? 'Administrador' : (user.rol == 'SECRETARIA' ? 'Secretaria' : (user.rol == 'VETERINARIO' ? 'Veterinario' : 'Usuario'))}">Rol</span>
+                                </div>
+                                
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2.5 px-0">
+                                        <span class="text-muted"><i class="bi bi-envelope-fill me-2"></i> Correo</span>
+                                        <strong th:text="${user.correo != null ? user.correo : '—'}">correo@correo.com</strong>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2.5 px-0">
+                                        <span class="text-muted"><i class="bi bi-person-fill me-2"></i> Usuario</span>
+                                        <strong th:text="${user.username}">jperez</strong>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2.5 px-0">
+                                        <span class="text-muted"><i class="bi bi-telephone-fill me-2"></i> Teléfono</span>
+                                        <strong th:text="${user.telefono != null ? user.telefono : '—'}">999999999</strong>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2.5 px-0">
+                                        <span class="text-muted"><i class="bi bi-card-text me-2"></i> DNI</span>
+                                        <strong th:text="${user.dni != null ? user.dni : '—'}">12345678</strong>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2.5 px-0">
+                                        <span class="text-muted"><i class="bi bi-activity me-2"></i> Estado</span>
+                                        <span th:class="${user.enabled} ? 'badge bg-success py-1.5 px-2.5' : 'badge bg-secondary py-1.5 px-2.5'" th:text="${user.enabled} ? 'ACTIVO' : 'INACTIVO'">ACTIVO</span>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2.5 px-0">
+                                        <span class="text-muted"><i class="bi bi-calendar-check-fill me-2"></i> Creado el</span>
+                                        <strong th:text="${user.fechaCreacion != null ? #temporals.format(user.fechaCreacion, 'dd/MM/yyyy HH:mm') : '—'}">dd/mm/yyyy</strong>
+                                    </div>
+                                    <div class="list-group-item d-flex justify-content-between align-items-center py-2.5 px-0 border-bottom-0">
+                                        <span class="text-muted"><i class="bi bi-clock-history me-2"></i> Último acceso</span>
+                                        <strong th:text="${user.ultimoAcceso != null ? #temporals.format(user.ultimoAcceso, 'dd/MM/yyyy HH:mm') : '—'}">dd/mm/yyyy</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer border-0 pt-0">
+                                <button type="button" class="btn btn-secondary w-100 rounded-3 py-2" data-bs-dismiss="modal">Cerrar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </th:block>
 
         </div>
     </div>

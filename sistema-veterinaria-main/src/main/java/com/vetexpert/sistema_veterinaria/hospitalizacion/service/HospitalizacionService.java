@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.hospitalizacion.service;
 
-import com.vetexpert.sistema_veterinaria.hospitalizacion.model.Hospitalizacion;
+import com.vetexpert.sistema_veterinaria.hospitalizacion.entity.Hospitalizacion;
 import java.util.List;
 import java.util.Optional;
 

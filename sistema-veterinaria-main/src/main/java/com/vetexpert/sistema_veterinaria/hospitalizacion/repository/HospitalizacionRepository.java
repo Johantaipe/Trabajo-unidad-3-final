@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.hospitalizacion.repository;
 
-import com.vetexpert.sistema_veterinaria.hospitalizacion.model.Hospitalizacion;
+import com.vetexpert.sistema_veterinaria.hospitalizacion.entity.Hospitalizacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

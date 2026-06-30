@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.propietarios.controller.api;
 
-import com.vetexpert.sistema_veterinaria.propietarios.model.Propietario;
+import com.vetexpert.sistema_veterinaria.propietarios.entity.Propietario;
 import com.vetexpert.sistema_veterinaria.propietarios.service.PropietarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

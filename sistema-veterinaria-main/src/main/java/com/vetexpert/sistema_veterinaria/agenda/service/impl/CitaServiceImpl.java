@@ -2,20 +2,20 @@ package com.vetexpert.sistema_veterinaria.agenda.service.impl;
 
 import com.vetexpert.sistema_veterinaria.agenda.dto.CitaDTO;
 import com.vetexpert.sistema_veterinaria.agenda.dto.ResumenMascotaDTO;
-import com.vetexpert.sistema_veterinaria.agenda.model.Cita;
-import com.vetexpert.sistema_veterinaria.agenda.model.EstadoCita;
+import com.vetexpert.sistema_veterinaria.agenda.entity.Cita;
+import com.vetexpert.sistema_veterinaria.agenda.entity.EstadoCita;
 import com.vetexpert.sistema_veterinaria.agenda.repository.CitaRepository;
 import com.vetexpert.sistema_veterinaria.agenda.service.CitaService;
-import com.vetexpert.sistema_veterinaria.mascotas.model.Mascota;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Mascota;
 import com.vetexpert.sistema_veterinaria.mascotas.repository.MascotaRepository;
-import com.vetexpert.sistema_veterinaria.propietarios.model.Propietario;
+import com.vetexpert.sistema_veterinaria.propietarios.entity.Propietario;
 import com.vetexpert.sistema_veterinaria.propietarios.repository.PropietarioRepository;
-import com.vetexpert.sistema_veterinaria.historias.model.HistoriaClinica;
+import com.vetexpert.sistema_veterinaria.historias.entity.HistoriaClinica;
 import com.vetexpert.sistema_veterinaria.historias.repository.HistoriaClinicaRepository;
-import com.vetexpert.sistema_veterinaria.vacunacion.model.VacunaAplicada;
-import com.vetexpert.sistema_veterinaria.vacunacion.repository.VacunaAplicadaRepository;
-import com.vetexpert.sistema_veterinaria.vacunacion.model.Desparasitacion;
-import com.vetexpert.sistema_veterinaria.vacunacion.repository.DesparasitacionRepository;
+import com.vetexpert.sistema_veterinaria.vacunas.entity.VacunaAplicada;
+import com.vetexpert.sistema_veterinaria.vacunas.repository.VacunaAplicadaRepository;
+import com.vetexpert.sistema_veterinaria.desparasitaciones.entity.Desparasitacion;
+import com.vetexpert.sistema_veterinaria.desparasitaciones.repository.DesparasitacionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
@@ -57,7 +57,12 @@ public class CitaServiceImpl implements CitaService {
         
         Propietario propietario = mascota.getPropietario();
 
-        // 1. Resolver duración estándar según el tipo de cita
+        // 1. Validar que la fecha no sea pasada
+        if (dto.getFecha().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("No se puede programar una cita para una fecha pasada.");
+        }
+
+        // 2. Resolver duración estándar según el tipo de cita
         int duracion = resolverDuracionEstandar(dto.getTipoCita(), dto.getDuracionMinutos());
         dto.setDuracionMinutos(duracion);
 
@@ -91,6 +96,11 @@ public class CitaServiceImpl implements CitaService {
                 .orElseThrow(() -> new IllegalArgumentException("Mascota no encontrada con ID: " + dto.getMascotaId()));
         
         Propietario propietario = mascota.getPropietario();
+
+        // Validar que la fecha no sea pasada
+        if (dto.getFecha().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("No se puede programar una cita para una fecha pasada.");
+        }
 
         int duracion = resolverDuracionEstandar(dto.getTipoCita(), dto.getDuracionMinutos());
         dto.setDuracionMinutos(duracion);
@@ -155,6 +165,10 @@ public class CitaServiceImpl implements CitaService {
         Cita cita = citaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Cita no encontrada con ID: " + id));
 
+        if (nuevaFecha.isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("No se puede programar una cita para una fecha pasada.");
+        }
+
         validarColision(nuevaFecha, nuevaHora, cita.getDuracionMinutos(), cita.getVeterinario(), id);
 
         cita.setFecha(nuevaFecha);
@@ -211,7 +225,7 @@ public class CitaServiceImpl implements CitaService {
         return res;
     }
 
-    private int resolverDuracionEstandar(com.vetexpert.sistema_veterinaria.agenda.model.TipoCita tipo, int duracionPropuesta) {
+    private int resolverDuracionEstandar(com.vetexpert.sistema_veterinaria.agenda.entity.TipoCita tipo, int duracionPropuesta) {
         if (tipo == null) return 30;
         return switch (tipo) {
             case CONSULTA_GENERAL -> 30;

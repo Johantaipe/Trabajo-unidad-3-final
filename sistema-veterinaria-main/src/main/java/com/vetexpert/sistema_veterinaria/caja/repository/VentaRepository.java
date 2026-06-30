@@ -1,7 +1,7 @@
 package com.vetexpert.sistema_veterinaria.caja.repository;
 
-import com.vetexpert.sistema_veterinaria.caja.model.Venta;
-import com.vetexpert.sistema_veterinaria.caja.model.EstadoPago;
+import com.vetexpert.sistema_veterinaria.caja.entity.Venta;
+import com.vetexpert.sistema_veterinaria.caja.entity.EstadoPago;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

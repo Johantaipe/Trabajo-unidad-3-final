@@ -1,7 +1,7 @@
 package com.vetexpert.sistema_veterinaria.historias.controller.api;
 
 import com.vetexpert.sistema_veterinaria.historias.dto.HistoriaClinicaDTO;
-import com.vetexpert.sistema_veterinaria.historias.model.HistoriaClinica;
+import com.vetexpert.sistema_veterinaria.historias.entity.HistoriaClinica;
 import com.vetexpert.sistema_veterinaria.historias.service.HistoriaClinicaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

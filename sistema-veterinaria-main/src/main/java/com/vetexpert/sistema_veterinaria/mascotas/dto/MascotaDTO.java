@@ -1,7 +1,7 @@
 package com.vetexpert.sistema_veterinaria.mascotas.dto;
 
-import com.vetexpert.sistema_veterinaria.mascotas.model.Especie;
-import com.vetexpert.sistema_veterinaria.mascotas.model.Sexo;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Especie;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Sexo;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;

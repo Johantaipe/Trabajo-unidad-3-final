@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.inventario.service.impl;
 
-import com.vetexpert.sistema_veterinaria.inventario.model.Proveedor;
+import com.vetexpert.sistema_veterinaria.inventario.entity.Proveedor;
 import com.vetexpert.sistema_veterinaria.inventario.repository.ProveedorRepository;
 import com.vetexpert.sistema_veterinaria.inventario.service.ProveedorService;
 import org.springframework.stereotype.Service;

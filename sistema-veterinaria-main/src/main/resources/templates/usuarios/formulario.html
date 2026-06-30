@@ -100,6 +100,35 @@
                                 </div>
 
                                 <div class="row">
+                                    <!-- Teléfono -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="telefono" class="form-label fw-bold">Teléfono <span class="text-danger">*</span></label>
+                                        <input type="text" 
+                                               id="telefono" 
+                                               name="telefono" 
+                                               th:field="*{telefono}" 
+                                               class="form-control" 
+                                               th:classappend="${errorTelefono} ? 'is-invalid'"
+                                               placeholder="Ej. 987654321" 
+                                               required>
+                                        <div class="invalid-feedback" th:if="${errorTelefono}" th:text="${errorTelefono}">Error</div>
+                                    </div>
+
+                                    <!-- DNI -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="dni" class="form-label fw-bold">DNI (si aplica)</label>
+                                        <input type="text" 
+                                               id="dni" 
+                                               name="dni" 
+                                               th:field="*{dni}" 
+                                               class="form-control" 
+                                               th:classappend="${errorDni} ? 'is-invalid'"
+                                               placeholder="Ej. 12345678">
+                                        <div class="invalid-feedback" th:if="${errorDni}" th:text="${errorDni}">Error</div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
                                     <!-- Rol -->
                                     <div class="col-md-6 mb-3">
                                         <label for="rol" class="form-label fw-bold">Rol de Acceso <span class="text-danger">*</span></label>
@@ -110,11 +139,11 @@
                                         </select>
                                     </div>
 
-                                    <!-- Estado (sólo informativo en edición/creación, o toggle por lista) -->
+                                    <!-- Estado -->
                                     <div class="col-md-6 mb-3 d-flex align-items-center mt-4">
-                                        <div class="form-check form-switch" th:if="${usuario.id != null}">
-                                            <input class="form-check-input" type="checkbox" id="enabledSwitch" th:field="*{enabled}" disabled>
-                                            <label class="form-check-label text-muted" for="enabledSwitch">Cuenta Activa (Modificar desde la lista)</label>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="enabledSwitch" th:field="*{enabled}">
+                                            <label class="form-check-label text-muted" for="enabledSwitch">Cuenta Activa</label>
                                         </div>
                                     </div>
                                 </div>

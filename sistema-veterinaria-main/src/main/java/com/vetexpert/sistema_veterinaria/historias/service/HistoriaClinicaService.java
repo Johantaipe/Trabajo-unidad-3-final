@@ -1,8 +1,8 @@
 package com.vetexpert.sistema_veterinaria.historias.service;
 
 import com.vetexpert.sistema_veterinaria.historias.dto.HistoriaClinicaDTO;
-import com.vetexpert.sistema_veterinaria.historias.model.EstadoConsulta;
-import com.vetexpert.sistema_veterinaria.historias.model.HistoriaClinica;
+import com.vetexpert.sistema_veterinaria.historias.entity.EstadoConsulta;
+import com.vetexpert.sistema_veterinaria.historias.entity.HistoriaClinica;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.List;

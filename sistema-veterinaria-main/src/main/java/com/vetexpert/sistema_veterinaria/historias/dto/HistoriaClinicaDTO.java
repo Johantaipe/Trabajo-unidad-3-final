@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.historias.dto;
 
-import com.vetexpert.sistema_veterinaria.historias.model.EstadoConsulta;
+import com.vetexpert.sistema_veterinaria.historias.entity.EstadoConsulta;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;

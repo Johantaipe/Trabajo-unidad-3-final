@@ -52,13 +52,6 @@
 
         <!-- Navigation Menu -->
         <ul class="sidebar-menu">
-            <!-- Dashboard -->
-            <li class="sidebar-item" th:if="${session.rol == 'VETERINARIO' or session.rol == 'SECRETARIA'}">
-                <a th:href="@{/dashboard}" class="sidebar-link" th:classappend="${activePage == 'dashboard'} ? 'active'" title="Dashboard">
-                    <i class="bi bi-house-door-fill"></i>
-                    <span class="nav-text">Dashboard</span>
-                </a>
-            </li>
 
             <!-- Propietarios -->
             <li class="sidebar-item" th:if="${session.rol == 'ADMIN' or session.rol == 'SECRETARIA'}">

@@ -1,8 +1,8 @@
 package com.vetexpert.sistema_veterinaria.agenda.dto;
 
-import com.vetexpert.sistema_veterinaria.agenda.model.EstadoCita;
-import com.vetexpert.sistema_veterinaria.agenda.model.PrioridadCita;
-import com.vetexpert.sistema_veterinaria.agenda.model.TipoCita;
+import com.vetexpert.sistema_veterinaria.agenda.entity.EstadoCita;
+import com.vetexpert.sistema_veterinaria.agenda.entity.PrioridadCita;
+import com.vetexpert.sistema_veterinaria.agenda.entity.TipoCita;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;

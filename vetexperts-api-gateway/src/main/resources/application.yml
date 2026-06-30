@@ -1,0 +1,68 @@
+# ===========================
+# VET EXPERTS - API GATEWAY
+# ===========================
+server:
+  port: 8080
+
+spring:
+  application:
+    name: vetexperts-api-gateway
+
+  cloud:
+    gateway:
+      # ===========================
+      # Rutas del Gateway
+      # ===========================
+      routes:
+        # --- Microservicio Usuarios ---
+        - id: usuarios-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/auth/**, /api/usuarios/**
+
+      # ===========================
+      # CORS Global
+      # ===========================
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "http://localhost:*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders: "*"
+            exposedHeaders:
+              - Authorization
+              - X-Total-Count
+            allowCredentials: true
+            maxAge: 3600
+
+      # ===========================
+      # Configuración por defecto
+      # ===========================
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+
+# ===========================
+# Actuator
+# ===========================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, gateway
+  endpoint:
+    gateway:
+      enabled: true
+
+# ===========================
+# Logging
+# ===========================
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    reactor.netty: INFO

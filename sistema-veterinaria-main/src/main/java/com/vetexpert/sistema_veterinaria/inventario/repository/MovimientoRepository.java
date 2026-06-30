@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.inventario.repository;
 
-import com.vetexpert.sistema_veterinaria.inventario.model.Movimiento;
+import com.vetexpert.sistema_veterinaria.inventario.entity.Movimiento;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

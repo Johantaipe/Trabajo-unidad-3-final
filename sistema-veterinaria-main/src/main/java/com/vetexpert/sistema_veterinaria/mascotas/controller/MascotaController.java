@@ -1,9 +1,9 @@
 package com.vetexpert.sistema_veterinaria.mascotas.controller;
 
 import com.vetexpert.sistema_veterinaria.mascotas.dto.MascotaDTO;
-import com.vetexpert.sistema_veterinaria.mascotas.model.Especie;
-import com.vetexpert.sistema_veterinaria.mascotas.model.Mascota;
-import com.vetexpert.sistema_veterinaria.mascotas.model.Sexo;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Especie;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Mascota;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Sexo;
 import com.vetexpert.sistema_veterinaria.mascotas.service.MascotaService;
 import com.vetexpert.sistema_veterinaria.propietarios.service.PropietarioService;
 import jakarta.servlet.http.HttpSession;

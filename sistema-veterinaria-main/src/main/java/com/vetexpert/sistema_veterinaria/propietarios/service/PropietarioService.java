@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.propietarios.service;
 
-import com.vetexpert.sistema_veterinaria.propietarios.model.Propietario;
+import com.vetexpert.sistema_veterinaria.propietarios.entity.Propietario;
 
 import java.util.List;
 import java.util.Optional;

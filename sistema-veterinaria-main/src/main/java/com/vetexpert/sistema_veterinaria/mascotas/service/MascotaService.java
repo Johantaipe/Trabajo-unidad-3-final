@@ -1,8 +1,8 @@
 package com.vetexpert.sistema_veterinaria.mascotas.service;
 
 import com.vetexpert.sistema_veterinaria.mascotas.dto.MascotaDTO;
-import com.vetexpert.sistema_veterinaria.mascotas.model.Especie;
-import com.vetexpert.sistema_veterinaria.mascotas.model.Mascota;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Especie;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Mascota;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.List;

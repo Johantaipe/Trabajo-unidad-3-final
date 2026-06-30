@@ -1,0 +1,2 @@
+com\vetexpert\gateway\ApiGatewayApplication.class
+com\vetexpert\gateway\controller\FallbackController.class

@@ -1,7 +1,7 @@
 package com.vetexpert.sistema_veterinaria.mascotas.repository;
 
-import com.vetexpert.sistema_veterinaria.mascotas.model.Especie;
-import com.vetexpert.sistema_veterinaria.mascotas.model.Mascota;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Especie;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Mascota;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

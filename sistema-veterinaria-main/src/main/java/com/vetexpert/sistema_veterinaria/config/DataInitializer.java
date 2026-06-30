@@ -1,17 +1,17 @@
 package com.vetexpert.sistema_veterinaria.config;
 
-import com.vetexpert.sistema_veterinaria.auth.model.Usuario;
-import com.vetexpert.sistema_veterinaria.auth.repository.UsuarioRepository;
-import com.vetexpert.sistema_veterinaria.vacunacion.model.Vacuna;
-import com.vetexpert.sistema_veterinaria.vacunacion.repository.VacunaRepository;
-import com.vetexpert.sistema_veterinaria.inventario.model.Proveedor;
+import com.vetexpert.sistema_veterinaria.usuarios.entity.Usuario;
+import com.vetexpert.sistema_veterinaria.usuarios.repository.UsuarioRepository;
+import com.vetexpert.sistema_veterinaria.vacunas.entity.Vacuna;
+import com.vetexpert.sistema_veterinaria.vacunas.repository.VacunaRepository;
+import com.vetexpert.sistema_veterinaria.inventario.entity.Proveedor;
 import com.vetexpert.sistema_veterinaria.inventario.repository.ProveedorRepository;
-import com.vetexpert.sistema_veterinaria.inventario.model.Producto;
+import com.vetexpert.sistema_veterinaria.inventario.entity.Producto;
 import com.vetexpert.sistema_veterinaria.inventario.repository.ProductoRepository;
-import com.vetexpert.sistema_veterinaria.servicios.model.Servicio;
-import com.vetexpert.sistema_veterinaria.servicios.repository.ServicioRepository;
-import com.vetexpert.sistema_veterinaria.promociones.model.Promocion;
-import com.vetexpert.sistema_veterinaria.promociones.repository.PromocionRepository;
+import com.vetexpert.sistema_veterinaria.shared.servicios.entity.Servicio;
+import com.vetexpert.sistema_veterinaria.shared.servicios.repository.ServicioRepository;
+import com.vetexpert.sistema_veterinaria.portal.entity.Promocion;
+import com.vetexpert.sistema_veterinaria.portal.repository.PromocionRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import java.time.LocalDate;

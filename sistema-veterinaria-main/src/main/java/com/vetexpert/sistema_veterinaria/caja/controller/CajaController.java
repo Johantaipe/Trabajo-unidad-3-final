@@ -1,8 +1,8 @@
 package com.vetexpert.sistema_veterinaria.caja.controller;
 
-import com.vetexpert.sistema_veterinaria.caja.model.Venta;
-import com.vetexpert.sistema_veterinaria.caja.model.EstadoPago;
-import com.vetexpert.sistema_veterinaria.caja.model.TipoComprobante;
+import com.vetexpert.sistema_veterinaria.caja.entity.Venta;
+import com.vetexpert.sistema_veterinaria.caja.entity.EstadoPago;
+import com.vetexpert.sistema_veterinaria.caja.entity.TipoComprobante;
 import com.vetexpert.sistema_veterinaria.caja.service.VentaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

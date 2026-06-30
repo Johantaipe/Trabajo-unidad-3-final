@@ -128,7 +128,7 @@
             <div class="mb-3">
                 <div class="d-flex justify-content-between">
                     <label for="password" class="form-label fw-semibold">Contraseña</label>
-                    <a th:href="@{/recuperar-acceso}" class="small text-decoration-none text-success">¿Olvidaste tu contraseña?</a>
+                    <a href="#" class="small text-decoration-none text-success" onclick="alert('Funcionalidad en desarrollo.'); return false;">¿Olvidaste tu contraseña?</a>
                 </div>
                 <div class="password-container">
                     <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required>
@@ -188,12 +188,7 @@
             <span class="text-muted small">¿No tienes cuenta? <a th:href="@{/registro-cliente}" class="text-success fw-bold text-decoration-none">Regístrate Gratis</a></span>
         </div>
 
-        <!-- Credenciales de Demo (Socio/Administrador) -->
-        <div class="mt-4 p-3 rounded-4 bg-light text-start" style="border: 1px solid rgba(0,0,0,0.05); font-size: 0.85rem; background-color: #fafbfc !important;">
-            <div class="fw-bold text-dark mb-1" style="color: var(--primary) !important;"><i class="bi bi-info-circle-fill me-1"></i> Credenciales de Acceso Demo (Admin)</div>
-            <div class="text-muted"><strong>Usuario:</strong> admin</div>
-            <div class="text-muted"><strong>Contraseña:</strong> admin123</div>
-        </div>
+
 
         <!-- Documentación de Configuración para el Administrador -->
         <div class="mt-4 p-3 rounded-4 text-start" style="border: 1px dashed rgba(0,0,0,0.12); font-size: 0.8rem; background-color: rgba(82, 183, 136, 0.02);">

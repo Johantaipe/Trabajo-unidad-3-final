@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.propietarios.controller;
 
-import com.vetexpert.sistema_veterinaria.propietarios.model.Propietario;
+import com.vetexpert.sistema_veterinaria.propietarios.entity.Propietario;
 import com.vetexpert.sistema_veterinaria.propietarios.service.PropietarioService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;

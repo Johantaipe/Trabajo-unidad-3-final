@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.agenda.repository;
 
-import com.vetexpert.sistema_veterinaria.agenda.model.Cita;
+import com.vetexpert.sistema_veterinaria.agenda.entity.Cita;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

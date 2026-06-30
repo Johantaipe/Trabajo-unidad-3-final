@@ -2,7 +2,7 @@ package com.vetexpert.sistema_veterinaria.agenda.service;
 
 import com.vetexpert.sistema_veterinaria.agenda.dto.CitaDTO;
 import com.vetexpert.sistema_veterinaria.agenda.dto.ResumenMascotaDTO;
-import com.vetexpert.sistema_veterinaria.agenda.model.Cita;
+import com.vetexpert.sistema_veterinaria.agenda.entity.Cita;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;

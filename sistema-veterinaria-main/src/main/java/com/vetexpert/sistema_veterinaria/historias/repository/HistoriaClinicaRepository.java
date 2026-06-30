@@ -1,7 +1,7 @@
 package com.vetexpert.sistema_veterinaria.historias.repository;
 
-import com.vetexpert.sistema_veterinaria.historias.model.EstadoConsulta;
-import com.vetexpert.sistema_veterinaria.historias.model.HistoriaClinica;
+import com.vetexpert.sistema_veterinaria.historias.entity.EstadoConsulta;
+import com.vetexpert.sistema_veterinaria.historias.entity.HistoriaClinica;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

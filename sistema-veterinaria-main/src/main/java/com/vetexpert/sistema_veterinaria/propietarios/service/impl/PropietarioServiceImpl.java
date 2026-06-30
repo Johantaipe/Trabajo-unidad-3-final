@@ -1,6 +1,6 @@
 package com.vetexpert.sistema_veterinaria.propietarios.service.impl;
 
-import com.vetexpert.sistema_veterinaria.propietarios.model.Propietario;
+import com.vetexpert.sistema_veterinaria.propietarios.entity.Propietario;
 import com.vetexpert.sistema_veterinaria.propietarios.repository.PropietarioRepository;
 import com.vetexpert.sistema_veterinaria.propietarios.service.PropietarioService;
 import org.springframework.stereotype.Service;

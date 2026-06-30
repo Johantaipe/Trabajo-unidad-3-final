@@ -1,5 +1,6 @@
 package com.vetexpert.sistema_veterinaria.config;
 
+import com.vetexpert.sistema_veterinaria.security.SecurityInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;

@@ -1,10 +1,10 @@
 package com.vetexpert.sistema_veterinaria.historias.controller;
 
 import com.vetexpert.sistema_veterinaria.historias.dto.HistoriaClinicaDTO;
-import com.vetexpert.sistema_veterinaria.historias.model.EstadoConsulta;
-import com.vetexpert.sistema_veterinaria.historias.model.HistoriaClinica;
+import com.vetexpert.sistema_veterinaria.historias.entity.EstadoConsulta;
+import com.vetexpert.sistema_veterinaria.historias.entity.HistoriaClinica;
 import com.vetexpert.sistema_veterinaria.historias.service.HistoriaClinicaService;
-import com.vetexpert.sistema_veterinaria.mascotas.model.Mascota;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Mascota;
 import com.vetexpert.sistema_veterinaria.mascotas.service.MascotaService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;

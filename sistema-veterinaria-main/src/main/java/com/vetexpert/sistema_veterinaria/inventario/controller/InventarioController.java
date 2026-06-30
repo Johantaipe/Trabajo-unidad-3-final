@@ -1,13 +1,13 @@
 package com.vetexpert.sistema_veterinaria.inventario.controller;
 
-import com.vetexpert.sistema_veterinaria.inventario.model.Producto;
-import com.vetexpert.sistema_veterinaria.inventario.model.Proveedor;
+import com.vetexpert.sistema_veterinaria.inventario.entity.Producto;
+import com.vetexpert.sistema_veterinaria.inventario.entity.Proveedor;
 import com.vetexpert.sistema_veterinaria.inventario.service.ProductoService;
 import com.vetexpert.sistema_veterinaria.inventario.service.ProveedorService;
 import com.vetexpert.sistema_veterinaria.inventario.service.MovimientoService;
 import com.vetexpert.sistema_veterinaria.propietarios.service.PropietarioService;
 import com.vetexpert.sistema_veterinaria.caja.service.VentaService;
-import com.vetexpert.sistema_veterinaria.caja.model.Venta;
+import com.vetexpert.sistema_veterinaria.caja.entity.Venta;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;

@@ -1,11 +1,11 @@
 package com.vetexpert.sistema_veterinaria.mascotas.service.impl;
 
 import com.vetexpert.sistema_veterinaria.mascotas.dto.MascotaDTO;
-import com.vetexpert.sistema_veterinaria.mascotas.model.Especie;
-import com.vetexpert.sistema_veterinaria.mascotas.model.Mascota;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Especie;
+import com.vetexpert.sistema_veterinaria.mascotas.entity.Mascota;
 import com.vetexpert.sistema_veterinaria.mascotas.repository.MascotaRepository;
 import com.vetexpert.sistema_veterinaria.mascotas.service.MascotaService;
-import com.vetexpert.sistema_veterinaria.propietarios.model.Propietario;
+import com.vetexpert.sistema_veterinaria.propietarios.entity.Propietario;
 import com.vetexpert.sistema_veterinaria.propietarios.service.PropietarioService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,24 +1,34 @@
 package com.vetexpert.sistema_veterinaria.agenda.controller.api;
 
 import com.vetexpert.sistema_veterinaria.agenda.dto.ResumenMascotaDTO;
-import com.vetexpert.sistema_veterinaria.agenda.model.Cita;
+import com.vetexpert.sistema_veterinaria.agenda.entity.Cita;
 import com.vetexpert.sistema_veterinaria.agenda.service.CitaService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.vetexpert.sistema_veterinaria.usuarios.repository.UsuarioRepository;
+import com.vetexpert.sistema_veterinaria.agenda.config.AgendaConfig;
+import com.vetexpert.sistema_veterinaria.usuarios.entity.Usuario;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/agenda")
 public class CitaRestController {
 
     private final CitaService citaService;
+    private final UsuarioRepository usuarioRepository;
+    private final AgendaConfig agendaConfig;
 
-    public CitaRestController(CitaService citaService) {
+    public CitaRestController(CitaService citaService,
+                              UsuarioRepository usuarioRepository,
+                              AgendaConfig agendaConfig) {
         this.citaService = citaService;
+        this.usuarioRepository = usuarioRepository;
+        this.agendaConfig = agendaConfig;
     }
 
     @GetMapping("/mascota/{id}/resumen")
@@ -109,26 +119,61 @@ public class CitaRestController {
             @RequestParam("veterinario") String veterinario) {
         try {
             LocalDate fecha = LocalDate.parse(fechaStr);
+            
+            // 1. Validar fechas pasadas
+            if (fecha.isBefore(LocalDate.now())) {
+                return ResponseEntity.ok(List.of());
+            }
+
+            // 2. Validar días laborables
+            if (!agendaConfig.getDiasLaborables().contains(fecha.getDayOfWeek())) {
+                return ResponseEntity.ok(List.of());
+            }
+
+            // 3. Validar veterinario activo
+            List<Usuario> activeVets = usuarioRepository.findByRolAndEnabledTrue("VETERINARIO");
+            boolean isValidVet = activeVets.stream().anyMatch(v -> {
+                String nombre = v.getNombre() != null ? v.getNombre() : "";
+                String apellido = v.getApellido() != null ? v.getApellido() : "";
+                String fullName = (nombre + " " + apellido).trim();
+                if (fullName.isEmpty()) {
+                    fullName = v.getUsername();
+                }
+                if (!fullName.toLowerCase().startsWith("dr.") && !fullName.toLowerCase().startsWith("dra.")) {
+                    fullName = "Dr. " + fullName;
+                }
+                return fullName.equalsIgnoreCase(veterinario);
+            });
+            
+            if (!isValidVet) {
+                return ResponseEntity.ok(List.of());
+            }
+
+            // 4. Calcular los slots dinámicamente según horario laboral
+            LocalTime apertura = agendaConfig.getHoraApertura();
+            LocalTime cierre = agendaConfig.getHoraCierre();
+            int duracion = agendaConfig.getDuracionDefecto();
+
+            List<LocalTime> todosLosHorarios = new ArrayList<>();
+            LocalTime current = apertura;
+            while (current.plusMinutes(duracion).isBefore(cierre) || current.plusMinutes(duracion).equals(cierre)) {
+                todosLosHorarios.add(current);
+                current = current.plusMinutes(duracion);
+            }
+
             List<Cita> citasExistentes = citaService.listarPorFecha(fecha);
-            
-            List<LocalTime> todosLosHorarios = List.of(
-                LocalTime.of(8, 0), LocalTime.of(8, 30),
-                LocalTime.of(9, 0), LocalTime.of(9, 30),
-                LocalTime.of(10, 0), LocalTime.of(10, 30),
-                LocalTime.of(11, 0), LocalTime.of(11, 30),
-                LocalTime.of(12, 0), LocalTime.of(12, 30),
-                LocalTime.of(13, 0), LocalTime.of(13, 30),
-                LocalTime.of(14, 0), LocalTime.of(14, 30),
-                LocalTime.of(15, 0), LocalTime.of(15, 30),
-                LocalTime.of(16, 0), LocalTime.of(16, 30),
-                LocalTime.of(17, 0), LocalTime.of(17, 30)
-            );
-            
+
             List<String> disponibles = todosLosHorarios.stream().filter(time -> {
                 LocalTime start = time;
-                LocalTime end = time.plusMinutes(30);
+                LocalTime end = time.plusMinutes(duracion);
+
+                // Si es hoy, evitar horarios que ya pasaron
+                if (fecha.equals(LocalDate.now()) && start.isBefore(LocalTime.now())) {
+                    return false;
+                }
+
                 for (Cita c : citasExistentes) {
-                    if (c.getEstado() == com.vetexpert.sistema_veterinaria.agenda.model.EstadoCita.CANCELADA) {
+                    if (c.getEstado() == com.vetexpert.sistema_veterinaria.agenda.entity.EstadoCita.CANCELADA) {
                         continue;
                     }
                     if (c.getVeterinario() != null && c.getVeterinario().equalsIgnoreCase(veterinario)) {
@@ -141,7 +186,7 @@ public class CitaRestController {
                 }
                 return true;
             }).map(t -> String.format("%02d:%02d", t.getHour(), t.getMinute())).toList();
-            
+
             return ResponseEntity.ok(disponibles);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();

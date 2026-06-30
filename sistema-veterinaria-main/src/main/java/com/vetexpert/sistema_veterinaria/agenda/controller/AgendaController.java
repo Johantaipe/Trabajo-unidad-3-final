@@ -1,10 +1,10 @@
 package com.vetexpert.sistema_veterinaria.agenda.controller;
 
 import com.vetexpert.sistema_veterinaria.agenda.dto.CitaDTO;
-import com.vetexpert.sistema_veterinaria.agenda.model.Cita;
-import com.vetexpert.sistema_veterinaria.agenda.model.EstadoCita;
-import com.vetexpert.sistema_veterinaria.agenda.model.PrioridadCita;
-import com.vetexpert.sistema_veterinaria.agenda.model.TipoCita;
+import com.vetexpert.sistema_veterinaria.agenda.entity.Cita;
+import com.vetexpert.sistema_veterinaria.agenda.entity.EstadoCita;
+import com.vetexpert.sistema_veterinaria.agenda.entity.PrioridadCita;
+import com.vetexpert.sistema_veterinaria.agenda.entity.TipoCita;
 import com.vetexpert.sistema_veterinaria.agenda.service.CitaService;
 import com.vetexpert.sistema_veterinaria.mascotas.service.MascotaService;
 import org.springframework.stereotype.Controller;
