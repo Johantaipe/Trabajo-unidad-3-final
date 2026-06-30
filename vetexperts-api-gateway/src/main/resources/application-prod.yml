@@ -1,5 +1,5 @@
 # ===========================
-# VET EXPERTS - API GATEWAY
+# VET EXPERTS - API GATEWAY (PRODUCCIÓN)
 # ===========================
 server:
   port: ${PORT:8080}
@@ -7,10 +7,6 @@ server:
 spring:
   application:
     name: vetexperts-api-gateway
-  
-  # Perfil activo (se sobrescribe con variable de entorno)
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE:local}
 
   cloud:
     gateway:
@@ -20,7 +16,7 @@ spring:
       routes:
         # --- Microservicio Usuarios ---
         - id: usuarios-service
-          uri: http://localhost:8081
+          uri: http://${USUARIOS_SERVICE_HOST:usuarios-service.railway.internal}:${USUARIOS_SERVICE_PORT:8081}
           predicates:
             - Path=/api/auth/**, /api/usuarios/**
 
@@ -30,7 +26,7 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOriginPatterns: "http://localhost:*"
+            allowedOriginPatterns: "*"
             allowedMethods:
               - GET
               - POST
@@ -68,5 +64,5 @@ management:
 # ===========================
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO
     reactor.netty: INFO
